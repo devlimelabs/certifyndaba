@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "default": "certifyndaba"
+  },
+  "targets": {},
+  "etags": {
+    "certifyndaba": {
+      "extensionInstances": {}
+    }
+  }
+}
