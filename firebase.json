@@ -19,18 +19,15 @@
     }
   ],
   "hosting": {
-    "public": "dist/certifyndaba/",
+    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "frameworksBackend": {
+      "region": "us-east1"
+    }
   },
   "storage": {
     "rules": "storage.rules"
