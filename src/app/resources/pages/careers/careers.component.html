@@ -1,0 +1,22 @@
+<div
+  id="careers-page"
+  class="bg-white px-6 py-12 md:py-24 lg:py-32 lg:px-8"
+>
+  <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700">
+    <p class="text-base font-semibold leading-7 text-indigo-600">Introducing</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Careers in ABA</h1>
+    <img
+      class="h-auto max-w-full my-8"
+      [src]="careerPage.fields.featured_image"
+    />
+    <p class="mt-6 text-xl leading-8">
+      A career in ABA can be a very rewarding and gratifying way to make a living. You are improving the quality of life
+      of individuals and their parents/guardians while at the same time progressing on your career path delivering both
+      promotions and financial freedom. A career path in ABA can go many ways but below provides you a common pathway
+    </p>
+    <div
+      class="mt-10 max-w-2xl"
+      [innerHTML]="careerPage.fields.body"
+    ></div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<label
+  [for]="name"
+  class="block text-sm font-medium leading-6 text-gray-900"
+>
+  {{ label }}
+</label>
+<p
+  *ngIf="description"
+  class="mt-1 text-sm leading-6 text-gray-600"
+>
+  {{ description }}
+</p>
+<div class="mt-2 ml-2">
+  <div
+    *ngFor="let option of options"
+    class="relative flex gap-x-3"
+  >
+    <div class="flex h-6 items-center">
+      <input
+        (change)="checkboxChange($event)"
+        [id]="option.label"
+        [name]="option.label"
+        type="checkbox"
+        [value]="option.value"
+        [checked]="value.includes(option.value)"
+        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+      />
+    </div>
+    <div class="text-sm leading-6">
+      <label
+        [for]="option.label"
+        class="font-medium text-gray-900"
+      >
+        {{ option.label }}
+      </label>
+      <p
+        *ngIf="option.description"
+        class="text-gray-500"
+      >
+        {{ option.description }}
+      </p>
+    </div>
+  </div>
+</div>

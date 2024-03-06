@@ -1,0 +1,124 @@
+<mat-toolbar class="flex flex-row flex-nowrap justify-center items-center !bg-transparent h-20">
+  <div class="flex flex-row flex-nowrap justify-between items-center w-full">
+    <div class="flex flex-row flex-nowrap justify-between lg:justify-start items-center w-full grow">
+      <button
+        *ngIf="layoutSvc.isMobile$ | async"
+        mat-icon-button
+        class="mr-2"
+        (click)="toggleSideNav.emit()"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div
+        class="flex flex-row flex-nowrap items-center cursor-pointer"
+        routerLink="/"
+      >
+        <svg
+          viewBox="17.7263 197.2883 426.8754 83.012"
+          xmlns="http://www.w3.org/2000/svg"
+          width="264px"
+          class="overflow-x-visible"
+        >
+          <text
+            style="
+              fill: rgb(79, 70, 229);
+              font-family: 'Roboto Flex';
+              font-size: 69px;
+              white-space: pre;
+              overflow: visible;
+            "
+            transform="matrix(1, 0, 0, 1, -137.3007354736328, 19.410007476806648)"
+          >
+            <tspan
+              x="155.027"
+              y="243.889"
+            >
+              Certifynd
+            </tspan>
+            <tspan
+              x="155.027"
+              dy="1em"
+            >
+              ​
+            </tspan>
+          </text>
+          <text
+            style="
+              fill: rgb(126, 34, 206);
+              font-family: 'Roboto Flex';
+              font-size: 70px;
+              font-weight: 700;
+              letter-spacing: -2px;
+              white-space: pre;
+              overflow: visible;
+            "
+            x="300"
+            y="262.293"
+            transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 7.105427357601002e-15)"
+          >
+            ABA
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="flex-none hidden md:flex md:flex-row md:justify-end md:items-center gap-4">
+      <ng-container *ngFor="let link of navLinks">
+        <button
+          *ngIf="!link?.childLinks?.length; else menuLink"
+          mat-button
+          class="text-lg"
+          aria-label=""
+          [routerLink]="[link.link]"
+          [routerLinkActiveOptions]="{ exact: !loggedIn }"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [ngClass]="
+            rla.isActive
+              ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
+              : '!text-indigo-600'
+          "
+        >
+          {{ link.label }}
+        </button>
+
+        <ng-template #menuLink>
+          <app-nav-menu-link [link]="link"></app-nav-menu-link>
+        </ng-template>
+
+        <mat-divider
+          [vertical]="true"
+          class="h-8 !border-r-2"
+        ></mat-divider>
+      </ng-container>
+
+      @if (loggedIn()) {
+      <img
+        class="h-10 w-10 rounded-full cursor-pointer"
+        [routerLink]="['/app/candidate/profile']"
+        [matTooltip]="user?.email ?? ''"
+        height="40"
+        [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + user?.username"
+        alt="avatar"
+      />
+      <button
+        mat-button
+        class="!text-indigo-600 text-lg"
+        (click)="signOut()"
+      >
+        Sign Out
+      </button>
+      } @else {
+      <button
+        mat-button
+        class="text-lg"
+        aria-label=""
+        (click)="signIn()"
+      >
+        Sign In
+      </button>
+      }
+    </div>
+  </div>
+</mat-toolbar>

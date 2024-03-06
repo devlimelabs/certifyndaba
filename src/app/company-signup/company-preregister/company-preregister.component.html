@@ -1,0 +1,245 @@
+<div
+  id="sign-up"
+  class="min-h-full flex"
+>
+  <div class="flex-1 flex flex-row justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-6 xl:px-12 w-7/12">
+    <div class="w-full max-w-3xl lg:max-w-2xl">
+      <div
+        *ngIf="showLogo"
+        class="min-w text-center"
+      >
+        <h1 class="text-7xl font-semibold text-blue-600">
+          Certifynd
+          <span class="font-bold text-purple-700 -ml-4">ABA</span>
+        </h1>
+      </div>
+
+      <div class="mt-8 w-full">
+        <div
+          *ngIf="!signedUp"
+          class="relative flex flex-wrap justify-center text-xl text-center"
+        >
+          <span class="p-6 bg-purple-700 rounded text-white">
+            Stop wasting time trying to find quality Therapists for your Clinics
+            <br />
+            Join today, and get access to the best ABA Therapy talent instantly
+          </span>
+        </div>
+
+        <div class="mt-6">
+          <form
+            *ngIf="!signedUp"
+            [formGroup]="signupForm"
+            class="mt-16"
+          >
+            <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-4">
+              <div class="col-span-full">
+                <label
+                  for="company-name"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Company Name
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="company"
+                    type="text"
+                    name="company-name"
+                    id="company-name"
+                    autocomplete="given-name"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('company')?.dirty && errors['company'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('company')?.dirty"
+                  [errors]="errors['company']"
+                ></app-input-error>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label
+                  for="first-name"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  First Name
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="firstName"
+                    type="text"
+                    name="first-name"
+                    id="first-name"
+                    autocomplete="given-name"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('firstName')?.dirty && errors['firstName'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('firstName')?.dirty"
+                  [errors]="errors['firstName']"
+                ></app-input-error>
+              </div>
+              <div class="sm:col-span-2">
+                <label
+                  for="last-name"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Last Name
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="lastName"
+                    type="text"
+                    name="last-name"
+                    id="last-name"
+                    autocomplete="family-name"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('lastName')?.dirty && errors['lastName'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('lastName')?.dirty"
+                  [errors]="errors['lastName']"
+                ></app-input-error>
+              </div>
+              <div class="col-span-full">
+                <label
+                  for="position"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Title/Position
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="position"
+                    type="text"
+                    name="position"
+                    id="position"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('position')?.dirty && errors['position'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('position')?.dirty"
+                  [errors]="errors['position']"
+                ></app-input-error>
+              </div>
+              <div class="sm:col-span-2">
+                <label
+                  for="email"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Email Address
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="email"
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('email')?.dirty && errors['email'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('email')?.dirty"
+                  [errors]="errors['email']"
+                ></app-input-error>
+              </div>
+              <div class="sm:col-span-2">
+                <label
+                  for="phone"
+                  class="block text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Phone Number
+                </label>
+                <div class="mt-2.5">
+                  <input
+                    formControlName="phone"
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    autocomplete="tel"
+                    aria-describedby="phone-description"
+                    placeholder="+1 (555) 555-5555"
+                    class="block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                    [class.invalid]="signupForm.get('phone')?.dirty && errors['phone'].length"
+                  />
+                </div>
+                <app-input-error
+                  *ngIf="signupForm.get('phone')?.dirty"
+                  [errors]="errors['phone']"
+                ></app-input-error>
+              </div>
+            </div>
+          </form>
+
+          <div
+            *ngIf="signedUp"
+            class="rounded-md bg-indigo-50 p-8"
+          >
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg
+                  class="h-10 w-10 text-indigo-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3 flex-1 md:flex md:flex-wrap">
+                <p class="text-xl text-indigo-700">
+                  Thank you for preregistering! We are focused on onboardinging individuals to the platform with a plan
+                  to bring employers aboard in early 2024. We will contact you when we are ready. If you have any
+                  questions in the meantime, checkout the
+                  <a routerLink="/faqs">FAQs</a>
+                  , or feel free to contact us at
+                  <a href="mailto:info@certifynd.com">info&#64;certifynd.com</a>
+                </p>
+                <p class="text-2xl text-indigo-700 w-full text-right my-4 mx-2">Thank you!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hidden lg:block relative w-0 flex-1 rounded-l-3xl">
+    <img
+      class="absolute -z-10 inset-0 h-full w-full object-cover rounded-l-3xl"
+      src="/assets/images/company-signup-1.jpg"
+      alt="Image of wall art that says Aim High Fly Higher; Photo by  James Healy on Unsplash"
+    />
+  </div>
+</div>
+<ng-container *ngIf="!signedUp">
+  <div class="flex justify-center w-full">
+    <button
+      type="submit"
+      (click)="signup()"
+      class="shrink-0 rounded-md bg-blue-600 px-6 py-4 text-center text-xl font-semibold text-white shadow-sm hover:bg-blue-500 hover:cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+    >
+      Register for Access
+    </button>
+  </div>
+  <div class="mt-10 flex flex-wrap justify-center items-center border-t border-gray-900/10 pt-8 col-span-full">
+    <p class="text-center text-sm text-gray-600 w-full">
+      Already have an account?
+      <button
+        type="button"
+        class="font-medium text-blue-600 hover:text-blue-500"
+        routerLink="/sign-in"
+      >
+        Sign In
+      </button>
+    </p>
+  </div>
+</ng-container>

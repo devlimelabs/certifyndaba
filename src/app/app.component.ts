@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CheckForUpdateService } from './core/check-for-update/check-for-update.service';
+import { PromptUpdateService } from './core/prompt-update/prompt-update.service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +12,9 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'certifyndaba';
+
+  private document = inject(DOCUMENT);
+  private checkUpdateSvc = inject(CheckForUpdateService);
+  private promptUpdateSvc = inject(PromptUpdateService);
+
 }

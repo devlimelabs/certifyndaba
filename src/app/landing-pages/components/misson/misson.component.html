@@ -1,0 +1,86 @@
+<div class="max-w-full bg-gradient-to-b from-purple-700 from-15% to-white to-75% mt-6 sm:mt-12 xl:my-36 pb-36">
+  <div class="pb-4">
+    <div class="mx-auto max-w-7xl px-6 py-16">
+      <h2 class="text-base font-semibold leading-8 text-indigo-200">Background</h2>
+      <p class="mt-2 text-xl font-semibold text-white sm:text-3xl max-w-6xl">
+        The CDC states that 1 in 36 children has been identified with autism spectrum disorder (ASD). In addition, it is
+        expected that ~1.1M teens will enter adulthood and will need continued care
+      </p>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl mt-8 px-6">
+    <dl class="grid max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2">
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">Certified BCBA's</dt>
+        <dd
+          [countUp]="61337"
+          [options]="{ duration: 6 }"
+          class="order-first text-4xl font-semibold tracking-tight text-gray-900"
+        >
+          0
+        </dd>
+      </div>
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">Certified RBT's</dt>
+        <dd
+          class="order-first text-4xl font-semibold tracking-tight text-gray-900"
+          [countUp]="136113"
+          [options]="{ duration: 6 }"
+        >
+          0
+        </dd>
+      </div>
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">BCBA's Needed</dt>
+        <dd class="order-first text-4xl font-semibold tracking-tight text-gray-900">
+          ~
+          <span
+            [countUp]="250000"
+            [options]="{ duration: 8 }"
+          >
+            0
+          </span>
+        </dd>
+      </div>
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">RBT's Needed</dt>
+        <dd class="order-first text-4xl font-semibold tracking-tight text-gray-900">
+          ~
+          <span
+            [countUp]="500000"
+            [options]="{ duration: 8 }"
+          >
+            0
+          </span>
+        </dd>
+      </div>
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">BCBA Shortage</dt>
+        <dd class="order-first text-4xl font-semibold tracking-tight text-red-700">
+          ~
+          <span
+            [countUp]="190000"
+            [options]="{ duration: 10 }"
+          >
+            0
+          </span>
+          and growing
+        </dd>
+      </div>
+      <div class="flex flex-col gap-y-3 border-l border-gray-900/10 pl-6">
+        <dt class="text-lg leading-6 text-gray-600">RBT Shortage</dt>
+        <dd class="order-first text-4xl font-semibold tracking-tight text-red-700">
+          ~
+          <span
+            [countUp]="315000"
+            [options]="{ duration: 10 }"
+          >
+            0
+          </span>
+          and growing
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>

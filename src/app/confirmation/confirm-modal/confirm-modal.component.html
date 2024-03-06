@@ -1,0 +1,40 @@
+<div class="flex flex-row flex-wrap w-full">
+  <h3
+    mat-dialog-title
+    *ngIf="data.showTitle"
+    class="w-full"
+  >
+    {{ data.title || 'Confirm' }}
+  </h3>
+
+  <mat-dialog-content class="flex flex-row flex-wrap w-full m-0 p-2">
+    <p
+      *ngIf="data.message; else confirmMessage"
+      class="text-center w-full"
+    >
+      {{ data.message }}
+    </p>
+
+    <ng-template #confirmMessage>
+      <p class="lead text-center w-full">Are you sure you want to {{ data.confirmAction }}?</p>
+    </ng-template>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="flex flex-row justify-end items-center w-full">
+    <button
+      *ngIf="data?.showCancel"
+      class="btn btn-sm btn-warning m-2"
+      tabindex="-1"
+      [mat-dialog-close]="false"
+    >
+      Cancel
+    </button>
+    <button
+      class="btn btn-sm btn-primary m-2"
+      tabindex="-1"
+      [mat-dialog-close]="true"
+    >
+      {{ data?.confirmText ?? 'Confirm' }}
+    </button>
+  </mat-dialog-actions>
+</div>

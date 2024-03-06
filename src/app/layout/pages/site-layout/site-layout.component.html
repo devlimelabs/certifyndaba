@@ -1,0 +1,42 @@
+<mat-sidenav-container class="!bg-white !bg-opacity-50">
+  <mat-sidenav
+    #sidenav
+    mode="over"
+    [fixedInViewport]="true"
+    class="p-4"
+  >
+    <!-- Mobile Navigation -->
+    <app-mobile-nav *ngIf="layoutSvc.isMobile$ | async"></app-mobile-nav>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="max-h-full !overflow-hidden">
+    <!-- Navbar -->
+    <app-navbar (toggleSideNav)="sidenav.toggle()"></app-navbar>
+
+    <main
+      #mainOutlet
+      class="flex-1 h-full w-full overflow-x-hidden overflow-y-auto"
+      [style.max-height]="'calc(100vh - 4rem)'"
+      [style.height]="'calc(100vh - 4rem)'"
+    >
+      <!-- Loading Screen -->
+      <div
+        *ngIf="layoutSvc.loading$ | async"
+        id="loading-backdrop"
+        class="absolute top-0 left-0 backdrop-blur bg-black/30 backdrop-opacity-80 w-full h-full flex justify-center items-center z-50"
+      >
+        <div>
+          <div class="loader"></div>
+          <h1 class="animate-pulse w-full text-center mt-6 text-2xl font-thin text-emerald-300">LOADING</h1>
+        </div>
+      </div>
+
+      <!-- Main Application Outlet -->
+      <div class="grow">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- Footer -->
+      <app-footer></app-footer>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
