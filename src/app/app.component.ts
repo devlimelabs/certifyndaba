@@ -1,20 +1,15 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CheckForUpdateService } from './core/check-for-update/check-for-update.service';
-import { PromptUpdateService } from './core/prompt-update/prompt-update.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [ RouterOutlet ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
 
-  private document = inject(DOCUMENT);
-  private checkUpdateSvc = inject(CheckForUpdateService);
-  private promptUpdateSvc = inject(PromptUpdateService);
+
 
 }

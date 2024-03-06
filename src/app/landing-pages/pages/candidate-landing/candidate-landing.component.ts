@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { CandidateSignupComponent } from 'src/app/auth/pages/candidate-signup/candidate-signup.component';
 
 import { Feature, FeaturesComponent } from '../../components/features/features.component';
 import { HeroComponent } from '../../components/hero/hero.component';
@@ -12,7 +11,6 @@ import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.compone
 @Component({
   standalone: true,
   imports: [
-    CandidateSignupComponent,
     CommonModule,
     MatIconModule,
     HeroComponent,

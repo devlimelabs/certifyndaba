@@ -1,6 +1,11 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import {
-  Component, inject, OnInit, Renderer2, ViewChild, ViewEncapsulation
+  afterNextRender,
+  Component,
+  inject,
+  Renderer2,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -29,7 +34,7 @@ import { AppNavbarComponent } from '../../components/app-navbar/app-navbar.compo
   styleUrls: [ './app-layout.component.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class AppLayoutComponent implements OnInit {
+export class AppLayoutComponent {
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -42,12 +47,12 @@ export class AppLayoutComponent implements OnInit {
   open = false;
   pageTitle$ = this.layoutSvc.pageTitle$;
 
-  ngOnInit(): void {
+  constructor() {
+    afterNextRender(() => this.renderer.setStyle(this.document.getElementById('st-2'), 'display', 'none'));
+
     this.layoutSvc.navigationEnd$
       .pipe(untilDestroyed(this))
       .subscribe(() => this.sidenav.close());
-
-    this.renderer.setStyle(this.document.getElementById('st-2'), 'display', 'none');
   }
 
   toggle(open: boolean) {

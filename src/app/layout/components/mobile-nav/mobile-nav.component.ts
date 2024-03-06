@@ -1,32 +1,21 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  OnInit,
-  Output,
-  signal,
-  WritableSignal
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, OnInit, Output, signal
 } from '@angular/core';
+import {
+  collection, Firestore, getDocs
+} from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {
-  Router, RouterLink, RouterLinkActive
-} from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { generateClient } from 'aws-amplify/api';
-import { orderBy } from 'lodash';
-import { AppAuthState } from 'src/app/auth/state/auth.state';
-import { PushNotificationsService } from 'src/app/core/push-notifications/push-notifications.service';
-import { listAppNavLinks, listNavLinks } from 'src/graphql/queries';
-
+import orderBy from 'lodash/orderBy';
+import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../service/layout.service';
 import { MatMenuModule } from '@angular/material/menu';
-import { DescopeAuthService } from '@descope/angular-sdk';
-import { lastValueFrom, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -49,42 +38,41 @@ import { lastValueFrom, switchMap } from 'rxjs';
 export class MobileNavComponent implements OnInit {
   @Output() toggleSideNav = new EventEmitter();
 
-  private client = generateClient();
-  private descopeSvc = inject(DescopeAuthService);
-  private pushNotificationsSvc = inject(PushNotificationsService);
-  private router = inject(Router);
+  private firestore = inject(Firestore);
+  private cdr = inject(ChangeDetectorRef);
 
-  appAuthState = inject(AppAuthState);
+  authSvc = inject(AuthService);
   layoutSvc = inject(LayoutService);
-  loggedIn = signal(false);
-  navLinks: WritableSignal<any[]> = signal([]);
-
-  get user(): any {
-    return this.appAuthState.get('user');
-  }
+  navLinks = signal<any[]>([]);
 
   ngOnInit(): void {
-    this.appAuthState.isLoggedIn$
-      .pipe(untilDestroyed(this),
+    this.authSvc.isLoggedIn$
+      .pipe(
+        untilDestroyed(this),
         switchMap(async loggedIn => {
-          this.loggedIn.set(loggedIn);
+          let linksRef;
+
           if (loggedIn) {
-            const links = (await this.client.graphql({
-              query: listAppNavLinks
-            }))?.data?.listAppNavLinks;
-
-            this.pushNotificationsSvc.init();
-
-            return links;
+            linksRef = collection(this.firestore, 'app-nav-links');
           } else {
-            return (await this.client.graphql({
-              query: listNavLinks,
-              authMode: 'iam'
-            }))?.data?.listNavLinks;
+            linksRef = collection(this.firestore, 'nav-links');
           }
-        }))
-      .subscribe(links => {
+
+          return await getDocs(linksRef);
+        })
+      ).subscribe(linksSnapshot => {
+        const links: any[] = [];
+
+        linksSnapshot.forEach(doc => {
+          links.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
         this.navLinks.set(orderBy(links, 'order'));
+
+        this.cdr.markForCheck();
       });
   }
 
@@ -93,8 +81,6 @@ export class MobileNavComponent implements OnInit {
   }
 
   async signOut(): Promise<void> {
-    await lastValueFrom(this.descopeSvc.descopeSdk.logout());
-
-    this.router.navigateByUrl('/sign-in');
+    this.authSvc.signOut();
   }
 }

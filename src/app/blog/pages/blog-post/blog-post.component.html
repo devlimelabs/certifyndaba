@@ -1,0 +1,67 @@
+<div
+  id="blog-post"
+  class="flex flex-row flex-wrap justify-center w-full max-w-full bg-slate-50 py-12"
+>
+  <mat-card class="mx-auto w-full max-w-full md:max-w-5xl p-8">
+    <article class="mx-auto w-full max-w-full md:max-w-5xl">
+      <header class="my-12 mb-4 lg:mb-6">
+        <p class="text-sm text-gray-500">
+          <time
+            pubdate
+            [attr.datetime]="post?.published | date"
+            [attr.title]="post?.published | date"
+          >
+            {{ post?.published | date }}
+          </time>
+        </p>
+        <h1 class="my-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl">
+          {{ post?.title }}
+        </h1>
+        <div class="flex flex-row flex-nowrap justify-between items-center border-y border-indigo-300">
+          <div class="text-gray-500">
+            <address class="font-normal inline">
+              By
+              <span
+                rel="author"
+                class="text-indigo-700"
+              >
+                {{ post?.author?.first_name }} {{ post?.author?.last_name }}
+              </span>
+            </address>
+            in
+            <span class="text-indigo-600">{{ post.categories[0].name }}</span>
+            <span>
+              on
+              <time
+                [attr.pubdate]="post.published"
+                class="uppercase"
+                [attr.datetime]="post.published | date"
+                [title]="post.published | date"
+              >
+                {{ post.published | date: 'long' }}
+              </time>
+            </span>
+          </div>
+          <div class="flex h-10 w-10 items-center">
+            <img
+              class="w-8 h-8 rounded-full"
+              src="/assets/logos/certifynd-icon.svg"
+              alt="CertifyndABA Logo Icon"
+            />
+          </div>
+        </div>
+      </header>
+
+      <img
+        *ngIf="post.featured_image"
+        class="h-auto max-w-full md:max-w-4xl mx-auto"
+        [src]="post.featured_image"
+      />
+
+      <div
+        class="py-8 md:p-8"
+        [innerHTML]="post?.body"
+      ></div>
+    </article>
+  </mat-card>
+</div>

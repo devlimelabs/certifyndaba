@@ -13,21 +13,22 @@
 </button>
 
 <mat-menu #childMenu>
-  <a
-    *ngFor="let link of childLinks"
-    [routerLink]="[link.link]"
-    routerLinkActive
-    #rla="routerLinkActive"
-    class="text-indigo-600 block px-4 py-2 text-sm hover:bg-slate-50 hover:text-purple-700"
-    role="menuitem"
-    tabindex="-1"
-    id="menu-item-3"
-    [ngClass]="
-      rla.isActive
-        ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
-        : '!text-indigo-600'
-    "
-  >
-    {{ link.label }}
-  </a>
+  @for (link of childLinks; track $index) {
+    <a
+      [routerLink]="[link.link]"
+      routerLinkActive
+      #rla="routerLinkActive"
+      class="text-indigo-600 block px-4 py-2 text-sm hover:bg-slate-50 hover:text-purple-700"
+      role="menuitem"
+      tabindex="-1"
+      id="menu-item-3"
+      [ngClass]="
+        rla.isActive
+          ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
+          : '!text-indigo-600'
+      "
+    >
+      {{ link.label }}
+    </a>
+  }
 </mat-menu>

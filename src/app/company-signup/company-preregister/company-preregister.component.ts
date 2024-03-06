@@ -13,7 +13,9 @@ import { InputErrorComponent } from 'src/app/shared/input-error/input-error.comp
 import ERROR_MESSAGES from '~constants/error-messages';
 import { STATES } from '~constants/states';
 import { LayoutService } from '../../layout/service/layout.service';
-import { generateClient } from 'aws-amplify/api';
+import {
+  addDoc, collection, Firestore
+} from '@angular/fire/firestore';
 
 @UntilDestroy()
 @Component({
@@ -25,12 +27,11 @@ import { generateClient } from 'aws-amplify/api';
     ReactiveFormsModule,
     RouterLink
   ],
-  templateUrl: './company-preregister.component.html',
-  styleUrls: [ './company-preregister.component.scss' ]
+  templateUrl: './company-preregister.component.html'
 })
 export class CompanyPreregisterComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
-  private client = generateClient();
+  private firestore = inject(Firestore);
   private fb = inject(FormBuilder);
   private formsManager = inject(NgFormsManager);
   private layoutSvc = inject(LayoutService);
@@ -97,47 +98,21 @@ export class CompanyPreregisterComponent implements OnInit {
     }
 
     try {
-      const preregisterCompanyUserCreate: any = `
-        mutation CreatePreregisterCompanyUser(
-          $input: CreatePreregisterCompanyUserInput!
-          $condition: ModelPreregisterCompanyUserConditionInput
-        ) {
-          createPreregisterCompanyUser(input: $input, condition: $condition) {
-            id
-            email
-            phone
-            firstName
-            lastName
-            position
-            company
-            companyCreated
-            createdAt
-            updatedAt
-            __typename
-          }
-        }
-      `;
+      const preregisteredCompanyUsersRef = collection(this.firestore, `preregistered-company-users`);
+      const user = await addDoc(preregisteredCompanyUsersRef, {
+        firstName,
+        lastName,
+        email,
+        phone,
+        company,
+        position
+      });
 
-      const companyUser = await (this.client.graphql({
-        query: preregisterCompanyUserCreate,
-        variables: {
-          input: {
-            firstName,
-            lastName,
-            email,
-            phone,
-            company,
-            position
-          }
-        },
-        authMode: 'iam'
-      }) as Promise<any>);
-
-      console.log('companyUser', companyUser);
+      console.log('user', user);
 
       this.signedUp = true;
-      localStorage.setItem('isPreregisteredCompanyUser', 'true');
-      localStorage.setItem('preregisteredUserID', companyUser?.data?.createPreregisterCompanyUser?.id);
+      localStorage.setItem('isPreregistereduser', 'true');
+      localStorage.setItem('preregisteredUserID', user?.id);
       this.cdr.markForCheck();
     } catch (err: any) {
       if (err.code === 'UsernameExistsException') {

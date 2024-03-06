@@ -6,7 +6,8 @@ import {
   EventEmitter,
   inject,
   OnInit,
-  Output
+  Output,
+  signal
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -17,16 +18,19 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Router, RouterLink, RouterLinkActive
 } from '@angular/router';
-import { signOut } from 'aws-amplify/auth';
 import orderBy from 'lodash/orderBy';
-import { AppAuthState } from 'src/app/auth/state/auth.state';
-import { PushNotificationsService } from 'src/app/core/push-notifications/push-notifications.service';
+// import { PushNotificationsService } from 'src/app/core/push-notifications/push-notifications.service';
 
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatMenuModule } from '@angular/material/menu';
-import { generateClient } from 'aws-amplify/api';
-import * as queries from '../../../../graphql/queries';
+import { AuthService } from '../../../auth/auth.service';
+import {
+  collection, Firestore, getDocs
+} from '@angular/fire/firestore';
+import { of } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
+
 @Component({
   selector: 'app-app-navbar',
   standalone: true,
@@ -50,37 +54,37 @@ import * as queries from '../../../../graphql/queries';
 export class AppNavbarComponent implements OnInit {
   @Output() toggleSideNav = new EventEmitter();
 
-  private client = generateClient();
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
-  private pushNotificationsSvc = inject(PushNotificationsService);
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
 
-  appAuthState = inject(AppAuthState);
+  authSvc = inject(AuthService);
   layoutSvc = inject(LayoutService);
 
-  isAdmin$ = this.appAuthState.isAdmin$;
+  isAdmin$ = of(true);
   loggedIn = false;
 
-  navLinks: any[] = [];
-
-  get user(): any {
-    return this.appAuthState.get('user');
-  }
+  navLinks = signal<any[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const links = await this.client.graphql({
-      query: queries.listAppNavLinks
-    }) as any;
+    const appLinksRef = collection(this.firestore, 'app-nav-links');
+    const appLinksSnapshot = (await getDocs(appLinksRef));
+    const links: any[] = [];
+
+    appLinksSnapshot.forEach(doc => {
+      links.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
 
     console.log('app links', links);
-    this.navLinks = orderBy(links?.items, 'order');
-    this.cdr.markForCheck();
-    this.pushNotificationsSvc.init();
+    this.navLinks.set(orderBy(links, 'order'));
+    // this.pushNotificationsSvc.init();
   }
 
   async signOut(): Promise<void> {
-    await signOut();
-
-    this.router.navigateByUrl('/');
+    this.authSvc.signOut();
   }
 }

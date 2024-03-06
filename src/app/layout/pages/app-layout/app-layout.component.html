@@ -13,8 +13,7 @@
 
     <main
       class="flex-1 h-full w-full overflow-x-hidden overflow-y-auto"
-      [style.max-height]="'calc(100vh - 4rem)'"
-      [style.height]="'calc(100vh - 4rem)'"
+      [ngStyle]="{ 'max-height': 'calc(100vh - 4rem)', height: 'calc(100vh - 4rem)' }"
     >
       <!-- Loading Screen -->
       <div

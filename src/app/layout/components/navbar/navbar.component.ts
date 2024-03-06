@@ -12,20 +12,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Router, RouterLink, RouterLinkActive
 } from '@angular/router';
-import { generateClient } from 'aws-amplify/api';
 import orderBy from 'lodash/orderBy';
-import { AppAuthState } from 'src/app/auth/state/auth.state';
-import { PushNotificationsService } from 'src/app/core/push-notifications/push-notifications.service';
-import { listNavLinks } from 'src/graphql/queries';
+import { AuthService } from '../../../auth/auth.service';
 
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
-import { DescopeAuthService } from '@descope/angular-sdk';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { lastValueFrom, switchMap } from 'rxjs';
-import { UserSignupOrInComponent } from 'src/app/auth/pages/user-signup-or-in/user-signup-or-in.component';
-import * as queries from '../../../../graphql/queries';
+import {
+  collection, Firestore, getDocs
+} from '@angular/fire/firestore';
+import { LoginComponent } from '../../../auth/pages/login/login.component';
 
 @Component({
   selector: 'app-navbar',
@@ -52,56 +49,48 @@ export class NavbarComponent implements OnInit {
   @Output() toggleSideNav = new EventEmitter();
 
   private cdr = inject(ChangeDetectorRef);
-  private descopeSvc = inject(DescopeAuthService);
   private destroyRef = inject(DestroyRef);
   private dialog = inject(MatDialog);
   private router = inject(Router);
-  private pushNotificationsSvc = inject(PushNotificationsService);
-
-  appAuthState = inject(AppAuthState);
+  private firestore = inject(Firestore);
+  authSvc = inject(AuthService);
   layoutSvc = inject(LayoutService);
 
   loggedIn = signal(false);
 
-  navLinks: any[] = [];
-
-  get user(): any {
-    return this.appAuthState.get('user');
-  }
+  navLinks = signal<any[]>([]);
 
   ngOnInit(): void {
-    const client = generateClient();
-
-    this.appAuthState.isLoggedIn$
+    this.authSvc.isLoggedIn$
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
         switchMap(async loggedIn => {
-          this.loggedIn.set(loggedIn);
+          let linksRef;
 
           if (loggedIn) {
-            const links = (await client.graphql({
-              query: queries.listAppNavLinks
-            }))?.data?.listAppNavLinks?.items;
-
-            this.pushNotificationsSvc.init();
-
-            return links;
+            linksRef = collection(this.firestore, 'app-nav-links');
           } else {
-            return (await client.graphql({
-              query: listNavLinks,
-              authMode: 'iam'
-            }))?.data?.listNavLinks?.items;
+            linksRef = collection(this.firestore, 'nav-links');
           }
+
+          return await getDocs(linksRef);
         })
-      ).subscribe(links => {
-        this.navLinks = orderBy(links, 'order');
-        this.cdr.markForCheck();
-        console.log('links', links);
+      ).subscribe(linksSnapshot => {
+        const links: any[] = [];
+
+        linksSnapshot.forEach(doc => {
+          links.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        this.navLinks.set(orderBy(links, 'order'));
+        console.log('this.navlinks(', this.navLinks());
       });
   }
 
   async signIn(): Promise<any> {
-    const dialogRef = this.dialog.open(UserSignupOrInComponent, {
+    const dialogRef = this.dialog.open(LoginComponent, {
       closeOnNavigation: true
     });
 
@@ -109,9 +98,7 @@ export class NavbarComponent implements OnInit {
   }
 
   async signOut(): Promise<void> {
-    await lastValueFrom(this.descopeSvc.descopeSdk.logout());
-
-    this.router.navigateByUrl('/');
+    await this.authSvc.signOut();
   }
 
 }

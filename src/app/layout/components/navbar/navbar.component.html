@@ -64,60 +64,59 @@
     </div>
 
     <div class="flex-none hidden md:flex md:flex-row md:justify-end md:items-center gap-4">
-      <ng-container *ngFor="let link of navLinks">
-        <button
-          *ngIf="!link?.childLinks?.length; else menuLink"
-          mat-button
-          class="text-lg"
-          aria-label=""
-          [routerLink]="[link.link]"
-          [routerLinkActiveOptions]="{ exact: !loggedIn }"
-          routerLinkActive
-          #rla="routerLinkActive"
-          [ngClass]="
-            rla.isActive
-              ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
-              : '!text-indigo-600'
-          "
-        >
-          {{ link.label }}
-        </button>
-
-        <ng-template #menuLink>
+      @for (link of navLinks(); track link.id) {
+        @if (!link?.childLinks?.length) {
+          <button
+            mat-button
+            class="text-lg"
+            aria-label=""
+            [routerLink]="[link.link]"
+            [routerLinkActiveOptions]="{ exact: !loggedIn }"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [ngClass]="
+              rla.isActive
+                ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
+                : '!text-indigo-600'
+            "
+          >
+            {{ link.label }}
+          </button>
+        } @else {
           <app-nav-menu-link [link]="link"></app-nav-menu-link>
-        </ng-template>
+        }
 
         <mat-divider
           [vertical]="true"
           class="h-8 !border-r-2"
         ></mat-divider>
-      </ng-container>
+      }
 
-      @if (loggedIn()) {
-      <img
-        class="h-10 w-10 rounded-full cursor-pointer"
-        [routerLink]="['/app/candidate/profile']"
-        [matTooltip]="user?.email ?? ''"
-        height="40"
-        [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + user?.username"
-        alt="avatar"
-      />
-      <button
-        mat-button
-        class="!text-indigo-600 text-lg"
-        (click)="signOut()"
-      >
-        Sign Out
-      </button>
+      @if (authSvc.$isLoggedIn()) {
+        <img
+          class="h-10 w-10 rounded-full cursor-pointer"
+          [routerLink]="['/app/candidate/profile']"
+          [matTooltip]="authSvc.$user()?.email ?? ''"
+          height="40"
+          [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + authSvc.$user()?.uid"
+          alt="avatar"
+        />
+        <button
+          mat-button
+          class="!text-indigo-600 text-lg"
+          (click)="signOut()"
+        >
+          Sign Out
+        </button>
       } @else {
-      <button
-        mat-button
-        class="text-lg"
-        aria-label=""
-        (click)="signIn()"
-      >
-        Sign In
-      </button>
+        <button
+          mat-button
+          class="text-lg"
+          aria-label=""
+          (click)="signIn()"
+        >
+          Sign In
+        </button>
       }
     </div>
   </div>

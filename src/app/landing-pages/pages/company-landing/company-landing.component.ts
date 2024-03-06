@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { CompanySignupComponent } from 'src/app/company-signup/company-signup.component';
 
 import { Feature, FeaturesComponent } from '../../components/features/features.component';
 import { HeroComponent } from '../../components/hero/hero.component';
@@ -13,7 +12,6 @@ import { CompanyPreregisterComponent } from 'src/app/company-signup/company-prer
   imports: [
     CommonModule,
     CompanyPreregisterComponent,
-    CompanySignupComponent,
     HeroComponent,
     FeaturesComponent,
     MissonComponent,

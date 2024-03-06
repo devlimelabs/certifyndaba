@@ -1,5 +1,11 @@
 import { Routes } from '@angular/router';
+import {
+  canActivate, redirectLoggedInTo, redirectUnauthorizedTo
+} from '@angular/fire/auth-guard';
+import { AppRedirectComponent } from './core/app-redirect/app-redirect.component';
 
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([ 'login' ]);
+const redirectLoggedInToApp = () => redirectLoggedInTo([ '/app' ]);
 export const routes: Routes = [
   {
     path: '',
@@ -12,10 +18,6 @@ export const routes: Routes = [
       {
         path: '404',
         loadComponent: () => import('./layout/pages/not-found/not-found.component').then(x => x.NotFoundComponent)
-      },
-      {
-        path: 'company/sign-up',
-        loadComponent: () => import('./company-signup/company-signup.component').then(c => c.CompanySignupComponent)
       },
       {
         path: 'contact',
@@ -40,7 +42,41 @@ export const routes: Routes = [
       {
         path: 'resources',
         loadChildren: () => import('./resources/resources.routes').then((x) => x.ResourcesRoutes)
+      },
+      {
+        path: 'individuals',
+        loadComponent: () => import('./landing-pages/pages/candidate-landing/candidate-landing.component').then(c => c.CandidateLandingComponent)
+      },
+      {
+        path: 'legal',
+        loadChildren: () => import('./legal/legal.routes').then((x) => x.LegalRoutes)
+      },
+      {
+        path: 'resources',
+        loadChildren: () => import('./resources/resources.routes').then((x) => x.ResourcesRoutes)
+      },
+      {
+        path: 'sign-in',
+        loadComponent: () => import('./auth/pages/login/login.component').then(c => c.LoginComponent),
+        ...canActivate(redirectLoggedInToApp)
+
       }
     ]
   },
+  {
+    path: 'app',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./layout/pages/app-layout/app-layout.component').then(c => c.AppLayoutComponent),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        component: AppRedirectComponent
+      }
+    ]
+  },
+  {
+    path: '**',
+    redirectTo: '404'
+  }
 ];

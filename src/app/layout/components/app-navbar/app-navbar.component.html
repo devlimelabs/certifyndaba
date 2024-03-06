@@ -2,19 +2,21 @@
   <div class="flex flex-row flex-nowrap justify-between items-center w-full">
     <div class="flex flex-row flex-nowrap justify-between lg:justify-start items-center w-full grow">
       <div class="flex flex-row flex-nowrap">
-        <button
-          *ngIf="layoutSvc.isMobile$ | async"
-          mat-icon-button
-          class="mr-2"
-          (click)="toggleSideNav.emit()"
-        >
-          <mat-icon>menu</mat-icon>
-        </button>
+        @if (layoutSvc.isMobile$ | async) {
+          <button
+            mat-icon-button
+            class="mr-2"
+            (click)="toggleSideNav.emit()"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
+        }
 
         <div
           class="flex flex-row flex-nowrap items-center cursor-pointer mx-4"
-          routerLink="/app/{{ user?.['custom:accountType'] }}/requests/"
+          routerLink="/app/candidate/requests/"
         >
+          <!-- TODO: FIX LINK ABOVE: {{ authSvc.$user()?.['custom:accountType'] }} -->
           <svg
             class="w-12 h-12"
             viewBox="214.816 115 120.368 150.7749"
@@ -40,33 +42,32 @@
       </div>
 
       <div class="flex-none hidden md:flex md:flex-row md:justify-start md:items-center gap-4">
-        <ng-container *ngFor="let link of navLinks">
-          <button
-            *ngIf="!link?.childLinks?.length; else menuLink"
-            mat-button
-            class="text-lg"
-            aria-label=""
-            [routerLink]="[link.link]"
-            routerLinkActive
-            #rla="routerLinkActive"
-            [ngClass]="
-              rla.isActive
-                ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
-                : '!text-indigo-600'
-            "
-          >
-            {{ link.label }}
-          </button>
-
-          <ng-template #menuLink>
+        @for (link of navLinks(); track link.id) {
+          @if (link?.childLinks?.length) {
+            <button
+              mat-button
+              class="text-lg"
+              aria-label=""
+              [routerLink]="[link.link]"
+              routerLinkActive
+              #rla="routerLinkActive"
+              [ngClass]="
+                rla.isActive
+                  ? '!text-purple-700 font-semibold decoration-2 underline decoration-purple-700 underline-offset-8'
+                  : '!text-indigo-600'
+              "
+            >
+              {{ link.label }}
+            </button>
+          } @else {
             <app-nav-menu-link [link]="link"></app-nav-menu-link>
-          </ng-template>
+          }
 
           <mat-divider
             [vertical]="true"
             class="h-8 !border-r-2"
           ></mat-divider>
-        </ng-container>
+        }
       </div>
 
       <div class="flex flex-row flex-nowrap justify-end items-center gap-4 w-full">
@@ -133,21 +134,23 @@
           </svg>
         </button>
 
-        @if (user) {
+        @if (authSvc.$user()) {
           <img
             class="h-10 w-10 rounded-full cursor-pointer"
-            [matTooltip]="user?.email ?? ''"
+            [matTooltip]="authSvc.$user()?.email ?? ''"
             height="40"
-            [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + user?.username"
+            [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + authSvc.$user()?.uid"
             alt="avatar"
             [matMenuTriggerFor]="userMenu"
           />
           <mat-menu #userMenu="matMenu">
+            <!-- TODO: FIX HARDCODED CANDIDATE LINK -->
             <button
               mat-menu-item
-              [routerLink]="['/', 'app', user?.['custom:accountType'], 'profile']"
+              [routerLink]="['/', 'app', 'candidate', 'profile']"
             >
-              {{ user?.['custom:accountType'] === 'company' ? 'Company ' : '' }} Profile
+              <!-- {{ authSvc.$user()?.['custom:accountType'] === 'company' ? 'Company ' : '' }} -->
+              Profile
             </button>
             <button
               mat-menu-item

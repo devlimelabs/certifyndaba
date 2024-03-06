@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {
-    ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges
+  ChangeDetectionStrategy, Component, Input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
-import { NavLink } from '~graphql-api';
 
 @Component({
   selector: 'app-nav-menu-link',
@@ -20,21 +19,11 @@ import { NavLink } from '~graphql-api';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavMenuLinkComponent implements OnChanges {
+export class NavMenuLinkComponent {
 
-  @Input() link!: NavLink;
+  @Input() link!: any;
 
   childIsActive = false;
 
   childLinks: any[] = [];
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['link']) {
-      try {
-        this.childLinks = JSON.parse(this.link?.childLinks as any);
-      } catch (err) {
-        this.childLinks = [];
-      }
-    }
-  }
 }

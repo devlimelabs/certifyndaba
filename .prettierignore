@@ -1,0 +1,8 @@
+amplify
+@types
+.vscode
+.angular
+node_modules
+src/graphql
+src/environments
+src/assets
