@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="36.7263 197.2883 406.8754 83.012" xmlns="http://www.w3.org/2000/svg" width="456px"
+  class="overflow-x-visible">
+  <text style="
+            fill: rgb(79, 70, 229);
+            font-family: 'Roboto Flex';
+            font-size: 69px;
+            white-space: pre;
+            overflow: visible;
+          " transform="matrix(1, 0, 0, 1, -137.3007354736328, 19.410007476806648)">
+    <tspan x="155.027" y="243.889">
+      Certifynd
+    </tspan>
+    <tspan x="155.027" dy="1em">
+      ​
+    </tspan>
+  </text>
+  <text style="
+            fill: rgb(126, 34, 206);
+            font-family: 'Roboto Flex';
+            font-size: 70px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            white-space: pre;
+            overflow: visible;
+          " x="300" y="262.293" transform="matrix(1, 0, 0, 1, 7.105427357601002e-15, 7.105427357601002e-15)">
+    ABA
+  </text>
+</svg>
