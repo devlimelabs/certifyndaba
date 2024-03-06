@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'node_modules/@ngneat/hot-toast/src/styles/styles.scss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'node_modules/tippy.js/dist/tippy.css';
+@import 'node_modules/tippy.js/themes/light.css';
+@import 'node_modules/tippy.js/animations/scale.css';
+
+body, html {
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  overflow: hidden;
+  background-color: white;
+}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Fix for share buttons */
+#st-2 .st-btn {
+  display: inline-flex !important;
+
+  .st-label {
+    margin-left: 1rem;
+  }
+}
