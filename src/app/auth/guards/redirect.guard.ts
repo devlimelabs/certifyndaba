@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { LocalStorage } from 'src/app/core/local-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class RedirectGuard  {
   ): boolean {
 
     if (![ '/login', '/' ].includes(state.url)) {
-      localStorage.setItem('redirect', state.url);
+      inject(LocalStorage).setItem('redirect', state.url);
     }
 
     return true;

@@ -5,7 +5,7 @@ import {
   inject,
   Renderer2,
   ViewChild,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -48,11 +48,13 @@ export class AppLayoutComponent {
   pageTitle$ = this.layoutSvc.pageTitle$;
 
   constructor() {
-    afterNextRender(() => this.renderer.setStyle(this.document.getElementById('st-2'), 'display', 'none'));
+    afterNextRender(() => {
+      this.layoutSvc.navigationEnd$
+        .pipe(untilDestroyed(this))
+        .subscribe(() => this.sidenav.close());
 
-    this.layoutSvc.navigationEnd$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.sidenav.close());
+      this.renderer.setStyle(this.document.getElementById('st-2'), 'display', 'none');
+    });
   }
 
   toggle(open: boolean) {

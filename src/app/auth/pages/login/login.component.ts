@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { Auth, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup } from '@angular/fire/auth';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectorRef, Component, OnInit, afterNextRender, inject
+} from '@angular/core';
+import {
+  Auth, sendSignInLinkToEmail, signInWithEmailLink
+} from '@angular/fire/auth';
+import {
+  AbstractControl, FormBuilder, ReactiveFormsModule, Validators
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -14,11 +20,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { FacebookAuthButtonComponent } from '../../components/facebook-auth-button/facebook-auth-button.component';
 import { GoogleAuthButtonComponent } from '../../components/google-auth-button/google-auth-button.component';
 import { MatDialogRef } from '@angular/material/dialog';
+import { LocalStorage } from 'src/app/core/local-storage';
 
 @UntilDestroy()
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: [ './login.component.scss' ],
   standalone: true,
   imports: [
     CommonModule,
@@ -32,11 +39,12 @@ import { MatDialogRef } from '@angular/material/dialog';
     ReactiveFormsModule
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
+  private localStorage = inject(LocalStorage);
   private router = inject(Router);
   private toast = inject(HotToastService);
   private route = inject(ActivatedRoute);
@@ -44,7 +52,7 @@ export class LoginComponent {
   dialogRef = inject(MatDialogRef, { optional: true });
 
   emailLoginForm = this.fb.group({
-    email: [ '', [ Validators.required, Validators.email ]],
+    email: [ '', [ Validators.required, Validators.email ] ],
     rememberMe: false
   });
 
@@ -58,15 +66,18 @@ export class LoginComponent {
   isDialog = false;
   redirect!: string | null;
 
+  constructor() {
+    afterNextRender(() => this.redirect = this.localStorage.getItem('redirect'));
+  }
+
   ngOnInit(): void {
     console.log('this.dialogRef', this.dialogRef);
     this.isDialog = !!this.dialogRef;
-    this.redirect = localStorage.getItem('redirect');
     this.emailCtrl = this.emailLoginForm.get('email');
     this.rememberMeCtrl = this.emailLoginForm.get('rememberMe');
 
-    const email = localStorage.getItem('email');
-    const rememberEmail = localStorage.getItem('rememberEmail');
+    const email = this.localStorage.getItem('email');
+    const rememberEmail = this.localStorage.getItem('rememberEmail');
 
     this.fromEmailLink = this.route.snapshot?.queryParams?.['loginWithEmailLink'];
 
@@ -86,7 +97,7 @@ export class LoginComponent {
   }
 
   async getEmailLink(): Promise<any> {
-    const email = this.emailCtrl?.value
+    const email = this.emailCtrl?.value;
 
     if (!email) {
       this.toast.error('Email is required for passwordless signup');
@@ -94,12 +105,12 @@ export class LoginComponent {
     }
 
     try {
-      localStorage.setItem('email', email);
+      this.localStorage.setItem('email', email);
 
       if (this.rememberMeCtrl?.value) {
-        localStorage.setItem('rememberEmail', 'true');
+        this.localStorage.setItem('rememberEmail', 'true');
       } else {
-        localStorage.removeItem('rememberEmail');
+        this.localStorage.removeItem('rememberEmail');
       }
 
       const actionCodeSettings = {
@@ -111,13 +122,13 @@ export class LoginComponent {
 
       this.emailLinkSent = true;
       this.cdr.markForCheck();
-    } catch(error: any) {
+    } catch (error: any) {
       const errorCode = error.code;
       console.debug('errorCode', errorCode);
       let errorMessage = 'There was an issue logging you in!';
 
       if (errorCode === 'auth/user-not-found') {
-        errorMessage = 'User Not Found!'
+        errorMessage = 'User Not Found!';
       }
 
       this.toast.error(errorMessage);
@@ -135,26 +146,26 @@ export class LoginComponent {
       }
 
       if (!this.rememberMeCtrl?.value) {
-        localStorage.removeItem('email');
+        this.localStorage.removeItem('email');
       }
 
       if (this.redirect) {
-        localStorage.removeItem('redirect');
+        this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(this.redirect);
       }
 
       if (this.isDialog) {
         return this.dialogRef?.close();
       } else {
-        return this.router.navigate(['/']);
+        return this.router.navigate([ '/' ]);
       }
-    } catch(error: any) {
+    } catch (error: any) {
       const errorCode = error?.code;
       console.log('error', error);
       let errorMessage = 'There was an issue logging you in!';
 
       if (errorCode === 'auth/user-not-found') {
-        errorMessage = 'User Not Found!'
+        errorMessage = 'User Not Found!';
       }
 
       this.toast.error(errorMessage);

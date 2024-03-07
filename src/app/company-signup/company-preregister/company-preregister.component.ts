@@ -16,6 +16,7 @@ import { LayoutService } from '../../layout/service/layout.service';
 import {
   addDoc, collection, Firestore
 } from '@angular/fire/firestore';
+import { LocalStorage } from 'src/app/core/local-storage';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class CompanyPreregisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private formsManager = inject(NgFormsManager);
   private layoutSvc = inject(LayoutService);
+  private localStorage = inject(LocalStorage);
   private router = inject(Router);
   private toast = inject(HotToastService);
 
@@ -66,7 +68,7 @@ export class CompanyPreregisterComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.signedUp = !!localStorage.getItem('isPreregisteredCompanyUser');
+    this.signedUp = !!this.localStorage.getItem('isPreregisteredCompanyUser');
     this.formsManager.upsert('signUp', this.signupForm);
 
     for (let control of Object.keys(this.errors)) {
@@ -111,8 +113,8 @@ export class CompanyPreregisterComponent implements OnInit {
       console.log('user', user);
 
       this.signedUp = true;
-      localStorage.setItem('isPreregistereduser', 'true');
-      localStorage.setItem('preregisteredUserID', user?.id);
+      this.localStorage.setItem('isPreregistereduser', 'true');
+      this.localStorage.setItem('preregisteredUserID', user?.id);
       this.cdr.markForCheck();
     } catch (err: any) {
       if (err.code === 'UsernameExistsException') {

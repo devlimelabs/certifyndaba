@@ -4,6 +4,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  Inject,
   inject,
   Renderer2,
   ViewChild,
@@ -33,7 +34,6 @@ export class SiteLayoutComponent {
 
   private renderer = inject(Renderer2);
   private destroyRef = inject(DestroyRef);
-  private document = inject(DOCUMENT);
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -42,8 +42,9 @@ export class SiteLayoutComponent {
   layoutSvc = inject(LayoutService);
   open = false;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) document: Document) {
     afterNextRender(() => {
+      this.renderer.setStyle(document.getElementById('st-2'), 'display', 'block');
       this.layoutSvc.navigationEnd$
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
@@ -56,8 +57,6 @@ export class SiteLayoutComponent {
         .subscribe(() => {
           this.mainOutlet.nativeElement.scrollTo(0,0);
         });
-
-      this.renderer.setStyle(this.document.getElementById('st-2'), 'display', 'block');
     });
   }
 

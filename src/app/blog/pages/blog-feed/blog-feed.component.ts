@@ -1,11 +1,10 @@
 import {
-  Component, OnInit, inject
+  Component, DestroyRef, OnInit, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@UntilDestroy()
 @Component({
   standalone: true,
   imports: [ CommonModule, RouterLink ],
@@ -14,13 +13,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class BlogFeedComponent implements OnInit {
 
+  private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
 
   blogPosts: any[] = [];
 
   ngOnInit() {
     this.route.data
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ blogPosts }) => {
         console.log('blogPosts', blogPosts);
         this.blogPosts = blogPosts;

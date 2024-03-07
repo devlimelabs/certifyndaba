@@ -85,7 +85,6 @@ export class NavbarComponent implements OnInit {
         });
 
         this.navLinks.set(orderBy(links, 'order'));
-        console.log('this.navlinks(', this.navLinks());
       });
   }
 

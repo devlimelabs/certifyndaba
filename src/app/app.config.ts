@@ -8,7 +8,6 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments/environment';
-import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import {
   ScreenTrackingService, UserTrackingService, provideAnalytics, getAnalytics
 } from '@angular/fire/analytics';
@@ -16,7 +15,7 @@ import {
   popperVariation, provideTippyConfig, tooltipVariation
 } from '@ngneat/helipopper';
 import { ConfirmationModule } from './confirmation/confirmation.module';
-import { TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +27,8 @@ export const appConfig: ApplicationConfig = {
       provideFirebaseApp(() => initializeApp(environment.firebase)),
       provideAnalytics(() => getAnalytics()),
       provideAuth(() => getAuth()),
-      provideFirestore(() => getFirestore())
+      provideFirestore(() => getFirestore()),
+      EditorModule
     ),
     provideHotToastConfig(),
     provideTippyConfig({
@@ -40,10 +40,6 @@ export const appConfig: ApplicationConfig = {
     }),
     ScreenTrackingService,
     UserTrackingService,
-    {
-      provide: FIREBASE_OPTIONS,
-      useValue: environment.firebase
-    },
     {
       provide: TINYMCE_SCRIPT_SRC,
       useValue: 'tinymce/tinymce.min.js'
