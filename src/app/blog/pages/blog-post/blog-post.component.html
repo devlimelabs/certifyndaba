@@ -29,16 +29,16 @@
               </span>
             </address>
             in
-            <span class="text-indigo-600">{{ post.categories[0].name }}</span>
+            <span class="text-indigo-600">{{ post?.categories?.[0]?.name }}</span>
             <span>
               on
               <time
-                [attr.pubdate]="post.published"
+                [attr.pubdate]="post?.published"
                 class="uppercase"
-                [attr.datetime]="post.published | date"
-                [title]="post.published | date"
+                [attr.datetime]="post?.published | date"
+                [title]="post?.published | date"
               >
-                {{ post.published | date: 'long' }}
+                {{ post?.published | date: 'long' }}
               </time>
             </span>
           </div>
@@ -53,9 +53,9 @@
       </header>
 
       <img
-        *ngIf="post.featured_image"
+        *ngIf="post?.featured_image"
         class="h-auto max-w-full md:max-w-4xl mx-auto"
-        [src]="post.featured_image"
+        [src]="post?.featured_image"
       />
 
       <div

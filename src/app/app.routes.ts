@@ -52,10 +52,6 @@ export const routes: Routes = [
         loadChildren: () => import('./legal/legal.routes').then((x) => x.LegalRoutes)
       },
       {
-        path: 'resources',
-        loadChildren: () => import('./resources/resources.routes').then((x) => x.ResourcesRoutes)
-      },
-      {
         path: 'sign-in',
         loadComponent: () => import('./auth/pages/login/login.component').then(c => c.LoginComponent),
         ...canActivate(redirectLoggedInToApp)
