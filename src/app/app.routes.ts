@@ -8,6 +8,7 @@ import { map, pipe } from 'rxjs';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([ 'login' ]);
 const redirectLoggedInToApp = () => redirectLoggedInTo([ '/app' ]);
 const adminOnly = () => pipe(customClaims, map((claims: any) => claims?.role === 'admin'));
+const candidateOnly = () => pipe(customClaims, map((claims: any) => claims?.accountType === 'candidate'));
 
 export const routes: Routes = [
   {
@@ -77,6 +78,12 @@ export const routes: Routes = [
         loadChildren: () => import('./admin/admin.routes').then((x) => x.AdminRoutes),
         canActivate: [ AuthGuard ],
         data: { authGuardPipe: adminOnly }
+      },
+      {
+        path: 'candidate',
+        canActivate: [ AuthGuard ],
+        data: { authGuardPipe: candidateOnly },
+        loadChildren: () => import('./candidate-app/candidate.routes').then((x) => x.CandidateRoutes)
       }
     ]
   },

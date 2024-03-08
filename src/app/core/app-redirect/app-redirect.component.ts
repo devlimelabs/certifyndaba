@@ -17,13 +17,13 @@ export class AppRedirectComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const groups = this.authSvc.$groups();
+    const user = this.authSvc.$user() as any;
 
-    if (groups.includes('admin')) {
+    if (user?.role == 'admin') {
       this.router.navigateByUrl('/app/admin/verifications');
-    } else if (groups.includes('candidate')) {
+    } else if (user?.accountType === 'candidate') {
       this.router.navigateByUrl('/app/candidate/profile');
-    } else if (groups.includes('company')) {
+    } else if (user?.accountType === 'company') {
       this.router.navigateByUrl('/app/company/requests');
     }
   }

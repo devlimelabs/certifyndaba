@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { downloadData } from '@aws-amplify/storage';
+
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, WritableSignal, signal
 } from '@angular/core';
@@ -32,38 +32,38 @@ export class S3ImageComponent implements OnChanges {
   }
 
   private async getImageDataUrl(imageKey: string): Promise<any> {
-    const blob = (await downloadData({ key: imageKey }).result)?.body;
-    const reader: any = new FileReader();
+    // const blob = (await downloadData({ key: imageKey }).result)?.body;
+    // const reader: any = new FileReader();
 
-    reader.readAsDataURL(blob);
+    // reader.readAsDataURL(blob);
 
-    const imageData: any = await new Promise((resolve, reject) => {
-      reader.onload = function () {
-        let image = new Image();
+    // const imageData: any = await new Promise((resolve, reject) => {
+    //   reader.onload = function () {
+    //     let image = new Image();
 
-        image.src = reader.result as string;
+    //     image.src = reader.result as string;
 
-        image.onload = () => {
-          const height = this.height;
-          const width = this.width;
+    //     image.onload = () => {
+    //       const height = this.height;
+    //       const width = this.width;
 
-          resolve({
-            height,
-            width,
-            imageUrl: reader.result
-          });
-        };
+    //       resolve({
+    //         height,
+    //         width,
+    //         imageUrl: reader.result
+    //       });
+    //     };
 
-        image.onerror = reject;
-      };
-    });
+    //     image.onerror = reject;
+    //   };
+    // });
 
-    const { imageUrl, width } = await imageData;
+    // const { imageUrl, width } = await imageData;
 
-    if (!this.width) {
-      this.width = width;
-    }
+    // if (!this.width) {
+    //   this.width = width;
+    // }
 
-    return imageUrl;
+    // return imageUrl;
   }
 }

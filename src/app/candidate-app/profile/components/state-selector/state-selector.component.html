@@ -1,0 +1,19 @@
+<mat-form-field
+  class="w-full"
+  appearance="outline"
+>
+  <mat-label>Relocation States</mat-label>
+  <mat-select
+    (selectionChange)="selectChange($event)"
+    [value]="value"
+    [multiple]="true"
+  >
+    <mat-option>None</mat-option>
+    <mat-option
+      *ngFor="let state of states"
+      [value]="state"
+    >
+      {{ state }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

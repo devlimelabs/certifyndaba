@@ -48,9 +48,12 @@ export class AuthService {
       .pipe(untilDestroyed(this))
       .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
-    this.authState$
-      .pipe(untilDestroyed(this))
-      .subscribe(authState => this._authState.set(authState));
+    // this.authState$
+    //   .pipe(untilDestroyed(this))
+    //   .subscribe(authState => {
+    //     console.log('authState', authState);
+    //     this._authState.set(authState);
+    //   });
     this.user$
       .pipe(untilDestroyed(this))
       .subscribe(user => this.user.set(user));

@@ -1,0 +1,22 @@
+<mat-tab-group class="h-full w-full order-2 md:order-1 mt-4 col-span-1">
+  <mat-tab label="New">
+    <app-requests-display-list
+      [requests]="requests['Pending']"
+      type="New"
+    ></app-requests-display-list>
+  </mat-tab>
+
+  <mat-tab label="Accepted">
+    <app-requests-display-list
+      [requests]="requests['Accepted']"
+      type="Accepted"
+    ></app-requests-display-list>
+  </mat-tab>
+
+  <mat-tab label="Rejected">
+    <app-requests-display-list
+      [requests]="requests['Rejected']"
+      type="Rejected"
+    ></app-requests-display-list>
+  </mat-tab>
+</mat-tab-group>

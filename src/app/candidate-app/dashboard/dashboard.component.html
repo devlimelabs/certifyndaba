@@ -1,0 +1,52 @@
+<div class="flex flex-row flex-wrap h-full max-h-full overflow-hidden items-start justify-start overflow-y-auto">
+  <div
+    class="h-fit mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap sm:flex-nowrap items-center my-4"
+  >
+    <h1 class="text-2xl font-semibold leading-tight tracking-tight text-indigo-600 flex-shrink-0 py-8 pr-8">
+      Hello, {{ username$ | async }}
+    </h1>
+
+    <div class="mx-8 w-full flex justify-center">
+      <div class="max-w-full sm:max-w-4xl rounded-md bg-blue-50 py-4 px-2">
+        <div class="flex">
+          <div class="flex-shrink-0 my-auto">
+            <svg
+              class="h-10 w-10 text-blue-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <div class="ml-3 flex-1">
+            <p class="text-blue-700">
+              <span class="font-semibold text-purple-700">Thank you for joining CertifyndABA!</span>
+              We are committed to your confidentiality and protecting your time. We are onboarding individuals like
+              yourself daily and will launch to Employers in early 2024. In the meantime, we encourage you to share this
+              platform with your colleagues and utilize the community resources on the site. Help us make this a great
+              community by giving us feedback as well.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto max-w-[1750px] px-4 sm:px-6 lg:px-8 relative pb-12">
+    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
+      <!-- Left column -->
+      <div class="grid grid-cols-1 lg:col-span-2 rounded-lg bg-white shadow h-full">
+        <router-outlet></router-outlet>
+      </div>
+
+      <!-- Right column -->
+      <div class="grid grid-cols-1 h-[650px] rounded-lg bg-white shadow">
+        <router-outlet name="right"></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

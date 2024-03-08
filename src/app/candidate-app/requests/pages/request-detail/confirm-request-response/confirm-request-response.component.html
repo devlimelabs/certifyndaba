@@ -1,0 +1,36 @@
+<h1
+  mat-dialog-title
+  class="border-b border-b-blue-600"
+>
+  {{ data.responseAction }} Connection Request
+</h1>
+<mat-dialog-content class="p-4">
+  <ng-container *ngIf="data.responseAction === 'Accept'">
+    <h3 class="pt-4 font-semibold text-lg text-black">Are you sure you want to Accept this connection request?</h3>
+    <p>This will notify the requesting company/clinic and allow them to see your contact information</p>
+  </ng-container>
+
+  <ng-container *ngIf="data.responseAction === 'Reject'">
+    <h3 class="pt-4 font-semibold text-lg text-black">Are you sure you want to Reject this connection request?</h3>
+    <p>
+      This will notify the requesting company/clinic of rejection, NONE of your personal information will be shared.
+    </p>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <div class="p-2 pt-4 border-t border-t-blue-600 w-full">
+    <button
+      mat-button
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      [mat-dialog-close]="true"
+      color="primary"
+    >
+      {{ data.responseAction }} Request
+    </button>
+  </div>
+</mat-dialog-actions>
