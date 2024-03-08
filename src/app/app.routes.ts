@@ -1,11 +1,14 @@
 import { Routes } from '@angular/router';
 import {
-  canActivate, redirectLoggedInTo, redirectUnauthorizedTo
+  canActivate, redirectLoggedInTo, redirectUnauthorizedTo, AuthGuard, customClaims
 } from '@angular/fire/auth-guard';
 import { AppRedirectComponent } from './core/app-redirect/app-redirect.component';
+import { map, pipe } from 'rxjs';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([ 'login' ]);
 const redirectLoggedInToApp = () => redirectLoggedInTo([ '/app' ]);
+const adminOnly = () => pipe(customClaims, map((claims: any) => claims?.role === 'admin'));
+
 export const routes: Routes = [
   {
     path: '',
@@ -68,6 +71,12 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         component: AppRedirectComponent
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./admin/admin.routes').then((x) => x.AdminRoutes),
+        canActivate: [ AuthGuard ],
+        data: { authGuardPipe: adminOnly }
       }
     ]
   },

@@ -32,6 +32,12 @@ export class AuthService {
   readonly $user = this.user.asReadonly();
   user$ = user(this.auth);
 
+
+  private _authState = signal<User | null>(null);
+  readonly $authState = this._authState.asReadonly();
+  authState$ = authState(this.auth);
+
+
   private appUser = signal<any>(null);
   readonly $appUser = this.appUser.asReadonly();
   private groups = signal<string[]>([]);
@@ -42,6 +48,9 @@ export class AuthService {
       .pipe(untilDestroyed(this))
       .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
+    this.authState$
+      .pipe(untilDestroyed(this))
+      .subscribe(authState => this._authState.set(authState));
     this.user$
       .pipe(untilDestroyed(this))
       .subscribe(user => this.user.set(user));

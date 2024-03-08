@@ -1,0 +1,131 @@
+<div class="flex flex-row flex-wrap h-full max-h-full overflow-hidden items-start justify-start">
+  <div class="flex items-baseline justify-between border-b border-indigo-600 pb-4 pt-8 px-6 w-full">
+    <h1 class="text-4xl font-bold tracking-tight text-gray-900">Candidate Verifications</h1>
+
+    <div class="flex items-center">
+      <div class="relative inline-block text-left">
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="toggleProcess()"
+        >
+          {{ showProcess ? 'Hide' : 'Show' }} Verification Instructions
+        </button>
+        <!-- <div>
+          <button
+            type="button"
+            class="p-2 group inline-flex justify-center text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+            id="menu-button"
+            [matMenuTriggerFor]="sortMenu"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            Sort
+            <svg
+              class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </div> -->
+
+        <mat-menu #sortMenu>
+          <div
+            class="py-1"
+            role="none"
+          >
+            <a
+              href="#"
+              class="font-medium text-gray-900 block px-4 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="menu-item-0"
+            >
+              Oldest
+            </a>
+            <a
+              href="#"
+              class="text-gray-500 block px-4 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="menu-item-1"
+            >
+              Newest
+            </a>
+          </div>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="showProcess"
+    class="border-b border-gray-200 p-4 m-8 mb-4 bg-gray-100 rounded-lg w-[calc(100%-2rem)]"
+    @showHideVertical
+  >
+    <div class="text-sm text-gray-700">
+      <ol class="p-4 pt-2 w-full">
+        <li>
+          1. Go To
+          <a
+            href="https://www.bacb.com/services/o.php?page=101135"
+            target="_blank"
+            class="text-indigo-600 font-semibold hover:underline"
+          >
+            BACB Certification Lookup Page
+          </a>
+        </li>
+        <li>2. Under Search Options select "Certificaiton Number"</li>
+        <li>3. Search for the candidate's certification number</li>
+        <li>4. Verify the personal information matches the candidate's profile.</li>
+        <li>
+          5. Copy the Original Certification Date, Expiration Date, & Certification Number into the corresponding fields
+          on the candidate's card to confirm verification was completed
+        </li>
+        <li>6. Click "Mark as Verified" to update the candidate's profile as Verified</li>
+      </ol>
+
+      <ol class="mx-2 p-4 rounded-md bg-red-200 text-gray-800 w-auto">
+        <li class="font-semibold">
+          If the information from the certification lookup does not match the profile, or the certifciation is no longer
+          active.
+        </li>
+        <li>
+          1. Fill out the Rejection Reason field with a note to send to the candidate on why their credentials were
+          rejected.
+        </li>
+        <li>2. Click "Reject Credentials" to save and notify the candidate.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="flex flex-col w-full bg-gray-10 bg-opacity-50 h-full max-h-full overflow-hidden relative">
+    <div
+      *ngIf="loading$ | async"
+      class="absolute bg-black/20 w-full h-full flex items-center justify-center z-50"
+    >
+      <mat-spinner
+        diameter="100"
+        color="primary"
+      ></mat-spinner>
+    </div>
+
+    <div
+      class="w-[100vw] max-w-[100vw] p-8 pb-80 h-[calc(100%-94px)] overflow-y-auto"
+      #verificationsContainer
+    >
+      <app-candidate-verification-card
+        *ngFor="let candidate of candidates"
+        [candidate]="candidate"
+        (verificationStatusUpdate)="refreshCandidates()"
+      ></app-candidate-verification-card>
+    </div>
+  </div>
+</div>
