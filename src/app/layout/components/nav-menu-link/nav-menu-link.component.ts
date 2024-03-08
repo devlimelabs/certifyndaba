@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input
+  ChangeDetectionStrategy, Component, Input, signal, viewChildren
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { RouterModule } from '@angular/router';
+import { RouterLinkActive, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-nav-menu-link',
@@ -23,7 +23,7 @@ export class NavMenuLinkComponent {
 
   @Input() link!: any;
 
-  childIsActive = false;
+  childLinks = viewChildren(RouterLinkActive);
 
-  childLinks: any[] = [];
+  childIsActive = signal(false);
 }

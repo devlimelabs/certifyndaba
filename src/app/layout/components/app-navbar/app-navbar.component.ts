@@ -79,7 +79,6 @@ export class AppNavbarComponent implements OnInit {
       });
     });
 
-    console.log('app links', links);
     this.navLinks.set(orderBy(links, 'order'));
     // this.pushNotificationsSvc.init();
   }

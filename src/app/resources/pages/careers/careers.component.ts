@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewEncapsulation, inject
+  Component, OnInit, ViewEncapsulation, inject, signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -17,15 +17,12 @@ export class CareersComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
 
-  careerPage: any;
+  careerPage = signal<any>(null);
 
   ngOnInit(): void {
     this.route.data
       .pipe(untilDestroyed(this))
-      .subscribe(({ careerPage }) => {
-        this.careerPage = careerPage.data;
-        console.log('careerPage', careerPage);
-      });
+      .subscribe(({ careerPage }) => this.careerPage.set(careerPage.data));
   }
 
 }
