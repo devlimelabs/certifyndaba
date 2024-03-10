@@ -63,6 +63,7 @@ export class AppNavbarComponent implements OnInit {
   layoutSvc = inject(LayoutService);
 
   isAdmin$ = of(true);
+
   loggedIn = false;
 
   navLinks = signal<any[]>([]);
@@ -70,7 +71,7 @@ export class AppNavbarComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const appLinksRef = collection(this.firestore, 'app-nav-links');
     const appLinksSnapshot = (await getDocs(appLinksRef));
-    const links: any[] = [];
+    let links: any[] = [];
 
     appLinksSnapshot.forEach(doc => {
       links.push({
@@ -78,6 +79,8 @@ export class AppNavbarComponent implements OnInit {
         ...doc.data()
       });
     });
+
+    links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$accountType()));
 
     this.navLinks.set(orderBy(links, 'order'));
     // this.pushNotificationsSvc.init();

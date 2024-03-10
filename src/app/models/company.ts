@@ -1,0 +1,25 @@
+export type Company = {
+  id: string;
+  about?: string | null;
+  name: string;
+  address1?: string | null;
+  address2?: string | null;
+  groupID?: string | null;
+  linkedInUrl?: string | null;
+  logoImage?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  plan?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  website?: string | null;
+  clinics?: any[] | null;
+  pendingCandidates?: Array<string | null> | null;
+  rejectedCandidates?: Array<string | null> | null;
+  connectedCandidates?: Array<string | null> | null;
+  availableRequests?: number | null;
+  createdAt: string;
+  updatedAt: string;
+  owner?: string | null;
+};

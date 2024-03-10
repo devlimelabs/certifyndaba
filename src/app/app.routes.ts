@@ -9,6 +9,7 @@ const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([ 'login' ]);
 const redirectLoggedInToApp = () => redirectLoggedInTo([ '/app' ]);
 const adminOnly = () => pipe(customClaims, map((claims: any) => claims?.role === 'admin'));
 const candidateOnly = () => pipe(customClaims, map((claims: any) => claims?.accountType === 'candidate'));
+const companyOnly = () => pipe(customClaims, map((claims: any) => claims?.accountType === 'company'));
 
 export const routes: Routes = [
   {
@@ -84,6 +85,12 @@ export const routes: Routes = [
         canActivate: [ AuthGuard ],
         data: { authGuardPipe: candidateOnly },
         loadChildren: () => import('./candidate-app/candidate.routes').then((x) => x.CandidateRoutes)
+      },
+      {
+        path: 'company',
+        canActivate: [ AuthGuard ],
+        data: { authGuardPipe: companyOnly },
+        loadChildren: () => import('./company-app/company.routes').then((x) => x.CompanyRoutes)
       }
     ]
   },

@@ -60,10 +60,10 @@
       <dt class="text-sm font-medium leading-6 text-gray-900">Company</dt>
       <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
         @if (request.company?.logoImage) {
-          <app-s3-image
+          <app-image
             [imageKey]="request.company?.logoImage"
             width="72"
-          ></app-s3-image>
+          ></app-image>
         }
         {{ request.company?.name }}
       </dd>

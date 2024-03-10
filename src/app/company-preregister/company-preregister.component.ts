@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { InputErrorComponent } from 'src/app/shared/input-error/input-error.component';
 import ERROR_MESSAGES from '~constants/error-messages';
 import { STATES } from '~constants/states';
-import { LayoutService } from '../../layout/service/layout.service';
+import { LayoutService } from '../layout/service/layout.service';
 import {
   addDoc, collection, Firestore
 } from '@angular/fire/firestore';
@@ -101,6 +101,7 @@ export class CompanyPreregisterComponent implements OnInit {
 
     try {
       const preregisteredCompanyUsersRef = collection(this.firestore, `preregistered-company-users`);
+
       const user = await addDoc(preregisteredCompanyUsersRef, {
         firstName,
         lastName,

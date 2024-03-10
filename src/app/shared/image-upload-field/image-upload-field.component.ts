@@ -4,16 +4,18 @@ import {
 } from '@angular/core';
 import { ValueAccessorDirective } from '../value-accessor/value-accessor.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { S3ImageComponent } from '../s3-image/s3-image.component';
 import last from 'lodash/last';
 import head from 'lodash/head';
 import { HotToastService } from '@ngneat/hot-toast';
-import { uploadData } from '@aws-amplify/storage';
+import {
+  ref, uploadBytesResumable, Storage
+} from '@angular/fire/storage';
+import { ImageComponent } from '~shared/image/image.component';
 
 @Component({
   selector: 'app-image-upload-field',
   standalone: true,
-  imports: [ CommonModule, S3ImageComponent ],
+  imports: [ CommonModule, ImageComponent ],
   templateUrl: './image-upload-field.component.html',
   styleUrl: './image-upload-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +24,7 @@ import { uploadData } from '@aws-amplify/storage';
 export class ImageUploadFieldComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
+  private readonly storage = inject(Storage);
   private toast = inject(HotToastService);
   private valueAccessor = inject(ValueAccessorDirective<string>);
 
@@ -70,17 +73,19 @@ export class ImageUploadFieldComponent implements OnInit {
 
       try {
         const fileName = `${head(file.name.split('.'))}.${last(file.name.split('.'))}`;
-        const upload = await uploadData({
-          key: fileName,
-          data: file,
-          options: {
-            accessLevel: 'protected',
-            onProgress: this.progress.bind(this)
-          }
-        }).result;
+        const storageRef = ref(this.storage, fileName);
+        const upload = await uploadBytesResumable(storageRef, file);
+        // const upload = await uploadData({
+        //   key: fileName,
+        //   data: file,
+        //   options: {
+        //     accessLevel: 'protected',
+        //     onProgress: this.progress.bind(this)
+        //   }
+        // }).result;
 
         if (upload) {
-          this.valueAccessor.valueChange(upload.key);
+          this.valueAccessor.valueChange(fileName);
           this.valueAccessor.touchedChange(true);
         }
 

@@ -8,6 +8,7 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { environment } from '../environments/environment';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import {
   ScreenTrackingService, UserTrackingService, provideAnalytics, getAnalytics
 } from '@angular/fire/analytics';
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       provideFirebaseApp(() => initializeApp(environment.firebase)),
       provideAnalytics(() => getAnalytics()),
       provideAuth(() => getAuth()),
+      provideStorage(() => getStorage()),
       provideFirestore(() => getFirestore()),
       EditorModule
     ),

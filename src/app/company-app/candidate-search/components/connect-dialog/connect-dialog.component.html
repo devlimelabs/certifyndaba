@@ -1,0 +1,246 @@
+<h1
+  mat-dialog-title
+  class="border-b border-b-blue-600"
+>
+  {{ data?.company?.availableRequests ? 'Send Connection Request' : 'Out of Requests' }}
+</h1>
+<mat-dialog-content>
+  @if (data?.company?.availableRequests) {
+    <div class="text-lg font-semibold mt-4 p-2">Requesting connection with candidate:</div>
+    <div class="border border-blue-600 rounded-lg w-full">
+      <app-candidate-list-item
+        [candidate]="data.candidate"
+        [showConnect]="false"
+        class="w-full"
+      ></app-candidate-list-item>
+    </div>
+    <div
+      class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 pt-4"
+      [formGroup]="connectionForm"
+    >
+      <div class="sm:col-span-full">
+        <label
+          for="title"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Title
+        </label>
+        <div class="mt-2">
+          <input
+            formControlName="title"
+            type="text"
+            name="title"
+            id="title"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div class="sm:col-span-full">
+        <label
+          for="description"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Details
+        </label>
+        <div class="mt-2">
+          <editor
+            class="min-h-[300px] w-full"
+            formControlName="description"
+            [init]="{
+              base_url: '/tinymce',
+              suffix: '.min',
+              plugins: 'anchor autolink emoticons image link lists media searchreplace table visualblocks wordcount',
+              toolbar:
+                'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | spellcheckdialog | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat'
+            }"
+          ></editor>
+        </div>
+      </div>
+
+      <div class="sm:col-span-3">
+        <label
+          for="salary"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Salary Range
+        </label>
+        <div class="mt-2 w-full">
+          <mat-slider
+            class="!min-w-[300px] w-full"
+            min="0"
+            max="250000"
+            step="1000"
+            showTickMarks
+            discrete
+            [displayWith]="formatLabel"
+          >
+            <input
+              [value]="salaryStart"
+              matSliderStartThumb
+              (valueChange)="setStartingSalary($event)"
+            />
+            <input
+              [value]="salaryEnd"
+              matSliderEndThumb
+              (valueChange)="setEndingSalary($event)"
+            />
+          </mat-slider>
+
+          <mat-hint>{{ salaryCtrl.value }}</mat-hint>
+        </div>
+      </div>
+
+      <div class="sm:col-span-3">
+        <label
+          for="start-time-frame"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Start Time Frame
+        </label>
+        <div class="mt-2">
+          <input
+            formControlName="startTimeFrame"
+            id="start-time-frame"
+            name="start-time-frame"
+            type="text"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div class="col-span-full">
+        <label
+          for="street-address"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Street address
+        </label>
+        <div class="mt-2">
+          <input
+            formControlName="address"
+            type="text"
+            name="street-address"
+            id="street-address"
+            autocomplete="street-address"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div class="sm:col-span-2 sm:col-start-1">
+        <label
+          for="city"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          City
+        </label>
+        <div class="mt-2">
+          <input
+            formControlName="city"
+            type="text"
+            name="city"
+            id="city"
+            autocomplete="address-level2"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div class="sm:col-span-2">
+        <label
+          for="region"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          State / Province
+        </label>
+        <div class="mt-2">
+          <select
+            formControlName="state"
+            id="state"
+            name="state"
+            autocomplete="address-level1"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          >
+            <option
+              *ngFor="let state of states"
+              [value]="state"
+            >
+              {{ state }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sm:col-span-2">
+        <label
+          for="postal-code"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          ZIP / Postal code
+        </label>
+        <div class="mt-2">
+          <input
+            formControlName="zip"
+            type="text"
+            name="postal-code"
+            id="postal-code"
+            autocomplete="postal-code"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div class="col-span-full flex flex-row flex-nowrap justify-between w-full mt-4 pb-2">
+        <button
+          mat-button
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+
+        <mat-checkbox
+          class="mx-4"
+          [formControl]="saveFormCtrl"
+        >
+          Retain information for next request
+        </mat-checkbox>
+
+        <button
+          mat-stroked-button
+          (click)="submitRequest()"
+          color="primary"
+        >
+          Send Connection Request
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="flex flex-row w-[640px] h-auto flex-wrap justify-center items-center">
+      <p class="text-center font-medium p-4 py-8">
+        Your company is out of connection requests! Your requests will automatically renew at the end of the month based
+        on your plan.
+      </p>
+      <button
+        mat-raised-button
+        color="primary"
+        class="ml-2"
+      >
+        Get More Requests Now
+      </button>
+    </div>
+  }
+</mat-dialog-content>
+@if (!data?.company?.availableRequests) {
+  <mat-dialog-actions
+    align="end"
+    class="p-2 pt-4 border-t border-t-blue-600 w-full"
+  >
+    <button
+      mat-button
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+}

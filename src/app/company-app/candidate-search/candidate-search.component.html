@@ -1,0 +1,64 @@
+<div class="flex flex-row flex-wrap h-full max-h-full overflow-hidden items-start justify-start">
+  <app-search-header class="w-full"></app-search-header>
+
+  <div class="flex flex-row flex-nowrap h-screen max-h-full overflow-hidden items-start justify-start w-full">
+    <div class="w-96 h-[calc(100%-94px)] overflow-y-auto border-r-blue-800 border-r">
+      <app-filter-panel
+        *ngFor="let category of filterCategories"
+        [filterCategory]="category"
+        (filterUpdate)="filter(category.property, $event)"
+      ></app-filter-panel>
+    </div>
+
+    <div class="flex flex-col w-full h-full max-h-full overflow-hidden relative">
+      <div
+        *ngIf="loading$ | async"
+        class="absolute bg-black/20 w-full h-full flex items-center justify-center"
+      >
+        <mat-spinner
+          diameter="100"
+          color="primary"
+        ></mat-spinner>
+      </div>
+      <cdk-virtual-scroll-viewport
+        #resultsList
+        [itemSize]="175"
+        class="w-full h-[calc(100%-94px)]"
+      >
+        <ul
+          role="list"
+          class="divide-y divide-blue-400 w-full h-full max-h-full overflow-y-auto"
+        >
+          <li
+            *cdkVirtualFor="let candidate of candidates"
+            class="flex items-center justify-start gap-x-6 hover:bg-blue-50 w-full"
+          >
+            <app-candidate-list-item
+              [candidate]="candidate"
+              [company]="company"
+              class="w-full"
+            ></app-candidate-list-item>
+          </li>
+
+          <li
+            *ngIf="nextToken === null"
+            class="flex items-center justify-start gap-x-6 bg-gray-200 w-full text-center py-8"
+          >
+            <h5 class="w-full text-xl font-light text-gray-500">End of Results ({{ this.candidates.length }})</h5>
+          </li>
+
+          <div
+            *ngIf="loadingMore$ | async"
+            class="bg-gray-100 w-full h-48 flex flex-row flex-wrap items-center justify-center"
+          >
+            <mat-spinner
+              diameter="100"
+              color="primary"
+            ></mat-spinner>
+            <h5 class="w-full font-semibold text-blue-800 text-center">Loading More Results..</h5>
+          </div>
+        </ul>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</div>

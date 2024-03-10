@@ -5,7 +5,7 @@ import { Feature, FeaturesComponent } from '../../components/features/features.c
 import { HeroComponent } from '../../components/hero/hero.component';
 import { MissonComponent } from '../../components/misson/misson.component';
 import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.component';
-import { CompanyPreregisterComponent } from 'src/app/company-signup/company-preregister/company-preregister.component';
+import { CompanyPreregisterComponent } from 'src/app/company-preregister/company-preregister.component';
 
 @Component({
   standalone: true,

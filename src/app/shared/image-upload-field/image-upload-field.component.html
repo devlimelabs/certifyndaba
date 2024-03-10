@@ -6,11 +6,11 @@
 </label>
 <div class="mt-2 flex flex-row justify-between items-center gap-x-3 w-full">
   @if (value()) {
-    <app-s3-image
+    <app-image
       [imageKey]="value()"
       width="96"
       class="shrink-0"
-    ></app-s3-image>
+    ></app-image>
 
     @if (!showInput()) {
       <button

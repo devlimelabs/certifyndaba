@@ -10,12 +10,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { lastValueFrom } from 'rxjs';
 
 import { ConfirmRequestResponseComponent } from './confirm-request-response/confirm-request-response.component';
-import { S3ImageComponent } from 'src/app/shared/s3-image/s3-image.component';
 import { SanitizePipe } from 'src/app/shared/sanitize.pipe';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import {
   doc, Firestore, updateDoc
 } from '@angular/fire/firestore';
+import { ImageComponent } from '~shared/image/image.component';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,7 @@ import {
     CommonModule,
     EditorModule,
     MatButtonModule,
-    S3ImageComponent,
+    ImageComponent,
     SanitizePipe
   ],
   templateUrl: './request-detail.component.html'

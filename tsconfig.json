@@ -29,7 +29,8 @@
       "~auth/*": ["src/app/auth/*"],
       "~shared/*": ["src/app/shared/*"],
       "~env": ["src/environments/environment"],
-      "~constants/*": ["src/app/constants/*"]
+      "~constants/*": ["src/app/constants/*"],
+      "~models/*": ["src/app/models/*"]
     }
   },
   "angularCompilerOptions": {

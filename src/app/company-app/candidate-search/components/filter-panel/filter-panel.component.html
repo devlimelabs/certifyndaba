@@ -1,0 +1,64 @@
+<div
+  class="text-sm flex flex-row flex-nowrap w-full justify-between items-center pl-4 bg-blue-50 border-b border-blue-600"
+>
+  <div class="flex flex-row flex-nowrap grow">
+    <span class="font-semibold text-blue-600">
+      {{ filterCategory.label | uppercase }}
+    </span>
+  </div>
+
+  <button
+    class="p-2 font-medium text-blue-600 hover:text-blue-700"
+    (click)="toggleDisplay()"
+  >
+    <svg
+      class="w-4 h-4"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      @switch (show) {
+        @case (false) {
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+          />
+        }
+
+        @case (true) {
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4.5 15.75l7.5-7.5 7.5 7.5"
+          />
+        }
+      }
+    </svg>
+  </button>
+</div>
+
+@if (show) {
+  <div
+    class="relative h-fit pb-1 max-h-[20rem] overflow-auto border-b border-blue-600"
+    @showHideVertical
+  >
+    @for (option of filterCategory.options; track i; let i = $index) {
+      <mat-checkbox
+        [checked]="option?.checked"
+        (change)="filter(i)"
+        color="accent"
+        class="hover:bg-white/5 w-full py-1"
+      >
+        <span
+          class="text-sm font-medium leading-normal"
+          [ngClass]="{ 'font-semibold text-purple-700': option?.checked }"
+        >
+          {{ option.label }}
+        </span>
+      </mat-checkbox>
+    }
+  </div>
+}

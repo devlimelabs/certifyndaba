@@ -1,0 +1,243 @@
+<div class="flex flex-row flex-nowrap justify-between items-center w-full p-4">
+  <div class="flex flex-row flex-nowrap gap-x-4 w-full">
+    <img
+      class="h-10 w-10 rounded-full"
+      height="40"
+      [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + candidate()?.id"
+      alt="avatar"
+    />
+
+    <div class="flex flex-row flex-wrap items-start">
+      <p class="text-base font-semibold leading-6 text-black w-full">
+        {{ candidate()?.experienceLevel | certificationName }}
+      </p>
+      <p class="text-xs text-gray-500">Living in: {{ candidate()?.city }}, {{ candidate()?.state }}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-none items-center gap-x-4">
+    <!-- @if (requestPending()) {
+      <button
+        role="button"
+        class="hidden rounded-md bg-yellow-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
+        disabled
+      >
+        Request Pending
+      </button>
+    } @else if (requestRejected()) {
+      <button
+        role="button"
+        class="hidden rounded-md bg-red-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
+        disabled
+      >
+        Candidate Rejected Request
+      </button>
+    } @else if (candidateConnected()) {
+      <button
+        role="button"
+        class="hidden rounded-md bg-green-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
+        disabled
+      >
+        Candidate Connected
+      </button>
+    } @else if (showConnect()) { -->
+    <button
+      role="button"
+      class="hidden rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
+      (click)="connect()"
+    >
+      Connect
+    </button>
+    <!-- } -->
+  </div>
+</div>
+
+@if (candidate()?.about) {
+  <div class="flex flex-row flex-wrap w-full px-4 pt-2 pb-4">
+    <!-- <div class="w-full">About Me:</div> -->
+    <p class="text-sm font-light text-gray-800 pl-2 pr-4">{{ candidate()?.about }}</p>
+  </div>
+}
+
+<div class="mt-1 flex items-center gap-x-2 md:gap-x-6 text-xs leading-5 text-gray-600 px-4 pb-4">
+  <div class="flex flex-col items-center justify-center gap-2 p-2 w-20">
+    <svg
+      class="w-6 h-6 text-blue-600"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+        clip-rule="evenodd"
+      />
+      <path
+        d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z"
+      />
+    </svg>
+
+    <p class="text-xs font-medium text-center">
+      {{ candidate()?.availabilityStatus | availability }}
+    </p>
+  </div>
+
+  <div class="flex flex-col items-center justify-center gap-2 p-2 w-20">
+    <svg
+      class="w-6 h-6 text-blue-600"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
+        clip-rule="evenodd"
+      />
+    </svg>
+
+    <p class="text-xs font-medium text-center">{{ candidate()?.yearsOfExperience }} Years Exp.</p>
+  </div>
+  <div
+    *ngIf="candidate()?.relocation"
+    class="flex flex-col items-center justify-center gap-2 p-2 w-20"
+  >
+    <svg
+      class="w-6 h-6 text-blue-600"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
+        clip-rule="evenodd"
+      />
+    </svg>
+
+    <p class="text-xs font-medium text-center">Will Relocate</p>
+  </div>
+
+  <div class="flex flex-col items-center justify-center gap-2 p-2 w-20">
+    <svg
+      class="h-6 w-6 text-blue-600"
+      xmlns="http://www.w3.org/2000/svg"
+      enable-background="new 0 0 24 24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <g>
+        <rect
+          fill="none"
+          height="24"
+          width="24"
+        />
+        <path
+          d="M15.5,11.5c0,2-2.5,3.5-2.5,5h-2c0-1.5-2.5-3-2.5-5C8.5,9.57,10.07,8,12,8S15.5,9.57,15.5,11.5z M13,17.5h-2V19h2V17.5z M22,12c0-2.76-1.12-5.26-2.93-7.07l-1.06,1.06C19.55,7.53,20.5,9.66,20.5,12c0,2.34-0.95,4.47-2.49,6.01l1.06,1.06 C20.88,17.26,22,14.76,22,12z M3.5,12c0-2.34,0.95-4.47,2.49-6.01L4.93,4.93C3.12,6.74,2,9.24,2,12c0,2.76,1.12,5.26,2.93,7.07 l1.06-1.06C4.45,16.47,3.5,14.34,3.5,12z M17.5,12c0,1.52-0.62,2.89-1.61,3.89l1.06,1.06C18.22,15.68,19,13.93,19,12 c0-1.93-0.78-3.68-2.05-4.95l-1.06,1.06C16.88,9.11,17.5,10.48,17.5,12z M7.05,16.95l1.06-1.06c-1-1-1.61-2.37-1.61-3.89 c0-1.52,0.62-2.89,1.61-3.89L7.05,7.05C5.78,8.32,5,10.07,5,12C5,13.93,5.78,15.68,7.05,16.95z"
+        />
+      </g>
+    </svg>
+
+    <p class="text-xs font-medium text-center">Online {{ candidate()?.updatedAt | daysAgo }}</p>
+  </div>
+
+  <div
+    *ngIf="(candidate()?.employmentTypes ?? []).includes('full-time')"
+    class="flex flex-col items-center justify-center gap-2 p-2 w-20"
+  >
+    <mat-icon class="h-6 w-6 text-blue-600">hourglass_full</mat-icon>
+
+    <p class="text-xs font-medium text-center">Full-Time</p>
+  </div>
+
+  <div
+    *ngIf="(candidate()?.employmentTypes ?? []).includes('part-time')"
+    class="flex flex-col items-center justify-center gap-2 p-2 w-20"
+  >
+    <mat-icon class="h-6 w-6 text-blue-600">hourglass_bottom</mat-icon>
+
+    <p class="text-xs font-medium text-center">Part-Time</p>
+  </div>
+
+  <div class="flex flex-col items-center justify-center gap-2 p-2 w-20">
+    <div class="flex flex-row flex-nowrap">
+      <mat-icon
+        *ngIf="(candidate()?.clientPopulations ?? []).includes(clientPopulations.Children)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Children"
+      >
+        child_care
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.clientPopulations ?? []).includes(clientPopulations.Adolescents)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Adolescents"
+      >
+        boy
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.clientPopulations ?? []).includes(clientPopulations.Adults)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Adults"
+      >
+        wc
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.clientPopulations ?? []).includes(clientPopulations.Elderly)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Elderly"
+      >
+        elderly
+      </mat-icon>
+    </div>
+    <p class="text-xs font-medium text-center">Client Populations</p>
+  </div>
+
+  <div class="flex flex-col items-center justify-center gap-2 p-2 w-20">
+    <div class="flex flex-row flex-nowrap">
+      <mat-icon
+        *ngIf="(candidate()?.environments ?? []).includes(therapyEnvironment.school)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="School"
+      >
+        school
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.environments ?? []).includes(therapyEnvironment.clinic)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Clinic"
+      >
+        business
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.environments ?? []).includes(therapyEnvironment.home)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Home"
+      >
+        home
+      </mat-icon>
+      <mat-icon
+        *ngIf="(candidate()?.environments ?? []).includes(therapyEnvironment.residence)"
+        class="text-blue-600"
+        matTooltipPosition="above"
+        matTooltip="Residence"
+      >
+        apartment
+      </mat-icon>
+      <div
+        *ngIf="(candidate()?.environments ?? []).includes(therapyEnvironment.other)"
+        class="text-blue-600 text-xs"
+      >
+        other
+      </div>
+    </div>
+    <p class="text-xs font-medium text-center">Therapy Environments</p>
+  </div>
+</div>

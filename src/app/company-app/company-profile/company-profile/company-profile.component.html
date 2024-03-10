@@ -1,0 +1,267 @@
+<div class="flex flex-row items-start justify-center pt-8 px-6 lg:px-0 h-full max-h-full overflow-y-auto">
+  <form
+    class="relative max-w-screen-md"
+    [formGroup]="companyProfileForm"
+    (ngSubmit)="submit()"
+  >
+    <div class="space-y-12">
+      <div class="pb-12">
+        <h2
+          class="text-base font-semibold leading-7 text-gray-900 flex flex-row flex-nowrap items-center justify-between"
+        >
+          Company Information
+        </h2>
+
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="col-span-full">
+            <app-image-upload-field
+              formControlName="logoImage"
+              label="Company Logo"
+              accountType="company"
+              [accountID]="companyProfile.id"
+            ></app-image-upload-field>
+          </div>
+
+          <div class="sm:col-span-full">
+            <label
+              for="company-name"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Company Name
+            </label>
+            <div class="mt-2">
+              <input
+                matInput
+                formControlName="name"
+                type="text"
+                name="company-name"
+                id="company-name"
+                autocomplete="organization"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-full">
+            <label
+              for="linkedin-profile"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Company Website URL
+            </label>
+            <div class="mt-2 flex rounded-md shadow-sm">
+              <input
+                formControlName="website"
+                type="text"
+                autocomplete="url"
+                name="website"
+                id="website"
+                class="block w-full min-w-0 flex-1 rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="https://certifyndABA.com"
+              />
+            </div>
+          </div>
+
+          <div class="col-span-full">
+            <label
+              for="street-address"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Street address
+            </label>
+            <div class="mt-2">
+              <input
+                formControlName="address1"
+                type="text"
+                name="street-address"
+                id="street-address"
+                autocomplete="address-line1"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+
+            <div class="mt-2">
+              <input
+                formControlName="address2"
+                type="text"
+                name="street-address2"
+                id="street-address2"
+                autocomplete="address-line2"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-2 sm:col-start-1">
+            <label
+              for="city"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              City
+            </label>
+            <div class="mt-2">
+              <input
+                formControlName="city"
+                type="text"
+                name="city"
+                id="city"
+                autocomplete="address-level2"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label
+              for="region"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              State / Province
+            </label>
+            <div class="mt-2">
+              <select
+                formControlName="state"
+                id="state"
+                name="state"
+                autocomplete="address-level1"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option
+                  *ngFor="let state of states"
+                  [value]="state"
+                >
+                  {{ state }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label
+              for="postal-code"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              ZIP / Postal code
+            </label>
+            <div class="mt-2">
+              <input
+                formControlName="zip"
+                type="text"
+                name="postal-code"
+                id="postal-code"
+                autocomplete="postal-code"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-4">
+            <label
+              for="country"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Country
+            </label>
+            <div class="mt-2">
+              <select
+                formControlName="country"
+                id="country"
+                name="country"
+                autocomplete="country-name"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option>United States</option>
+                <option>Canada</option>
+                <option>Mexico</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="email"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Contact Email Address
+            </label>
+            <div class="mt-2">
+              <input
+                formControlName="email"
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Contact Phone Number
+            </label>
+            <div class="mt-2">
+              <input
+                formControlName="phone"
+                id="phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-full">
+            <label
+              for="linkedin-profile"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Company LinkedIn URL
+            </label>
+            <div class="mt-2 flex rounded-md shadow-sm">
+              <span
+                class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm"
+              >
+                https://linkedin.com/company/
+              </span>
+              <input
+                type="text"
+                name="linkedin-profile"
+                id="linkedin-profile"
+                formControlName="linkedInUrl"
+                class="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="company-name"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="sticky bottom-0 bg-[#fafafa] border-t border-gray-900/10 p-4 flex items-center justify-end gap-x-6 w-full"
+    >
+      <button
+        type="button"
+        class="text-sm font-semibold leading-6 text-gray-900"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        [ngClass]="{
+          'text-white bg-indigo-600  focus-visible:outline-indigo-600 hover:bg-indigo-500 cursor-pointer':
+            companyProfileChanged,
+          'text-gray-400 bg-gray-200  focus-visible:outline-gray-200 cursor-default': !companyProfileChanged
+        }"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+</div>
