@@ -6,11 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HotToastService } from '@ngneat/hot-toast';
-import {
-  APIService, Candidate, ClientPopulation, Company, TherapyEnvironment
-} from 'graphql-api';
+
 import { firstValueFrom } from 'rxjs';
-import { RequestsService } from 'src/app/requests/service/requests.service';
 import { AvailabilityPipe } from 'src/app/shared/availability/availability.pipe';
 import { CertificationNamePipe } from 'src/app/shared/certification-name/certification-name.pipe';
 import { DaysAgoPipe } from 'src/app/shared/days-ago/days-ago.pipe';
@@ -18,6 +15,14 @@ import { DaysAgoPipe } from 'src/app/shared/days-ago/days-ago.pipe';
 import { ConnectDialogComponent } from '../connect-dialog/connect-dialog.component';
 import { input } from '@angular/core';
 import { computed } from '@angular/core';
+import { ClientPopulation } from '~models/client-population';
+import { TherapyEnvironment } from '~models/therapy-environment';
+import {
+  Firestore, addDoc, collection
+} from '@angular/fire/firestore';
+import { Candidate } from '~models/candidate';
+import { Company } from '~models/company';
+import { AuthService } from '~auth/auth.service';
 
 @Component({
   selector: 'app-candidate-list-item',
@@ -37,13 +42,13 @@ import { computed } from '@angular/core';
 })
 export class CandidateListItemComponent {
 
-  private api = inject(APIService);
+  private authSvc = inject(AuthService);
+  private firestore = inject(Firestore);
   private dialog = inject(MatDialog);
   private toast = inject(HotToastService);
-  private requestsSvc = inject(RequestsService);
 
-  candidate = input<Candidate>();
-  company = input<Company>();
+  candidate = input<Candidate|null>(null);
+  company = input<Company|null>(null);
   showConnect = input<boolean>(true);
 
   requestPending = computed(() => this.company()?.pendingCandidates?.includes(this.candidate()?.id ?? ''));
@@ -64,7 +69,8 @@ export class CandidateListItemComponent {
 
     if (connectionRequest) {
       try {
-        const request = await this.requestsSvc.createRequest(connectionRequest);
+        const requestRef = collection(this.firestore, `companies/${this.authSvc.$companyID()}/requests`);
+        const request = await addDoc(requestRef, connectionRequest);
         this.toast.success('Connection request sent!');
       } catch (err) {
         this.toast.error('There was an error sending the connection request, please try again later');

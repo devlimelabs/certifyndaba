@@ -1,3 +1,4 @@
+const sendWelcomeEmail = require('./welcome-email');
 /**
  * Import function triggers from their respective submodules:
  *
@@ -17,3 +18,7 @@
 //   logger.info("Hello logs!", { structuredData: true });
 //   response.send("Hello from Firebase!");
 // });
+
+module.exports = {
+  sendWelcomeEmail
+};

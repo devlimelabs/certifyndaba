@@ -19,7 +19,7 @@ export class SearchService {
   filterState = {
     facets: {},
     hits: [],
-    limit: 12,
+    limit: 1000,
     offset: 0,
     total: 0,
     q: '',
@@ -47,7 +47,7 @@ export class SearchService {
     return this.index.searchForFacetValues({
       facetName,
       facetQuery: query,
-      hitsPerPage: 10,
+      hitsPerPage: 1000,
       page: 1
     });
   }

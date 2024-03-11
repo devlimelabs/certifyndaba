@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, getDocs, orderBy, query } from '@angular/fire/firestore';
-import { ListCandidatesQuery } from 'graphql-api';
+import {
+  Firestore, collection, getDocs, orderBy, query
+} from '@angular/fire/firestore';
+import { Candidate } from '~models/candidate';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ export class CandidateSearchService {
 
   private firestore = inject(Firestore);
 
-  async listCandidates(): Promise<ListCandidatesQuery> {
+  async listCandidates(): Promise<Candidate[]> {
     const candidatesSnapshot = await getDocs(
       query(
         collection(this.firestore, `users`),

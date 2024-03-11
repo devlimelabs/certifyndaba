@@ -27,10 +27,12 @@
     ],
     "paths": {
       "~auth/*": ["src/app/auth/*"],
-      "~shared/*": ["src/app/shared/*"],
-      "~env": ["src/environments/environment"],
+      "~animations/*": ["src/app/animations/*"],
       "~constants/*": ["src/app/constants/*"],
-      "~models/*": ["src/app/models/*"]
+      "~env": ["src/environments/environment"],
+      "~models/*": ["src/app/models/*"],
+      "~search/*": ["src/app/search/*"],
+      "~shared/*": ["src/app/shared/*"]
     }
   },
   "angularCompilerOptions": {

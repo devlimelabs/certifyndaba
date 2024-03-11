@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  forwardRef,
-  inject,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, OnInit } from '@angular/core';
 import {
   FormBuilder, FormControl, ReactiveFormsModule, Validators
 } from '@angular/forms';
@@ -24,7 +16,6 @@ import { Subscription } from 'rxjs';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import omit from 'lodash/omit';
-import { DomSanitizer } from '@angular/platform-browser';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 
@@ -54,14 +45,11 @@ import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 })
 export class ConnectDialogComponent implements OnInit {
 
-  private api = inject(APIService);
   private fb = inject(FormBuilder);
-  private appAuthState = inject(AppAuthState);
-  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private dialogRef = inject(MatDialogRef<ConnectDialogComponent>);
   public data = inject(MAT_DIALOG_DATA);
-  private sanitizer = inject(DomSanitizer);
+
   cacheSub: Subscription | undefined | null;
   saveFormCtrl = new FormControl(false);
 

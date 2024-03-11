@@ -13,5 +13,5 @@ export const environment = {
     measurementId: "G-PEXP3T3BHR"
   },
   meilisearch_domain: "https://search.certifyndaba.com",
-  meilisearch_apikey: "41c1507d58b2d9239abdc8316a24851c45615297b553c2aca6ed4688bfaf91ab"
+  meilisearch_apikey: "ba171de0aaa836a98a6a5ca14eb13a2b00de68674d1141e1b89aaec9f369bf8c"
 };

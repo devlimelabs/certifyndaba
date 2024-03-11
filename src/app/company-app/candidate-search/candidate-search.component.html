@@ -3,23 +3,51 @@
 
   <div class="flex flex-row flex-nowrap h-screen max-h-full overflow-hidden items-start justify-start w-full">
     <div class="w-96 h-[calc(100%-94px)] overflow-y-auto border-r-blue-800 border-r">
-      <app-filter-panel
-        *ngFor="let category of filterCategories"
-        [filterCategory]="category"
-        (filterUpdate)="filter(category.property, $event)"
-      ></app-filter-panel>
+      <app-refinement-list
+        attribute="experienceLevel"
+        label="Certification"
+        [showByDefault]="true"
+      ></app-refinement-list>
+
+      <app-refinement-list
+        attribute="locationsOfInterest"
+        label="Location"
+        [searchable]="true"
+      ></app-refinement-list>
+
+      <app-refinement-list
+        attribute="clientPopulations"
+        label="Client Populations"
+        [showByDefault]="true"
+      ></app-refinement-list>
+
+      <app-refinement-list
+        attribute="environments"
+        label="Therapy Environments"
+        [showByDefault]="true"
+      ></app-refinement-list>
+
+      <app-refinement-list
+        attribute="employmentTypes"
+        label="Employment Types"
+      ></app-refinement-list>
+
+      <app-refinement-list
+        attribute="availabilityStatus"
+        label="availability"
+      ></app-refinement-list>
     </div>
 
     <div class="flex flex-col w-full h-full max-h-full overflow-hidden relative">
-      <div
-        *ngIf="loading$ | async"
-        class="absolute bg-black/20 w-full h-full flex items-center justify-center"
-      >
-        <mat-spinner
-          diameter="100"
-          color="primary"
-        ></mat-spinner>
-      </div>
+      @if (loading$ | async) {
+        <div class="absolute bg-black/20 w-full h-full flex items-center justify-center">
+          <mat-spinner
+            diameter="100"
+            color="primary"
+          ></mat-spinner>
+        </div>
+      }
+
       <cdk-virtual-scroll-viewport
         #resultsList
         [itemSize]="175"
@@ -30,12 +58,12 @@
           class="divide-y divide-blue-400 w-full h-full max-h-full overflow-y-auto"
         >
           <li
-            *cdkVirtualFor="let candidate of candidates"
+            *cdkVirtualFor="let candidate of $candidates()"
             class="flex items-center justify-start gap-x-6 hover:bg-blue-50 w-full"
           >
             <app-candidate-list-item
               [candidate]="candidate"
-              [company]="company"
+              [company]="$company()"
               class="w-full"
             ></app-candidate-list-item>
           </li>
@@ -44,19 +72,18 @@
             *ngIf="nextToken === null"
             class="flex items-center justify-start gap-x-6 bg-gray-200 w-full text-center py-8"
           >
-            <h5 class="w-full text-xl font-light text-gray-500">End of Results ({{ this.candidates.length }})</h5>
+            <h5 class="w-full text-xl font-light text-gray-500">End of Results ({{ $candidates().length }})</h5>
           </li>
 
-          <div
-            *ngIf="loadingMore$ | async"
-            class="bg-gray-100 w-full h-48 flex flex-row flex-wrap items-center justify-center"
-          >
-            <mat-spinner
-              diameter="100"
-              color="primary"
-            ></mat-spinner>
-            <h5 class="w-full font-semibold text-blue-800 text-center">Loading More Results..</h5>
-          </div>
+          @if (loadingMore$ | async) {
+            <div class="bg-gray-100 w-full h-48 flex flex-row flex-wrap items-center justify-center">
+              <mat-spinner
+                diameter="100"
+                color="primary"
+              ></mat-spinner>
+              <h5 class="w-full font-semibold text-blue-800 text-center">Loading More Results..</h5>
+            </div>
+          }
         </ul>
       </cdk-virtual-scroll-viewport>
     </div>

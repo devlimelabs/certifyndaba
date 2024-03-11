@@ -1,0 +1,111 @@
+<div
+  class="text-xs flex flex-row flex-nowrap w-full justify-between items-center pl-4 bg-blue-800 border-b border-blue-900"
+>
+  <div class="flex flex-row flex-nowrap grow">
+    <span class="font-semibold text-base text-white">
+      {{ label || attribute() + 's' | uppercase }}
+    </span>
+  </div>
+
+  <!-- <app-clear-refinements [attribute]="attribute()"></app-clear-refinements> -->
+
+  @if (searchable) {
+    <button
+      mat-icon-button
+      (click)="toggleSearchView()"
+      [class.!text-blue-700]="showSearchView()"
+      [tp]="searchIconTooltip()"
+    >
+      <mat-icon>{{ searchIcon() }}</mat-icon>
+    </button>
+  }
+
+  <button
+    mat-icon-button
+    (click)="toggleDisplay()"
+    [tp]="expandIconTooltip()"
+  >
+    <mat-icon>{{ expandIcon() }}</mat-icon>
+  </button>
+</div>
+
+@if (show()) {
+  <div
+    class="relative h-fit max-h-[22rem] overflow-hidden bg-blue-50 border-b border-blue-800"
+    @showHideVertical
+  >
+    @if (searchable && showSearchView()) {
+      <mat-form-field class="mt-2 px-2 w-full">
+        <input
+          matInput
+          [placeholder]="searchPlaceholder || ('Search ' + attribute() + 's' | startCase)"
+          type="text"
+          [formControl]="facetCtrl"
+        />
+        @if (facetCtrl.value?.length) {
+          <button
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="clearSearch()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <div
+        class="overflow-x-visible pr-2 max-h-[calc(22rem-132px)] overflow-y-auto"
+        #optionsList
+      >
+        @for (option of facetHits(); track $index) {
+          <mat-checkbox
+            [checked]="facetValues()[option.value]"
+            (change)="toggleFacetValue(option?.value)"
+            color="primary"
+            class="hover:bg-white/5 w-full"
+          >
+            <div class="flex flex-row flex-nowrap justify-between items-center w-full">
+              <div
+                class="text-sm font-medium"
+                [class.text-blue-700]="option?.checked"
+              >
+                {{ option.value }}
+              </div>
+
+              <div class="shrink-0 rounded-full px-2 bg-blue-600 text-xs text-white text-center ml-8">
+                {{ option?.count | number }}
+              </div>
+            </div>
+          </mat-checkbox>
+        } @empty {
+          <p class="text-sm text-gray-300 text-center py-2 w-full">There are no matching values</p>
+        }
+      </div>
+    } @else {
+      <div
+        class="overflow-x-visible pr-2 max-h-[calc(22rem-132px)] overflow-y-auto"
+        #optionsList
+      >
+        @for (facetValue of state.$facets()?.[this.attribute()] ?? {} | keyvalue; track facetValue.key) {
+          <mat-checkbox
+            [checked]="false"
+            (change)="toggleFacetValue(facetValue?.key)"
+            color="accent"
+            class="hover:bg-white/5 w-full"
+          >
+            <div class="flex flex-row flex-nowrap justify-between items-center w-full">
+              <div class="text-sm font-medium">
+                {{ facetValue?.key }}
+              </div>
+
+              <div class="shrink-0 rounded-full px-2 bg-white text-xs text-black text-center ml-8">
+                {{ facetValue.value }} cards
+              </div>
+            </div>
+          </mat-checkbox>
+        }
+      </div>
+    }
+  </div>
+}

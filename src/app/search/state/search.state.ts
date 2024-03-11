@@ -1,4 +1,6 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
+import {
+  Injectable, WritableSignal, signal
+} from '@angular/core';
 import { map } from 'lodash';
 import reduce from 'lodash/reduce';
 
@@ -9,7 +11,7 @@ export class SearchState {
   readonly facetValues = signal<{ [key: string]: any[] }>({});
   readonly hits = signal<any>([]);
   readonly index = signal('');
-  readonly hitsPerPage = signal<number>(24);
+  readonly hitsPerPage = signal<number>(1000);
   readonly loading = signal<boolean>(false);
   readonly page = signal<number>(1);
   readonly processingTimeMs = signal<number>(0);
@@ -36,20 +38,19 @@ export class SearchState {
         filterString += ' AND ';
       }
 
-      values = map(values, value => value.includes('"') ? value.replace(/"/g, '\\"') : value)
+      values = map(values, value => value.includes('"') ? value.replace(/"/g, '\\"') : value);
       filterString += `${key} = "${values.join('" OR "')}"`;
 
       return filterString;
     }, ``);
 
     return {
-      facets: ['*'],
+      facets: [ '*' ],
       filter,
       page: this.$page(),
       hitsPerPage: this.$hitsPerPage(),
-      sort: ['releaseYear:desc','number:asc'],
-      limit: 10000
-    }
+      limit: 1000
+    };
   }
 
   set<K extends keyof SearchState>(key: K, value: any): void {

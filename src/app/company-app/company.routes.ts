@@ -14,6 +14,8 @@ import { companyInfoResolver } from './candidate-search/resolve/company-info.res
 import { CompanyProfileComponent } from './company-profile/company-profile/company-profile.component';
 import { CandidateSearchComponent } from './candidate-search/candidate-search.component';
 import { candidateSearchResolver } from './candidate-search/resolve/candidate-search.resolver';
+import { SearchService } from '../search/services/search.service';
+import { SearchState } from '../search/state/search.state';
 
 
 export const CompanyRoutes: Routes = [
@@ -54,6 +56,7 @@ export const CompanyRoutes: Routes = [
   {
     path: 'search',
     component: CandidateSearchComponent,
+    providers: [ SearchService, SearchState ],
     resolve: {
       candidates: candidateSearchResolver,
       company: companyInfoResolver
