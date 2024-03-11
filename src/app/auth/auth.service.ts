@@ -1,6 +1,6 @@
 import {
   DestroyRef,
-  Injectable, computed, inject, signal
+  Injectable, afterNextRender, computed, inject, signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -27,7 +27,10 @@ export class AuthService {
   private firestore = inject(Firestore);
   private router = inject(Router);
 
-  readonly isLoggedIn$ = authState(this.auth).pipe(map((aUser: User | null) => !!aUser));
+  readonly isLoggedIn$ = authState(this.auth).pipe(map((aUser: User | null) => {
+    console.log(aUser);
+    return !!aUser;
+  }));
   private isLoggedIn = signal(false);
   readonly $isLoggedIn = this.isLoggedIn.asReadonly();
 
@@ -53,42 +56,43 @@ export class AuthService {
   readonly $groups = this.groups.asReadonly();
 
   constructor() {
-    this.isLoggedIn$
-      .pipe(untilDestroyed(this))
-      .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
+    afterNextRender(() => {
+      this.isLoggedIn$
+        .pipe(untilDestroyed(this))
+        .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
-    this.user$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        switchMap((authUser: User | null) => authUser?.getIdTokenResult() ?? of(null)),
-        switchMap((token: any) => {
-          console.log('id token', token);
-          if (token?.claims) {
-            this.claims.set({ ...token.claims });
-            let userDocPath = `users/${token?.claims?.sub}`;
+      this.user$
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          switchMap((authUser: User | null) => authUser?.getIdTokenResult() ?? of(null)),
+          switchMap(async (token: any) => {
+            if (token?.claims) {
+              this.claims.set({ ...token.claims });
+              let userDocPath = `users/${token?.claims?.sub}`;
 
-            if (token.claims?.accountType === 'company') {
-              this.companyID.set(token?.claims?.companyID);
-              userDocPath = `companies/${token?.claims?.companyID}/users/${token?.claims?.sub}`;
+              if (token.claims?.accountType === 'company') {
+                this.companyID.set(token?.claims?.companyID);
+                userDocPath = `companies/${token?.claims?.companyID}/users/${token?.claims?.sub}`;
+              }
+
+              const userRef = doc(this.firestore, userDocPath);
+
+              const user = await getDoc(userRef);
+
+              return {
+                id: user.id,
+                ...user.data()
+              };
+
+            } else {
+              this.claims.set(null);
+              return of(null);
             }
+          })
+        )
+        .subscribe((user: any) => this.user.set(user));
+    });
 
-            const userRef = doc(this.firestore, userDocPath);
-
-            return getDoc(userRef);
-
-          } else {
-
-            this.claims.set(null);
-            return of(null);
-          }
-        })
-      )
-      .subscribe((user: any) => {
-        this.user.set({
-          id: user?.id,
-          ...user.data()
-        });
-      });
   }
 
   async signOut(): Promise<void> {

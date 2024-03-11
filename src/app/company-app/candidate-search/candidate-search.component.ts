@@ -16,24 +16,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
 import { HotToastService } from '@ngneat/hot-toast';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  APIService, Candidate, Company, ModelCandidateFilterInput
-} from 'graphql-api';
-import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
-import {
-  BehaviorSubject, filter, map, pairwise, throttleTime
-} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { CandidateListItemComponent } from './components/candidate-list-item/candidate-list-item.component';
 import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
 import { SearchHeaderComponent } from './components/search-header/search-header.component';
-import { ARRAY_FILTER_CATEGORIES } from './constants/array-filter-categories';
 import { FILTER_CATEGORIES } from './constants/filter-categories';
 import { CandidateSearchService } from './service/candidate-search.service';
+import { Candidate } from '~models/candidate';
+import { Company } from '~models/company';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SearchService } from 'src/app/search/services/search.service';
+import { SearchState } from 'src/app/search/state/search.state';
 
-@UntilDestroy()
+
 @Component({
   standalone: true,
   imports: [
@@ -47,13 +44,13 @@ import { CandidateSearchService } from './service/candidate-search.service';
     ScrollingModule,
     SearchHeaderComponent
   ],
+  providers: [ SearchService, SearchState ],
   templateUrl: './candidate-search.component.html',
   styleUrls: [ './candidate-search.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateSearchComponent implements OnInit, AfterViewInit {
 
-  private api = inject(APIService);
   private candidateSearchSvc = inject(CandidateSearchService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -81,7 +78,7 @@ export class CandidateSearchComponent implements OnInit, AfterViewInit {
   company!: Company;
   nextToken: string | null | undefined;
 
-  queryModel: ModelCandidateFilterInput = {};
+  queryModel = {};
 
   queryValues: { [key: string]: any[] } = {
     experienceLevel: [],
@@ -96,70 +93,16 @@ export class CandidateSearchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.route.data
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ candidates, company }) => {
-        this.candidates = candidates.items;
-        this.nextToken = candidates.nextToken;
+        this.candidates = candidates;
         this.company = company;
         this.cdr.markForCheck();
       });
   }
 
-  ngAfterViewInit() {
-    this.resultsList.elementScrolled().pipe(
-      map(() => this.resultsList.measureScrollOffset('bottom')),
-      pairwise(),
-      filter(([ y1, y2 ]) => (y2 < y1 && y2 < 175) && !(this.loading.value || this.loadingMore.value) && !!this.nextToken),
-      throttleTime(200)
-    )
-      .subscribe(() => {
-        this.ngZone.run(() => {
-          this.loadMore();
-        });
-      });
-  }
+  private buildQueryModel(queryValues: { [key: string]: any[] }): any {
 
-  private buildQueryModel(queryValues: { [key: string]: any[] }): ModelCandidateFilterInput {
-    return reduce(queryValues, (query, values, property) => {
-      if (values.length) {
-        const propQueries = [];
-
-        for (let value of values) {
-          let propertyFilter: any = { [property]: { eq: value } };
-
-          if (ARRAY_FILTER_CATEGORIES.includes(property)) {
-            propertyFilter = { [property]: { contains: value } };
-          }
-
-          propQueries.push(propertyFilter);
-
-          if (property === 'locationsOfInterest') {
-            propQueries.push({ state: { eq: value } });
-            /* Adds individuals who are willing to relocate, and didnt specify locations */
-            propQueries.push({
-              and: [
-                { relocation: { eq: true } },
-                {
-                  or: [ { locationsOfInterest: { attributeType: '_null' } }, { locationsOfInterest: { attributeExists: false } } ]
-                }
-              ]
-            });
-            /* Includes individuals who did not indiciate whether they will or will not relocate */
-            propQueries.push(
-              { relocation: { attributeType: '_null' } }
-            );
-            propQueries.push(
-              { relocation: { attributeExists: false } }
-            );
-          }
-        }
-
-        query.and ??= [];
-        query.and.push({ or: propQueries });
-      }
-
-      return query;
-    }, { and: [ { status: { eq: 'verified' } } ] } as any);
   }
 
   async filter(property: string, values: string[]): Promise<void> {

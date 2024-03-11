@@ -11,5 +11,7 @@ export const environment = {
     messagingSenderId: "706271314549",
     appId: "1:706271314549:web:1a69870fece267fda8ee3c",
     measurementId: "G-PEXP3T3BHR"
-  }
+  },
+  meilisearch_domain: "https://search.certifyndaba.com",
+  meilisearch_apikey: "41c1507d58b2d9239abdc8316a24851c45615297b553c2aca6ed4688bfaf91ab"
 };

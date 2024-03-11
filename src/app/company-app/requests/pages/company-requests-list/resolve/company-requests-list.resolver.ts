@@ -23,7 +23,7 @@ export const CompanyRequestsListResolver: ResolveFn<any> = async (route: Activat
 
   const requestsSnapshot = await getDocs(
     query(
-      collection(inject(Firestore), `requests`),
+      collection(inject(Firestore), `companies/${inject(AuthService).$companyID()}/requests/`),
       where('companyID', '==', inject(AuthService).$companyID()),
       where('status', '==', status),
       orderBy('createdAt', 'desc')

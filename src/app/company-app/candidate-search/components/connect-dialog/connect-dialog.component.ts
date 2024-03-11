@@ -15,8 +15,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogModule, MatDialogRef
 } from '@angular/material/dialog';
-import { APIService } from 'graphql-api';
-import { AppAuthState } from 'src/app/auth/state/auth.state';
 import { STATES } from '~constants/states';
 
 import { CandidateListItemComponent } from '../candidate-list-item/candidate-list-item.component';
@@ -27,7 +25,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import omit from 'lodash/omit';
 import { DomSanitizer } from '@angular/platform-browser';
-import { EditorModule } from '@tinymce/tinymce-angular';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 
 @Component({
@@ -43,6 +41,12 @@ import { EditorModule } from '@tinymce/tinymce-angular';
     MatDialogModule,
     MatSliderModule,
     ReactiveFormsModule
+  ],
+  providers: [
+    {
+      provide: TINYMCE_SCRIPT_SRC,
+      useValue: 'tinymce/tinymce.min.js'
+    }
   ],
   templateUrl: './connect-dialog.component.html',
   styleUrls: [ './connect-dialog.component.scss' ],

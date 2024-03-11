@@ -12,6 +12,8 @@ import { CompanyRequestsListComponent } from './requests/pages/company-requests-
 import { CompanyRequestsListResolver } from './requests/pages/company-requests-list/resolve/company-requests-list.resolver';
 import { companyInfoResolver } from './candidate-search/resolve/company-info.resolver';
 import { CompanyProfileComponent } from './company-profile/company-profile/company-profile.component';
+import { CandidateSearchComponent } from './candidate-search/candidate-search.component';
+import { candidateSearchResolver } from './candidate-search/resolve/candidate-search.resolver';
 
 
 export const CompanyRoutes: Routes = [
@@ -48,14 +50,13 @@ export const CompanyRoutes: Routes = [
         }
       }
     ]
+  },
+  {
+    path: 'search',
+    component: CandidateSearchComponent,
+    resolve: {
+      candidates: candidateSearchResolver,
+      company: companyInfoResolver
+    }
   }
-  // ,
-  // {
-  //   path: 'search',
-  //   component: CandidateSearchComponent,
-  //   resolve: {
-  //     candidates: candidateSearchResolver,
-  //     company: companyInfoResolver
-  //   }
-  // }
 ];

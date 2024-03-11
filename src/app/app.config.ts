@@ -16,7 +16,7 @@ import {
   popperVariation, provideTippyConfig, tooltipVariation
 } from '@ngneat/helipopper';
 import { ConfirmationModule } from './confirmation/confirmation.module';
-import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { EditorModule } from '@tinymce/tinymce-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -41,10 +41,6 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     ScreenTrackingService,
-    UserTrackingService,
-    {
-      provide: TINYMCE_SCRIPT_SRC,
-      useValue: 'tinymce/tinymce.min.js'
-    }
+    UserTrackingService
   ]
 };

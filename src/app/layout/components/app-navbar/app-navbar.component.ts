@@ -80,7 +80,9 @@ export class AppNavbarComponent implements OnInit {
       });
     });
 
+    console.log('links', links);
     links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$accountType()));
+    console.log('links', links);
 
     this.navLinks.set(orderBy(links, 'order'));
     // this.pushNotificationsSvc.init();
