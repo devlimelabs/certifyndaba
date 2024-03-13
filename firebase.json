@@ -57,5 +57,8 @@
     },
     "singleProjectMode": true
   },
-  "extensions": {}
+  "extensions": {
+    "firestore-meilisearch": "meilisearch/firestore-meilisearch@0.1.12",
+    "firestore-send-email": "firebase/firestore-send-email@0.1.31"
+  }
 }
