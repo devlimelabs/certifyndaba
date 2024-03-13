@@ -47,3 +47,9 @@ Thumbs.db
 static-data
 static-data/*
 src/app/models/old-schema.graphql
+
+firebase-debug.log
+
+firestore-debug.log
+
+ui-debug.log
