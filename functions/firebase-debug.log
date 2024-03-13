@@ -1,0 +1,25 @@
+[debug] [2024-03-13T00:39:03.047Z] ----------------------------------------------------------------------
+[debug] [2024-03-13T00:39:03.048Z] Command:       /Users/john/.nvm/versions/node/v18.18.2/bin/node /Users/john/.nvm/versions/node/v18.18.2/bin/firebase deploy
+[debug] [2024-03-13T00:39:03.048Z] CLI Version:   13.4.1
+[debug] [2024-03-13T00:39:03.048Z] Platform:      darwin
+[debug] [2024-03-13T00:39:03.048Z] Node Version:  v18.18.2
+[debug] [2024-03-13T00:39:03.049Z] Time:          Tue Mar 12 2024 20:39:03 GMT-0400 (Eastern Daylight Time)
+[debug] [2024-03-13T00:39:03.049Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-03-13T00:39:03.077Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-03-13T00:39:03.078Z] > authorizing via signed-in user (john@devlimelabs.com)
+[debug] [2024-03-13T00:39:03.078Z] [iam] checking project certifyndaba for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create",null]
+[debug] [2024-03-13T00:39:03.078Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/certifyndaba:testIamPermissions [none]
+[debug] [2024-03-13T00:39:03.078Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/certifyndaba:testIamPermissions x-goog-quota-user=projects/certifyndaba
+[debug] [2024-03-13T00:39:03.079Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/certifyndaba:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create",null]}
+[debug] [2024-03-13T00:39:03.412Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/certifyndaba:testIamPermissions 200
+[debug] [2024-03-13T00:39:03.412Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/certifyndaba:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2024-03-13T00:39:03.413Z] [iam] error while checking permissions, command may fail: FirebaseError: Authorization failed. This account is missing the following required permissions on project certifyndaba:
+
+  
+[debug] [2024-03-13T00:39:03.413Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/certifyndaba/serviceAccounts/certifyndaba@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2024-03-13T00:39:03.413Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/certifyndaba/serviceAccounts/certifyndaba@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2024-03-13T00:39:03.734Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/certifyndaba/serviceAccounts/certifyndaba@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2024-03-13T00:39:03.734Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/certifyndaba/serviceAccounts/certifyndaba@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2024-03-13T00:39:03.735Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/certifyndaba [none]
+[debug] [2024-03-13T00:39:04.099Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/certifyndaba 200

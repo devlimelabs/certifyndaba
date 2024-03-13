@@ -4,8 +4,10 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 
 const db = admin.firestore();
-export const sendWelcomeEmail = onDocumentCreated(`users/*`, event => {
-  console.log(event);
+export const sendWelcomeEmail = onDocumentCreated(`users/{userID}`, event => {
+
+  console.log('event', event);
+
   const firstName = event?.data?.data()?.firstName ?? ''
 
   db.collection('mail').add({

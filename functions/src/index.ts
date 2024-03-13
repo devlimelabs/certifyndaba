@@ -5,4 +5,4 @@
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
-export { sendWelcomeEmail } from './send-welcome-email';
+export * from './notifications';
