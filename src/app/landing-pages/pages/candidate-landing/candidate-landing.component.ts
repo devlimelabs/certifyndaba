@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { Feature, FeaturesComponent } from '../../components/features/features.component';
 import { HeroComponent } from '../../components/hero/hero.component';
@@ -23,6 +23,9 @@ import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.compone
   styleUrls: [ './candidate-landing.component.scss' ]
 })
 export class CandidateLandingComponent {
+
+  private router = inject(Router);
+
   features: Feature[] = [
     {
       title: 'Privacy',
@@ -40,4 +43,9 @@ export class CandidateLandingComponent {
       icon: 'verified_user'
     }
   ];
+
+
+  async signup() {
+    this.router.navigateByUrl(`/sign-in?redirect=/app/candidate/profile`);
+  }
 }

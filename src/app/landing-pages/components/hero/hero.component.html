@@ -6,12 +6,21 @@
           <h1 class="text-4xl font-bold tracking-tight text-indigo-600 sm:text-6xl">{{ title }}</h1>
           <p class="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none">{{ description }}</p>
           <div class="mt-10 flex items-center justify-start gap-x-6">
-            <a
-              [routerLink]="buttonLink"
-              class="rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              {{ buttonText }}
-            </a>
+            @if (buttonLink?.length) {
+              <a
+                [routerLink]="buttonLink"
+                class="rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {{ buttonText }}
+              </a>
+            } @else {
+              <a
+                (click)="buttonClick.emit()"
+                class="rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {{ buttonText }}
+              </a>
+            }
           </div>
         </div>
         <div class="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0 relative">

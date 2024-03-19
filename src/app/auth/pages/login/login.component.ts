@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef, Component, OnInit, afterNextRender, inject
+  ChangeDetectorRef, Component, DestroyRef, OnInit, afterNextRender, inject
 } from '@angular/core';
 import {
   Auth, sendSignInLinkToEmail, signInWithEmailLink
@@ -19,8 +19,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 import { FacebookAuthButtonComponent } from '../../components/facebook-auth-button/facebook-auth-button.component';
 import { GoogleAuthButtonComponent } from '../../components/google-auth-button/google-auth-button.component';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LocalStorage } from 'src/app/core/local-storage';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
@@ -34,6 +35,7 @@ import { LocalStorage } from 'src/app/core/local-storage';
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule
@@ -43,6 +45,7 @@ export class LoginComponent implements OnInit {
 
   private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
   private fb = inject(FormBuilder);
   private localStorage = inject(LocalStorage);
   private router = inject(Router);
@@ -71,8 +74,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.dialogRef', this.dialogRef);
-    this.isDialog = !!this.dialogRef;
     this.emailCtrl = this.emailLoginForm.get('email');
     this.rememberMeCtrl = this.emailLoginForm.get('rememberMe');
 
@@ -94,6 +95,16 @@ export class LoginComponent implements OnInit {
       this.emailMissing = true;
       this.cdr.markForCheck();
     }
+
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
+        this.redirect = params?.['redirect'];
+
+        if (this.redirect) {
+          this.localStorage.setItem('redirect', this.redirect);
+        }
+      });
   }
 
   async getEmailLink(): Promise<any> {

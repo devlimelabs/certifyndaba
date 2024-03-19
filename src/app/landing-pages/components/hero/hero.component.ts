@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input 
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -15,6 +15,8 @@ import { RouterModule } from '@angular/router';
 export class HeroComponent {
   @Input() title = 'Title';
   @Input() description = 'Description';
-  @Input() buttonLink = '/candidate/sign-up';
+  @Input() buttonLink: string | undefined;
   @Input() buttonText = 'Sign Up for Free';
+
+  @Output() buttonClick = new EventEmitter();
 }

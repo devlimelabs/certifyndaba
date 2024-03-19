@@ -42,5 +42,11 @@ export const appConfig: ApplicationConfig = {
     }),
     ScreenTrackingService,
     UserTrackingService
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: initAuthService,
+    //   deps: [ AuthService, Auth ],
+    //   multi: true
+    // }
   ]
 };

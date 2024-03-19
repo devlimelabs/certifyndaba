@@ -51,7 +51,7 @@ export class GoogleAuthButtonComponent {
       await signInWithPopup(this.auth, provider);
 
       const redirect = this.localStorage.getItem('redirect');
-
+      console.log('redirect', redirect);
       if (redirect) {
         this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(redirect);

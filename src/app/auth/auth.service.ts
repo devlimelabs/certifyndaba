@@ -1,6 +1,5 @@
 import {
-  DestroyRef,
-  Injectable, afterNextRender, computed, inject, signal
+  DestroyRef, Injectable, afterNextRender, computed, inject, signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -11,12 +10,12 @@ import {
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { UserClaims } from '~models/user-claims';
-@UntilDestroy()
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,8 +40,7 @@ export class AuthService {
   private claims = signal<UserClaims | null>(null);
   readonly $claims = this.claims.asReadonly();
 
-  private companyID = signal('');
-  readonly $companyID = this.companyID.asReadonly();
+  readonly $companyID = computed(() => this.$claims()?.companyID);
 
   readonly $accountType = computed(() => this.$claims()?.accountType);
 
@@ -58,20 +56,24 @@ export class AuthService {
   constructor() {
     afterNextRender(() => {
       this.isLoggedIn$
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
-      this.user$
+      user(this.auth)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          switchMap((authUser: User | null) => authUser?.getIdTokenResult() ?? of(null)),
+          switchMap((authUser: User | null) => {
+            console.log('aUser', authUser);
+            return authUser?.getIdTokenResult() ?? of(null);
+          }),
           switchMap(async (token: any) => {
+            console.log('token', token);
             if (token?.claims) {
               this.claims.set({ ...token.claims });
               let userDocPath = `users/${token?.claims?.sub}`;
 
               if (token.claims?.accountType === 'company') {
-                this.companyID.set(token?.claims?.companyID);
+                // this.companyID.set(token?.claims?.companyID);
                 userDocPath = `companies/${token?.claims?.companyID}/users/${token?.claims?.sub}`;
               }
 
@@ -92,8 +94,8 @@ export class AuthService {
         )
         .subscribe((user: any) => this.user.set(user));
     });
-
   }
+
 
   async signOut(): Promise<void> {
     await signOut(this.auth);
@@ -101,3 +103,4 @@ export class AuthService {
     this.router.navigateByUrl('/');
   }
 }
+

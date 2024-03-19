@@ -82,8 +82,7 @@ export const routes: Routes = [
       },
       {
         path: 'candidate',
-        canActivate: [ AuthGuard ],
-        data: { authGuardPipe: candidateOnly },
+
         loadChildren: () => import('./candidate-app/candidate.routes').then((x) => x.CandidateRoutes)
       },
       {

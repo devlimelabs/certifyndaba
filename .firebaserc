@@ -6,8 +6,9 @@
   "etags": {
     "certifyndaba": {
       "extensionInstances": {
+        "mailersend-email": "663a0f936c997e4a8bf340f52ca535fb1b6c7139fb83b7baee7308d32b959a84",
         "firestore-meilisearch": "f8102960170261ae637b79c332efdec8741ffdd8f80324d1617b108cb44bbf14",
-        "firestore-send-email": "da74eee09339de31fceff1eca3370fdc7f1c208e7784cd0854b01b07a3f81d49"
+        "firestore-send-email": "659000cf4296af08416268c0c3cd05ba8845aed929688fab7e7963624f6602cd"
       }
     }
   }

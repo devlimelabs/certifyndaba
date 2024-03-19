@@ -90,7 +90,9 @@ export class NavbarComponent implements OnInit {
 
   async signIn(): Promise<any> {
     const dialogRef = this.dialog.open(LoginComponent, {
-      closeOnNavigation: true
+      closeOnNavigation: true,
+      hasBackdrop: false,
+      maxWidth: '90vw'
     });
 
     await lastValueFrom(dialogRef.afterClosed());
