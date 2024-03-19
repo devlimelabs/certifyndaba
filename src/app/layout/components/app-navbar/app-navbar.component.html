@@ -44,6 +44,8 @@
       <div class="flex-none hidden md:flex md:flex-row md:justify-start md:items-center gap-4">
         @for (link of navLinks(); track link.id) {
           @if (link?.childLinks?.length) {
+            <app-nav-menu-link [link]="link"></app-nav-menu-link>
+          } @else {
             <button
               mat-button
               class="text-lg"
@@ -59,8 +61,6 @@
             >
               {{ link.label }}
             </button>
-          } @else {
-            <app-nav-menu-link [link]="link"></app-nav-menu-link>
           }
 
           <mat-divider
