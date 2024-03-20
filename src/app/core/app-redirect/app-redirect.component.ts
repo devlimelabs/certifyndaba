@@ -17,7 +17,7 @@ export class AppRedirectComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const user = this.authSvc.$user() as any;
+    const user = this.authSvc.$claims() as any;
 
     if (user?.role == 'admin') {
       this.router.navigateByUrl('/app/admin/verifications');

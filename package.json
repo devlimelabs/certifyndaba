@@ -29,7 +29,6 @@
     "@angular/platform-server": "^17.2.0",
     "@angular/router": "^17.2.0",
     "@angular/ssr": "^17.2.2",
-    "@devlime/ngx-state": "^14.3.3",
     "@ngneat/forms-manager": "^2.5.1",
     "@ngneat/helipopper": "^9.2.1",
     "@ngneat/hot-toast": "^7.0.0",

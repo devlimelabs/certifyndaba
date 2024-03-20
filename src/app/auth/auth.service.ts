@@ -1,20 +1,25 @@
+import { HttpClient } from '@angular/common/http';
 import {
-  DestroyRef, Injectable, afterNextRender, computed, inject, signal
+  DestroyRef, Injectable, Signal, computed, inject, signal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
-  Auth, User, UserCredential, authState, signOut, user
+  Auth, AuthProvider, IdTokenResult, User, authState, getAdditionalUserInfo, signInWithPopup, signOut, user
 } from '@angular/fire/auth';
 import {
   Firestore, doc, getDoc
 } from '@angular/fire/firestore';
-import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
 
-import { of } from 'rxjs';
+import {
+  Observable, firstValueFrom, of
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { UserClaims } from '~models/user-claims';
+import { LocalStorage } from '../core/local-storage';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '~env';
 
 
 @Injectable({
@@ -25,7 +30,10 @@ export class AuthService {
   private auth = inject(Auth);
   private destroyRef = inject(DestroyRef);
   private firestore = inject(Firestore);
+  private http = inject(HttpClient);
+  private localStorage = inject(LocalStorage);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   readonly isLoggedIn$ = authState(this.auth).pipe(map((aUser: User | null) => {
     console.log(aUser);
@@ -35,11 +43,12 @@ export class AuthService {
   readonly $isLoggedIn = this.isLoggedIn.asReadonly();
 
   readonly user$ = user(this.auth);
-  private user = signal<User | null>(null);
-  readonly $user = this.user.asReadonly();
+  readonly $user: Signal<User | null>;
 
-  private claims = signal<UserClaims | null>(null);
-  readonly $claims = this.claims.asReadonly();
+  readonly userProfile$: Observable<any>;
+  readonly $userProfile: Signal<any>;
+  private claims$: Observable<any>;
+  readonly $claims: Signal<UserClaims | null>;
 
   readonly $companyID = computed(() => this.$claims()?.companyID);
 
@@ -55,68 +64,82 @@ export class AuthService {
   readonly $groups = this.groups.asReadonly();
 
   constructor() {
-    afterNextRender(() => {
-      this.isLoggedIn$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
+    this.isLoggedIn$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
-      user(this.auth)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          switchMap((authUser: User | null) => {
-            console.log('aUser', authUser);
-            return authUser?.getIdTokenResult() ?? of(null);
-          }),
-          switchMap(async (token: any) => {
-            console.log('token', token);
-            if (token?.claims) {
-              this.claims.set({ ...token.claims });
-              let userDocPath = `users/${token?.claims?.sub}`;
+    this.claims$ = user(this.auth)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
+        map((token: IdTokenResult | null) => token?.claims ?? null)
+      );
 
-              if (token.claims?.accountType === 'company') {
-                // this.companyID.set(token?.claims?.companyID);
-                userDocPath = `companies/${token?.claims?.companyID}/users/${token?.claims?.sub}`;
-              }
+    this.userProfile$ = this.claims$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap((claims: any) => {
+          console.log('claims', claims);
 
-              const userRef = doc(this.firestore, userDocPath);
+          let userDocPath = `users/${claims?.sub}`;
 
-              const user = await getDoc(userRef);
+          if (claims?.accountType === 'company') {
+            // this.companyID.set(token?.claims?.companyID);
+            userDocPath = `companies/${claims?.companyID}/users/${claims?.sub}`;
+          }
 
-              return {
-                id: user.id,
-                ...user.data()
-              };
+          const userRef = doc(this.firestore, userDocPath);
 
-            } else {
-              this.claims.set(null);
-              return of(null);
-            }
-          })
-        )
-        .subscribe((user: any) => this.user.set(user));
-    });
+          return getDoc(userRef);
+        }),
+        map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+      );
+
+    this.$user = toSignal(user(this.auth), { initialValue: null });
+    this.$userProfile = toSignal(this.userProfile$, { initialValue: null });
+    this.$claims = toSignal(this.claims$, { initialValue: null });
   }
 
-  async handleClaims(authResult: UserCredential): Promise<void> {
-    const functions = getFunctions();
-    const addClaims = httpsCallable(functions, 'addClaims');
-
+  async initSignIn(provider: AuthProvider): Promise<any> {
     try {
-      const idToken = await authResult.user.getIdToken();
-      const result = await addClaims({
-        accountType: 'candidate',
-        idToken
+      const authResult = await signInWithPopup(this.auth, provider);
+
+      const additionalInfo = getAdditionalUserInfo(authResult);
+      let idToken: any = await authResult.user.getIdToken();
+
+      if (additionalInfo?.isNewUser) {
+        console.log('authResult', authResult);
+
+        await firstValueFrom(this.http.post(`https://us-central1-${environment.firebase.projectId}.cloudfunctions.net/addClaims`, {
+          accountType: 'candidate',
+          idToken
+        }));
+
+        idToken = await authResult.user.getIdToken(true);
+      }
+
+      const redirect = this.localStorage.getItem('redirect');
+      console.log('redirect', redirect);
+
+      if (redirect) {
+        this.localStorage.removeItem('redirect');
+        return this.router.navigateByUrl(redirect);
+      }
+
+      return this.router.navigateByUrl(`/app/${idToken?.claims?.accountType}/requests`);
+    } catch (err) {
+      console.error('error', err);
+      this.snackBar.open('There was an error logging you in!', 'ok', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: 'bg-red-50 text-red-600'
       });
-        // Read result of the Cloud Function.
-        /** @type {any} */
-      const data = result.data;
-      console.log('result', result);
-    } catch (error: any) {
-      // Getting the Error details.
-      const code = error?.code;
-      const message = error?.message;
-      const details = error?.details;
-      // ...
+
+      return false;
     }
   }
 

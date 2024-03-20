@@ -10,9 +10,6 @@ import {
 import { AuthService } from '~auth/auth.service';
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { RequestStatus } from '~models/request-status';
-import { filter, take } from 'rxjs/operators';
-import { lastValueFrom } from 'rxjs';
-import { Auth, user } from '@angular/fire/auth';
 
 
 export const CompanyRequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
@@ -27,8 +24,8 @@ export const CompanyRequestsListResolver: ResolveFn<any> = async (route: Activat
 
   console.log('authSvc.$companyID()', authSvc.$companyID());
   console.log('authSvc.$user()', authSvc.$user());
-  const authUser = await lastValueFrom(user(inject(Auth)).pipe(filter(user => !!user), take(1)));
-  console.log('authUser', authUser);
+  const claims = authSvc.$claims();
+  console.log('claims', claims);
 
 
   console.log('authSvc.$user()', authSvc.$user());

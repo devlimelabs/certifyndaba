@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 } from '@angular/core';
-import {
-  Auth, getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup
-} from '@angular/fire/auth';
+import { GoogleAuthProvider } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -13,8 +11,7 @@ import { Functions } from '@angular/fire/functions';
 import { GOOGLE_ICON } from './google-icon';
 import { LocalStorage } from 'src/app/core/local-storage';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '~env';
-import { firstValueFrom } from 'rxjs';
+import { AuthService } from '~auth/auth.service';
 
 @Component({
   selector: 'app-google-auth-button',
@@ -31,7 +28,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class GoogleAuthButtonComponent {
 
-  private auth = inject(Auth);
+  private authSvc = inject(AuthService);
   private functions = inject(Functions);
   private http = inject(HttpClient);
   private iconRegistry = inject(MatIconRegistry);
@@ -51,51 +48,8 @@ export class GoogleAuthButtonComponent {
   }
 
   async loginWithGoogle(): Promise<boolean> {
-    try {
-      const provider = new GoogleAuthProvider();
-
-      const authResult = await signInWithPopup(this.auth, provider);
-
-      const additionalInfo = getAdditionalUserInfo(authResult);
-
-      if (additionalInfo?.isNewUser) {
-        console.log('authResult', authResult);
-
-        const idToken = await authResult.user.getIdToken();
-
-        await firstValueFrom(this.http.post(`https://us-central1-${environment.firebase.projectId}.cloudfunctions.net/addClaims`, {
-          accountType: 'candidate',
-          idToken
-        }));
-
-        await authResult.user.getIdToken(true);
-      }
-
-      const redirect = this.localStorage.getItem('redirect');
-      console.log('redirect', redirect);
-
-      if (redirect) {
-        this.localStorage.removeItem('redirect');
-        return this.router.navigateByUrl(redirect);
-      }
-
-      if (this.isDialog) {
-        this.closeDialog.emit();
-        return true;
-      }
-
-      return this.router.navigate([ '/' ]);
-    } catch (err) {
-      console.error('error', err);
-      this.snackBar.open('There was an error logging you in!', 'ok', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-        panelClass: 'bg-red-50 text-red-600'
-      });
-
-      return false;
-    }
+    const provider = new GoogleAuthProvider();
+    return await this.authSvc.initSignIn(provider);
   }
 
 }

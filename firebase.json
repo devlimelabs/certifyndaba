@@ -17,10 +17,7 @@
     "rewrites": [
       {
         "source": "/api/addClaims",
-        "function": {
-          "functionId": "addClaims",
-          "region": "us-central1"
-        }
+        "function": "addClaims"
       }
     ],
     "frameworksBackend": {
