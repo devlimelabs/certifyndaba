@@ -2,16 +2,19 @@ import {
   ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 } from '@angular/core';
 import {
-  Auth, GoogleAuthProvider, signInWithPopup
+  Auth, getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup
 } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-
+import { Functions } from '@angular/fire/functions';
 import { GOOGLE_ICON } from './google-icon';
 import { LocalStorage } from 'src/app/core/local-storage';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '~env';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-google-auth-button',
@@ -19,7 +22,8 @@ import { LocalStorage } from 'src/app/core/local-storage';
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    HttpClientModule
   ],
   templateUrl: './google-auth-button.component.html',
   styleUrls: [ './google-auth-button.component.scss' ],
@@ -28,6 +32,8 @@ import { LocalStorage } from 'src/app/core/local-storage';
 export class GoogleAuthButtonComponent {
 
   private auth = inject(Auth);
+  private functions = inject(Functions);
+  private http = inject(HttpClient);
   private iconRegistry = inject(MatIconRegistry);
   private localStorage = inject(LocalStorage);
   private router = inject(Router);
@@ -48,10 +54,26 @@ export class GoogleAuthButtonComponent {
     try {
       const provider = new GoogleAuthProvider();
 
-      await signInWithPopup(this.auth, provider);
+      const authResult = await signInWithPopup(this.auth, provider);
+
+      const additionalInfo = getAdditionalUserInfo(authResult);
+
+      if (additionalInfo?.isNewUser) {
+        console.log('authResult', authResult);
+
+        const idToken = await authResult.user.getIdToken();
+
+        await firstValueFrom(this.http.post(`https://us-central1-${environment.firebase.projectId}.cloudfunctions.net/addClaims`, {
+          accountType: 'candidate',
+          idToken
+        }));
+
+        await authResult.user.getIdToken(true);
+      }
 
       const redirect = this.localStorage.getItem('redirect');
       console.log('redirect', redirect);
+
       if (redirect) {
         this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(redirect);

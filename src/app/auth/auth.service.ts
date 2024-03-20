@@ -3,11 +3,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  Auth, User, authState, signOut, user
+  Auth, User, UserCredential, authState, signOut, user
 } from '@angular/fire/auth';
 import {
   Firestore, doc, getDoc
 } from '@angular/fire/firestore';
+import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
 
 import { of } from 'rxjs';
@@ -96,6 +97,28 @@ export class AuthService {
     });
   }
 
+  async handleClaims(authResult: UserCredential): Promise<void> {
+    const functions = getFunctions();
+    const addClaims = httpsCallable(functions, 'addClaims');
+
+    try {
+      const idToken = await authResult.user.getIdToken();
+      const result = await addClaims({
+        accountType: 'candidate',
+        idToken
+      });
+        // Read result of the Cloud Function.
+        /** @type {any} */
+      const data = result.data;
+      console.log('result', result);
+    } catch (error: any) {
+      // Getting the Error details.
+      const code = error?.code;
+      const message = error?.message;
+      const details = error?.details;
+      // ...
+    }
+  }
 
   async signOut(): Promise<void> {
     await signOut(this.auth);
