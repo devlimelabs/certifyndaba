@@ -17,7 +17,6 @@ import {
 } from '@ngneat/helipopper';
 import { ConfirmationModule } from './confirmation/confirmation.module';
 import { EditorModule } from '@tinymce/tinymce-angular';
-import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
@@ -33,7 +32,6 @@ export const appConfig: ApplicationConfig = {
       provideAuth(() => getAuth()),
       provideStorage(() => getStorage()),
       provideFirestore(() => getFirestore()),
-      provideFunctions(() => getFunctions()),
       EditorModule
     ),
     provideHotToastConfig(),
