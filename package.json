@@ -48,6 +48,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "express": "^4.18.2",
+    "globalthis": "^1.0.3",
     "lodash": "^4.17.21",
     "meilisearch": "^0.37.0",
     "ngx-countup": "^13.1.0",
