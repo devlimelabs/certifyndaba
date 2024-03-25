@@ -28,7 +28,7 @@ import { AuthService } from '../../../auth/auth.service';
 import {
   collection, Firestore, getDocs
 } from '@angular/fire/firestore';
-import { of } from 'rxjs';
+import { map } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
 
 @Component({
@@ -62,9 +62,9 @@ export class AppNavbarComponent implements OnInit {
   authSvc = inject(AuthService);
   layoutSvc = inject(LayoutService);
 
-  isAdmin$ = of(true);
+  isAdmin$ = this.authSvc.claims$.pipe(map(claims => claims?.role === 'admin'));
 
-  loggedIn = false;
+  loggedIn = this.authSvc.isLoggedIn$;
 
   navLinks = signal<any[]>([]);
 
@@ -80,8 +80,11 @@ export class AppNavbarComponent implements OnInit {
       });
     });
 
-    console.log('links', links);
-    links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$accountType()));
+    console.log('this.authSvc.$claims()', this.authSvc.$claims());
+    links = links.filter(link => {
+      console.log('link', link);
+      return !link.groups?.length || link.groups?.includes(this.authSvc.$claims()?.accountType);
+    });
     console.log('links', links);
 
     this.navLinks.set(orderBy(links, 'order'));

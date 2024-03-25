@@ -47,7 +47,7 @@ export class AuthService {
 
   readonly userProfile$: Observable<any>;
   readonly $userProfile: Signal<any>;
-  private claims$: Observable<any>;
+  readonly claims$: Observable<any>;
   readonly $claims: Signal<UserClaims | null>;
 
   readonly $companyID = computed(() => this.$claims()?.companyID);
@@ -68,7 +68,7 @@ export class AuthService {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(isLoggedIn => this.isLoggedIn.set(isLoggedIn));
 
-    this.claims$ = user(this.auth)
+    this.claims$ = authState(this.auth)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
@@ -84,7 +84,6 @@ export class AuthService {
           let userDocPath = `users/${claims?.sub}`;
 
           if (claims?.accountType === 'company') {
-            // this.companyID.set(token?.claims?.companyID);
             userDocPath = `companies/${claims?.companyID}/users/${claims?.sub}`;
           }
 

@@ -7,7 +7,6 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { Functions } from '@angular/fire/functions';
 import { GOOGLE_ICON } from './google-icon';
 import { LocalStorage } from 'src/app/core/local-storage';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -29,7 +28,6 @@ import { AuthService } from '~auth/auth.service';
 export class GoogleAuthButtonComponent {
 
   private authSvc = inject(AuthService);
-  private functions = inject(Functions);
   private http = inject(HttpClient);
   private iconRegistry = inject(MatIconRegistry);
   private localStorage = inject(LocalStorage);

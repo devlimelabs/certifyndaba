@@ -23,8 +23,6 @@ import { MultiCheckboxComponent } from 'src/app/shared/multi-checkbox/multi-chec
 import { STATES } from '~constants/states';
 
 import { StateSelectorComponent } from './components/state-selector/state-selector.component';
-// import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
-import { identityRevealedValidator } from './identity-revealed-validator';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import { startCase } from 'lodash';
@@ -32,6 +30,7 @@ import { AuthService } from '~auth/auth.service';
 import {
   Firestore, doc, updateDoc
 } from '@angular/fire/firestore';
+import { identityRevealedValidator } from './identity-revealed-validator';
 
 @UntilDestroy()
 @Component({
@@ -183,7 +182,7 @@ export class ProfileComponent implements OnInit {
     state: '',
     yearsOfExperience: '',
     zip: ''
-  }, { validators: identityRevealedValidator });
+  });
 
   pushNotificationsCtrl = new FormControl();
 
@@ -301,8 +300,19 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.profileChanged) {
+      const aboutSectionCheck = identityRevealedValidator(this.profileForm);
+
+      if (aboutSectionCheck?.['identityRevealed']) {
+        this.toast.warning('Your about section appears to contain personal information. In order to ensure your privacy, please remove all personal information from your about section.', {
+          duration: 7500
+        });
+
+        return;
+      }
+
       try {
         const usersRef = doc(this.firestore, `users/${this.profile.id}`);
+        console.log('usersRef', usersRef);
         this.profile = await updateDoc(usersRef, this.profileForm.value);
 
         this.profileChanged = false;

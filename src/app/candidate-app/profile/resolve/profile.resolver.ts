@@ -2,13 +2,23 @@ import { inject } from '@angular/core';
 import {
   Firestore, doc, getDoc
 } from '@angular/fire/firestore';
-import { ResolveFn } from '@angular/router';
+import { ResolveFn, Router } from '@angular/router';
+import {
+  filter, firstValueFrom, map, take
+} from 'rxjs';
 import { AuthService } from '~auth/auth.service';
 
 export const profileResolver: ResolveFn<any> = async (route, state) => {
-  const userId = inject(AuthService).$user();
+  const authSvc = inject(AuthService);
+  const firestore = inject(Firestore);
 
-  const userRef = doc(inject(Firestore), `users/${userId}`);
+  const userID = await firstValueFrom(authSvc.user$.pipe(filter(user => !!user),take(1),map(user => user?.uid)));
+
+  if (!userID) {
+    return inject(Router).createUrlTree([ '/sign-in' ]);
+  }
+
+  const userRef = doc(firestore, `users/${userID}`);
 
   const userSnapShot = await getDoc(userRef);
 

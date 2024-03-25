@@ -1,15 +1,11 @@
 import { Routes } from '@angular/router';
-import {
-  canActivate, redirectLoggedInTo, redirectUnauthorizedTo, AuthGuard, customClaims
-} from '@angular/fire/auth-guard';
+import { AuthGuard } from '@angular/fire/auth-guard';
 import { AppRedirectComponent } from './core/app-redirect/app-redirect.component';
-import { map, pipe } from 'rxjs';
 
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([ 'login' ]);
-const redirectLoggedInToApp = () => redirectLoggedInTo([ '/app' ]);
-const adminOnly = () => pipe(customClaims, map((claims: any) => claims?.role === 'admin'));
-const candidateOnly = () => pipe(customClaims, map((claims: any) => claims?.accountType === 'candidate'));
-const companyOnly = () => pipe(customClaims, map((claims: any) => claims?.accountType === 'company'));
+import { appAuthGuard } from '~auth/guards/app-auth.guard';
+import {
+  isAdmin, isCandidate, isCompany, isLoggedIn, isLoggedOut
+} from '~auth/guards/firebase-guards';
 
 export const routes: Routes = [
   {
@@ -58,15 +54,17 @@ export const routes: Routes = [
       },
       {
         path: 'sign-in',
-        loadComponent: () => import('./auth/pages/login/login.component').then(c => c.LoginComponent),
-        ...canActivate(redirectLoggedInToApp)
+        canActivate: [ AuthGuard ],
+        data: { authGuardPipe: isLoggedOut },
+        loadComponent: () => import('./auth/pages/login/login.component').then(c => c.LoginComponent)
 
       }
     ]
   },
   {
     path: 'app',
-    ...canActivate(redirectUnauthorizedToLogin),
+    canActivate: [ AuthGuard ],
+    data: { authGuardPipe:  isLoggedIn },
     loadComponent: () => import('./layout/pages/app-layout/app-layout.component').then(c => c.AppLayoutComponent),
     children: [
       {
@@ -78,23 +76,20 @@ export const routes: Routes = [
         path: 'admin',
         loadChildren: () => import('./admin/admin.routes').then((x) => x.AdminRoutes),
         canActivate: [ AuthGuard ],
-        data: { authGuardPipe: adminOnly }
+        data: { authGuardPipe: isAdmin }
       },
       {
         path: 'candidate',
-
+        canActivate: [ appAuthGuard ],
+        data: { authGuardPipe: isCandidate },
         loadChildren: () => import('./candidate-app/candidate.routes').then((x) => x.CandidateRoutes)
       },
       {
         path: 'company',
         canActivate: [ AuthGuard ],
-        data: { authGuardPipe: companyOnly },
+        data: { authGuardPipe: isCompany },
         loadChildren: () => import('./company-app/company.routes').then((x) => x.CompanyRoutes)
       }
     ]
-  },
-  {
-    path: '**',
-    redirectTo: '404'
   }
 ];

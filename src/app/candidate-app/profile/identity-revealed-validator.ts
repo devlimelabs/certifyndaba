@@ -17,7 +17,7 @@ export const identityRevealedValidator: ValidatorFn = (profileForm: AbstractCont
   const about = profileForm.get('about');
 
   const matchingFields = filter(personalInfoFields, (field: string) => {
-    const fieldValue = profileForm.get(field)?.value?.toLowerCase();
+    const fieldValue = profileForm?.get(field)?.value?.toLowerCase();
 
     return fieldValue?.length && about?.value?.toLowerCase()?.includes(fieldValue);
   });
