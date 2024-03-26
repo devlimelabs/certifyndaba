@@ -1,12 +1,16 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component, inject, OnInit
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component, DestroyRef, inject, OnInit
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Dictionary, groupBy } from 'lodash';
 
 import { RequestsDisplayListComponent } from '../../components/requests-display-list/requests-display-list.component';
+import { RequestsTableComponent } from 'src/app/requests/components/requests-table/requests-table.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -14,13 +18,20 @@ import { RequestsDisplayListComponent } from '../../components/requests-display-
     CommonModule,
     RouterLink,
     MatTabsModule,
-    RequestsDisplayListComponent
+    RequestsDisplayListComponent,
+    RequestsTableComponent
   ],
   templateUrl: './requests-list.component.html',
-  styleUrls: [ './requests-list.component.scss' ]
+  styleUrls: [ './requests-list.component.scss' ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RequestsListComponent implements OnInit {
+
+  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
+
+  allRequests: any[] = [];
 
   requests: Dictionary<any[]> = {
     Pending: [],
@@ -30,9 +41,11 @@ export class RequestsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.data
-      .pipe()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ requests }) => {
+        this.allRequests = requests;
         this.requests = groupBy(requests, 'status');
+        this.cdr.markForCheck();
       });
   }
 }

@@ -1,6 +1,6 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit
 } from '@angular/core';
 import {
   FormControl, ReactiveFormsModule, UntypedFormBuilder, Validators
@@ -11,8 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HotToastService } from '@ngneat/hot-toast';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import { Observable } from 'rxjs';
@@ -21,18 +19,16 @@ import {
 } from 'src/app/shared/certification-number-input/certification-number-input.component';
 import { MultiCheckboxComponent } from 'src/app/shared/multi-checkbox/multi-checkbox.component';
 import { STATES } from '~constants/states';
-
 import { StateSelectorComponent } from './components/state-selector/state-selector.component';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
-import { startCase } from 'lodash';
+import startCase from 'lodash/startCase';
 import { AuthService } from '~auth/auth.service';
 import {
   Firestore, doc, updateDoc
 } from '@angular/fire/firestore';
-import { identityRevealedValidator } from './identity-revealed-validator';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@UntilDestroy()
 @Component({
   standalone: true,
   imports: [
@@ -57,6 +53,7 @@ export class ProfileComponent implements OnInit {
   private authSvc = inject(AuthService);
   private firestore = inject(Firestore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
   private fb = inject(UntypedFormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -194,7 +191,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.data
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ profile, userPushSettings }) => {
         this.profile = profile;
         this.userPushSettings = userPushSettings;
@@ -218,7 +215,7 @@ export class ProfileComponent implements OnInit {
       });
 
     this.profileForm.get('experienceLevel')?.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(experienceLevel => {
         if ([
           'RBT',
@@ -234,7 +231,7 @@ export class ProfileComponent implements OnInit {
 
     this.profileForm.valueChanges
       .pipe(
-        untilDestroyed(this)
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(profileFormValue => {
         this.profileChanged = !(isEqual(profileFormValue, omit(this.profile, [
@@ -249,7 +246,7 @@ export class ProfileComponent implements OnInit {
 
     // this.pushNotificationsCtrl.valueChanges
     //   .pipe(
-    //     untilDestroyed(this),
+    //     takeUntilDestroyed(this.destroyRef),
     //     switchMap(async pushTopics => this.api.UpdateUserPushSettings({
     //       userID: this.user.sub,
     //       requests: pushTopics.includes('requests'),
@@ -300,9 +297,9 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.profileChanged) {
-      const aboutSectionCheck = identityRevealedValidator(this.profileForm);
+      const personalInfoDetected = this.checkForPersonalInfoInAbout();
 
-      if (aboutSectionCheck?.['identityRevealed']) {
+      if (personalInfoDetected) {
         this.toast.warning('Your about section appears to contain personal information. In order to ensure your privacy, please remove all personal information from your about section.', {
           duration: 7500
         });
@@ -334,6 +331,37 @@ export class ProfileComponent implements OnInit {
     }
 
     return `${value}`;
+  }
+
+  checkForPersonalInfoInAbout(): boolean {
+    let personalInfoFound = false;
+
+    const personalInfoFields = [
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'linkedInProfileUrl'
+    ];
+
+    const about = this.profileForm.get('about');
+
+    const matchingFields: any = filter(personalInfoFields, (field: string) => {
+      const fieldValue = this.profileForm?.get(field)?.value?.toLowerCase();
+
+      return fieldValue?.length && about?.value?.toLowerCase()?.includes(fieldValue);
+    });
+
+
+    if (matchingFields.length > 0) {
+      personalInfoFound = true;
+
+      for (let field of matchingFields) {
+        this.toast.warning(`Your about section contains your ${startCase(field)}: ${this.profileForm?.get(field)?.value}`);
+      }
+    }
+
+    return personalInfoFound ;
   }
 
   isCertified(): boolean {

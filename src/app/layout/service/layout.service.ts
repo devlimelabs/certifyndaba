@@ -20,6 +20,7 @@ export class LayoutService {
   private navLinks = new ReplaySubject<any[]>(1);
   private pageTitle = new BehaviorSubject<string>('');
   private _scrollToTop = new Subject<void>();
+  private showRightPanel = new BehaviorSubject(true);
 
   isMobile$ = this.breakpointObserver
     .observe([ '(max-width: 767px )' ])
@@ -30,6 +31,7 @@ export class LayoutService {
   navLinks$ = this.navLinks.asObservable();
   pageTitle$ = this.pageTitle.asObservable();
   scrollToTop$ = this._scrollToTop.asObservable();
+  showRightPanel$ = this.showRightPanel.asObservable();
 
   constructor() {
     this.router.events
@@ -52,6 +54,10 @@ export class LayoutService {
 
   setPageTitle(title: string): void {
     this.pageTitle.next(title);
+  }
+
+  setRightPanel(show: boolean) {
+    this.showRightPanel.next(show);
   }
 
   private isNavigationEnd(ev: RouterEvent): boolean {

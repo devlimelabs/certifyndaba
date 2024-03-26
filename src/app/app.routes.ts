@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from '@angular/fire/auth-guard';
 import { AppRedirectComponent } from './core/app-redirect/app-redirect.component';
 
-import { appAuthGuard } from '~auth/guards/app-auth.guard';
 import {
   isAdmin, isCandidate, isCompany, isLoggedIn, isLoggedOut
 } from '~auth/guards/firebase-guards';
@@ -80,7 +79,7 @@ export const routes: Routes = [
       },
       {
         path: 'candidate',
-        canActivate: [ appAuthGuard ],
+        canActivate: [ AuthGuard ],
         data: { authGuardPipe: isCandidate },
         loadChildren: () => import('./candidate-app/candidate.routes').then((x) => x.CandidateRoutes)
       },

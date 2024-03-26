@@ -75,7 +75,7 @@ export class NavbarComponent implements OnInit {
           return await getDocs(linksRef);
         })
       ).subscribe(linksSnapshot => {
-        const links: any[] = [];
+        let links: any[] = [];
 
         linksSnapshot.forEach(doc => {
           links.push({
@@ -83,6 +83,8 @@ export class NavbarComponent implements OnInit {
             ...doc.data()
           });
         });
+
+        links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$claims()?.accountType));
 
         this.navLinks.set(orderBy(links, 'order'));
       });

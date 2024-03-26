@@ -84,7 +84,7 @@ export class AuthService {
           let userDocPath = `users/${claims?.sub}`;
 
           if (claims?.accountType === 'company') {
-            userDocPath = `companies/${claims?.companyID}/users/${claims?.sub}`;
+            userDocPath = `companies/${claims?.companyId }/users/${claims?.sub}`;
           }
 
           const userRef = doc(this.firestore, userDocPath);
@@ -127,8 +127,9 @@ export class AuthService {
         this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(redirect);
       }
+      console.log('idToken?.claims?.accountType', idToken?.claims?.accountType);
 
-      return this.router.navigateByUrl(`/app/${idToken?.claims?.accountType}/requests`);
+      return this.router.navigateByUrl(`/app/company/requests`);
     } catch (err) {
       console.error('error', err);
       this.snackBar.open('There was an error logging you in!', 'ok', {

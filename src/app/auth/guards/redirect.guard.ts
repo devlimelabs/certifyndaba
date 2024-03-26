@@ -13,7 +13,7 @@ export class RedirectGuard  {
   ): boolean {
 
     if (![ '/login', '/' ].includes(state.url)) {
-      inject(LocalStorage).setItem('redirect', state.url);
+      inject(LocalStorage)?.setItem('redirect', state.url);
     }
 
     return true;

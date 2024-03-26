@@ -8,8 +8,11 @@ import {
 } from '@angular/fire/firestore';
 import { AuthService } from '~auth/auth.service';
 import { RequestsService } from 'src/app/requests/service/requests.service';
+import { LayoutService } from 'src/app/layout/service/layout.service';
 
 export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+
+  inject(LayoutService).setRightPanel(true);
 
   const requestsSvc = inject(RequestsService);
   requestsSvc.setShowBackToList(false);

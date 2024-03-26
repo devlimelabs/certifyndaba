@@ -1,8 +1,9 @@
 <div
-  class="text-xs flex flex-row flex-nowrap w-full justify-between items-center pl-4 bg-blue-800 border-b border-blue-900"
+  class="text-xs flex flex-row flex-nowrap w-full justify-between items-center pl-4 border-b border-blue-900"
+  [class.bg-blue-100]="show()"
 >
   <div class="flex flex-row flex-nowrap grow">
-    <span class="font-semibold text-base text-white">
+    <span class="font-semibold text-base text-blue-800">
       {{ label || attribute() + 's' | uppercase }}
     </span>
   </div>
@@ -99,8 +100,8 @@
                 {{ facetValue?.key }}
               </div>
 
-              <div class="shrink-0 rounded-full px-2 bg-white text-xs text-black text-center ml-8">
-                {{ facetValue.value }} cards
+              <div class="shrink-0 rounded-full px-2 bg-blue-800 text-xs text-white font-semibold text-center ml-8">
+                {{ facetValue.value }}
               </div>
             </div>
           </mat-checkbox>
