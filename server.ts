@@ -33,33 +33,22 @@ export function app(): express.Express {
     } = req;
 
     console.log('originalUrl, baseUrl, url', originalUrl, baseUrl, url);
-    const bypassSSRRoutes = [ '/app' ]; // Add routes to exclude from SSR
-    const shouldBypassSSR = bypassSSRRoutes.some(route => url.startsWith(route));
 
-    if (shouldBypassSSR) {
-      try {
-      // Serve static file for routes that should bypass SSR
-        res.sendFile(join(browserDistFolder, 'index.html'));
-      } catch (err) {
-        next(err);
-      }
-    } else {
-      commonEngine
-        .render({
-          bootstrap,
-          documentFilePath: indexHtml,
-          url: `${protocol}://${headers.host}${originalUrl}`,
-          publicPath: browserDistFolder,
-          providers: [
-            {
-              provide: APP_BASE_HREF,
-              useValue: baseUrl
-            }
-          ]
-        })
-        .then((html) => res.send(html))
-        .catch((err) => next(err));
-    }
+    commonEngine
+      .render({
+        bootstrap,
+        documentFilePath: indexHtml,
+        url: `${protocol}://${headers.host}${originalUrl}`,
+        publicPath: browserDistFolder,
+        providers: [
+          {
+            provide: APP_BASE_HREF,
+            useValue: baseUrl
+          }
+        ]
+      })
+      .then((html) => res.send(html))
+      .catch((err) => next(err));
   });
 
   return server;
