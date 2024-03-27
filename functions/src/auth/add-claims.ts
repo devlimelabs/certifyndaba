@@ -29,17 +29,11 @@ export const addClaims = onRequest({
         throw new HttpsError("failed-precondition", "Company ID is required for company users");
       }
 
-      if (!req.body.companyName) {
-        throw new HttpsError("failed-precondition", "Company Name is required for company users");
-      }
-
-      if (!req.body.companyRole) {
-        throw new HttpsError("failed-precondition", "Company Role is required for company users");
-      }
+      // if (!req.body.companyName) {
+      //   throw new HttpsError("failed-precondition", "Company Name is required for company users");
+      // }
 
       additionalClaims.companyID = req.body.companyID;
-      additionalClaims.companyName = req.body.companyName;
-      additionalClaims.companyRole = req.body.companyRole;
     }
 
     const setClaims = await getAuth().setCustomUserClaims(claims.uid, additionalClaims);

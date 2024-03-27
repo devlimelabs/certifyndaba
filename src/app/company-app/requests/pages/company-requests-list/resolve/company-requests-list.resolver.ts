@@ -7,32 +7,29 @@ import {
 import {
   Firestore, collection, getDocs, orderBy, query, where
 } from '@angular/fire/firestore';
-import { AuthService } from '~auth/auth.service';
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { RequestStatus } from '~models/request-status';
+import { AuthStore } from '~auth/state/auth.store';
 
 
 export const CompanyRequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 
   const requestsSvc = inject(RequestsService);
-  const authSvc = inject(AuthService);
+  const authStore = inject(AuthStore);
   const firestore = inject(Firestore);
   requestsSvc.setShowBackToList(false);
   requestsSvc.setShowRequestButton(false);
 
   const { status = RequestStatus.Pending } = route.params;
 
-  console.log('authSvc.$companyID()', authSvc.$companyID());
-  console.log('authSvc.$user()', authSvc.$user());
-  const claims = authSvc.$claims();
-  console.log('claims', claims);
 
+  const claims = authStore.claims();
+  const companyID =  authStore.companyID();
+  console.log('claims, companyID', claims, companyID);
 
-  console.log('authSvc.$user()', authSvc.$user());
   const requestsSnapshot = await getDocs(
     query(
-      collection(firestore, `companies/${authSvc.$companyID()}/requests/`),
-      where('companyID', '==', authSvc.$companyID()),
+      collection(firestore, `companies/${authStore.companyID()}/requests/`),
       where('status', '==', status),
       orderBy('createdAt', 'desc')
     )

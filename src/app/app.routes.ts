@@ -48,15 +48,10 @@ export const routes: Routes = [
         loadComponent: () => import('./landing-pages/pages/candidate-landing/candidate-landing.component').then(c => c.CandidateLandingComponent)
       },
       {
-        path: 'legal',
-        loadChildren: () => import('./legal/legal.routes').then((x) => x.LegalRoutes)
-      },
-      {
         path: 'sign-in',
         canActivate: [ AuthGuard ],
         data: { authGuardPipe: isLoggedOut },
         loadComponent: () => import('./auth/pages/login/login.component').then(c => c.LoginComponent)
-
       }
     ]
   },

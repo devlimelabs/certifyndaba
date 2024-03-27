@@ -7,6 +7,7 @@ export type CompanyUser = {
   position?: string | null;
   companyID: string;
   companyAdmin?: string | null;
+  companyName?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
   owner?: string | null;

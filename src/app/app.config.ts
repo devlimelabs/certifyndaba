@@ -18,9 +18,11 @@ import {
 import { ConfirmationModule } from './confirmation/confirmation.module';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { AuthStore } from '~auth/state/auth.store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    AuthStore,
     provideRouter(routes),
     provideClientHydration(),
     provideAnimationsAsync(),
