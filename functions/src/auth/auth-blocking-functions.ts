@@ -43,6 +43,7 @@ export const addCustomClaims = beforeUserCreated(async (event): Promise<any> => 
         phone: user.phoneNumber,
         displayName: user?.displayName ?? user.email,
         profileImage: user.photoURL,
+        status: 'unverified',
         ...claims
       });
 

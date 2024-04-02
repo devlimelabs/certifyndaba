@@ -16,7 +16,7 @@
   </div>
 
   <div class="flex flex-none items-center gap-x-4">
-    <!-- @if (requestPending()) {
+    @if (requestPending()) {
       <button
         role="button"
         class="hidden rounded-md bg-yellow-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
@@ -40,15 +40,15 @@
       >
         Candidate Connected
       </button>
-    } @else if (showConnect()) { -->
-    <button
-      role="button"
-      class="hidden rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
-      (click)="connect()"
-    >
-      Connect
-    </button>
-    <!-- } -->
+    } @else if (showConnect()) {
+      <button
+        role="button"
+        class="hidden rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-blue-700 hover:bg-blue-700 sm:block"
+        (click)="connect()"
+      >
+        Connect
+      </button>
+    }
   </div>
 </div>
 
