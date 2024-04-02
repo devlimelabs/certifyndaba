@@ -14,6 +14,7 @@ export const addClaims = onRequest({
   // Get the ID token passed.
   const idToken = req.body.idToken;
   const accountType = req.body.accountType;
+  const companyID = req.body?.companyID ?? req?.body?.companyId ?? req.auth?.tenantId;
 
   try {
     // Verify the ID token and decode its payload.
@@ -25,15 +26,15 @@ export const addClaims = onRequest({
 
     if (accountType === 'company') {
       /* TODO: expect companyId, name, role, etc */
-      if (!req.body.companyID) {
+      if (!companyID) {
         throw new HttpsError("failed-precondition", "Company ID is required for company users");
       }
+
+      additionalClaims.companyID = companyID;
 
       // if (!req.body.companyName) {
       //   throw new HttpsError("failed-precondition", "Company Name is required for company users");
       // }
-
-      additionalClaims.companyID = req.body.companyID;
     }
 
     const setClaims = await getAuth().setCustomUserClaims(claims.uid, additionalClaims);

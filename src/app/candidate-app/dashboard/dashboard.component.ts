@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map } from 'rxjs/operators';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from '~auth/auth.service';
 import { showHideHorizontal } from '~animations/show-hide-horizontal';
 import { LayoutService } from 'src/app/layout/service/layout.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthStore } from '~auth/state/auth.store';
 
 @Component({
   standalone: true,
@@ -16,9 +15,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class DashboardComponent {
 
-  private authSvc = inject(AuthService);
   private layoutSvc = inject(LayoutService);
 
+  authStore = inject(AuthStore);
+
   showRightPanel = toSignal(this.layoutSvc.showRightPanel$);
-  username$ = this.authSvc.user$.pipe(map(user => user?.displayName));
 }

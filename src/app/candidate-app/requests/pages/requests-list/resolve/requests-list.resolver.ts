@@ -4,24 +4,26 @@ import {
 } from '@angular/router';
 
 import {
-  Firestore, collection, getDocs, orderBy, query, where
+  Firestore, collectionGroup, getDocs, orderBy, query, where
 } from '@angular/fire/firestore';
-import { AuthService } from '~auth/auth.service';
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { LayoutService } from 'src/app/layout/service/layout.service';
+import { AuthStore } from '~auth/state/auth.store';
 
 export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 
   inject(LayoutService).setRightPanel(true);
 
+  const authStore = inject(AuthStore);
   const requestsSvc = inject(RequestsService);
+
   requestsSvc.setShowBackToList(false);
   requestsSvc.setShowRequestButton(false);
 
   const requestsSnapshot = await getDocs(
     query(
-      collection(inject(Firestore), `requests`),
-      where('candidateID', '==', inject(AuthService)?.$user()?.uid),
+      collectionGroup(inject(Firestore), `requests`),
+      where('candidateID', '==', authStore.authUser()?.uid),
       orderBy('createdAt', 'desc')
     )
   );

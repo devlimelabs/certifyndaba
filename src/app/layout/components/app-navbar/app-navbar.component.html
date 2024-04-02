@@ -14,9 +14,8 @@
 
         <div
           class="flex flex-row flex-nowrap items-center cursor-pointer mx-4"
-          routerLink="/app/candidate/requests/"
+          [routerLink]="['/app', authStore.accountType() + 'requests']"
         >
-          <!-- TODO: FIX LINK ABOVE: {{ authSvc.$user()?.['custom:accountType'] }} -->
           <svg
             class="w-12 h-12"
             viewBox="214.816 115 120.368 150.7749"
@@ -71,7 +70,7 @@
       </div>
 
       <div class="flex flex-row flex-nowrap justify-end items-center gap-4 w-full">
-        <ng-container *ngIf="isAdmin$ | async">
+        @if (authStore.isAdmin()) {
           <button
             mat-button
             class="!text-indigo-600 text-lg"
@@ -110,7 +109,7 @@
               Verifications
             </a>
           </mat-menu>
-        </ng-container>
+        }
 
         <button
           type="button"
@@ -134,12 +133,12 @@
           </svg>
         </button>
 
-        @if (authSvc.$user()) {
+        @if (authStore.isLoggedIn()) {
           <img
             class="h-10 w-10 rounded-full cursor-pointer"
-            [matTooltip]="authSvc.$user()?.email ?? ''"
+            [matTooltip]="authStore.userProfile()?.email ?? ''"
             height="40"
-            [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + authSvc.$user()?.uid"
+            [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + authStore.authUser()?.uid"
             alt="avatar"
             [matMenuTriggerFor]="userMenu"
           />
@@ -147,9 +146,8 @@
             <!-- TODO: FIX HARDCODED CANDIDATE LINK -->
             <button
               mat-menu-item
-              [routerLink]="['/', 'app', 'candidate', 'profile']"
+              [routerLink]="['/', 'app', authStore.claims()?.accountType, 'profile']"
             >
-              <!-- {{ authSvc.$user()?.['custom:accountType'] === 'company' ? 'Company ' : '' }} -->
               Profile
             </button>
             <button

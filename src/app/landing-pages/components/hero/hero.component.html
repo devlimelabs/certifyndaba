@@ -9,14 +9,14 @@
             @if (buttonLink?.length) {
               <a
                 [routerLink]="buttonLink"
-                class="rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                class="cursor-pointer rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {{ buttonText }}
               </a>
             } @else {
               <a
                 (click)="buttonClick.emit()"
-                class="rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                class="cursor-pointer rounded-md px-3.5 py-2.5 text-lg font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {{ buttonText }}
               </a>

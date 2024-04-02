@@ -22,7 +22,7 @@ import {
 } from '@angular/fire/firestore';
 import { Candidate } from '~models/candidate';
 import { Company } from '~models/company';
-import { AuthService } from '~auth/auth.service';
+import { AuthStore } from '~auth/state/auth.store';
 
 @Component({
   selector: 'app-candidate-list-item',
@@ -42,7 +42,7 @@ import { AuthService } from '~auth/auth.service';
 })
 export class CandidateListItemComponent {
 
-  private authSvc = inject(AuthService);
+  private authStore = inject(AuthStore);
   private firestore = inject(Firestore);
   private dialog = inject(MatDialog);
   private toast = inject(HotToastService);
@@ -69,7 +69,7 @@ export class CandidateListItemComponent {
 
     if (connectionRequest) {
       try {
-        const requestRef = collection(this.firestore, `companies/${this.authSvc.$companyID()}/requests`);
+        const requestRef = collection(this.firestore, `companies/${this.authStore.companyID()}/requests`);
         const request = await addDoc(requestRef, connectionRequest);
         this.toast.success('Connection request sent!');
       } catch (err) {

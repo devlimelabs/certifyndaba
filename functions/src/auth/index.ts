@@ -1,2 +1,1 @@
-export { addNewUser } from './add-new-user';
-export { addClaims } from './add-claims';
+export { addCustomClaims, updateLastLogin } from './auth-blocking-functions';

@@ -19,7 +19,7 @@ import {
   CertificationType
 } from 'src/app/shared/certification-number-input/certification-number-input.component';
 import { DaysAgoPipe } from 'src/app/shared/days-ago/days-ago.pipe';
-import { AuthService } from '~auth/auth.service';
+import { AuthStore } from '~auth/state/auth.store';
 
 @Component({
   selector: 'app-candidate-verification-card',
@@ -42,7 +42,7 @@ import { AuthService } from '~auth/auth.service';
 export class CandidateVerificationCardComponent {
 
   private firestore = inject(Firestore);
-  private authSvc = inject(AuthService);
+  private authStore = inject(AuthStore);
   private fb = inject(FormBuilder);
   private toast = inject(HotToastService);
 
@@ -91,7 +91,7 @@ export class CandidateVerificationCardComponent {
         certificationExpirationDate,
         rejectionReason: null,
         status: 'verified',
-        verifiedBy: this.authSvc.$user()?.uid,
+        verifiedBy: this.authStore.authUser()?.uid,
         verifiedOn: new Date().toISOString()
       });
 
@@ -121,7 +121,7 @@ export class CandidateVerificationCardComponent {
         id: this.candidate.id,
         rejectionReason: null,
         status: 'verified',
-        verifiedBy: this.authSvc.$user()?.uid,
+        verifiedBy: this.authStore.authUser()?.uid,
         verifiedOn: new Date().toISOString()
       });
 

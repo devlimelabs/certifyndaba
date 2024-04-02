@@ -1,14 +1,7 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, DestroyRef, OnInit, afterNextRender, inject, signal
-} from '@angular/core';
-import {
-  Auth, sendSignInLinkToEmail, signInWithEmailLink
-} from '@angular/fire/auth';
-import {
-  AbstractControl, FormBuilder, ReactiveFormsModule, Validators
-} from '@angular/forms';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Auth, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup } from '@angular/fire/auth';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -20,19 +13,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 import { FacebookAuthButtonComponent } from '../../components/facebook-auth-button/facebook-auth-button.component';
 import { GoogleAuthButtonComponent } from '../../components/google-auth-button/google-auth-button.component';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { LocalStorage } from 'src/app/core/local-storage';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HttpClient } from '@angular/common/http';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { filter } from 'rxjs/operators';
-import { AuthService } from '~auth/auth.service';
-import { firstValueFrom } from 'rxjs';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @UntilDestroy()
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: [ './login.component.scss' ],
+  styleUrls: ['./login.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -41,24 +27,16 @@ import { firstValueFrom } from 'rxjs';
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
-    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatProgressSpinnerModule,
     ReactiveFormsModule
-  ],
-  host: { ngSkipHydration: 'true' }, // eslint-disable-line @angular-eslint/no-host-metadata-property
-  changeDetection: ChangeDetectionStrategy.OnPush
+  ]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   private auth = inject(Auth);
-  private authSvc = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
-  private localStorage = inject(LocalStorage);
   private router = inject(Router);
   private toast = inject(HotToastService);
   private route = inject(ActivatedRoute);
@@ -66,7 +44,7 @@ export class LoginComponent implements OnInit {
   dialogRef = inject(MatDialogRef, { optional: true });
 
   emailLoginForm = this.fb.group({
-    email: [ '', [ Validators.required, Validators.email ] ],
+    email: [ '', [ Validators.required, Validators.email ]],
     rememberMe: false
   });
 
@@ -77,24 +55,20 @@ export class LoginComponent implements OnInit {
   emailMissing = false;
   errorCount = 0;
   fromEmailLink = false;
-  loadingLogin = signal(false);
   isDialog = false;
   redirect!: string | null;
 
-  constructor() {
-    afterNextRender(() => this.redirect = this.localStorage.getItem('redirect'));
-  }
-
   ngOnInit(): void {
-    this.fromEmailLink = this.route.snapshot?.queryParams?.['loginWithEmailLink'];
-    if (this.fromEmailLink) {
-      this.loadingLogin.set(true);
-    }
+    console.log('this.dialogRef', this.dialogRef);
+    this.isDialog = !!this.dialogRef;
+    this.redirect = localStorage.getItem('redirect');
     this.emailCtrl = this.emailLoginForm.get('email');
     this.rememberMeCtrl = this.emailLoginForm.get('rememberMe');
 
-    const email = this.localStorage.getItem('email');
-    const rememberEmail = this.localStorage.getItem('rememberEmail');
+    const email = localStorage.getItem('email');
+    const rememberEmail = localStorage.getItem('rememberEmail');
+
+    this.fromEmailLink = this.route.snapshot?.queryParams?.['loginWithEmailLink'];
 
     if (email) {
       this.emailLoginForm.patchValue({
@@ -109,22 +83,10 @@ export class LoginComponent implements OnInit {
       this.emailMissing = true;
       this.cdr.markForCheck();
     }
-
-
-    /* TODO: Probably dont need this any more. remove it */
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        this.redirect = params?.['redirect'];
-
-        if (this.redirect) {
-          this.localStorage.setItem('redirect', this.redirect);
-        }
-      });
   }
 
   async getEmailLink(): Promise<any> {
-    const email = this.emailCtrl?.value;
+    const email = this.emailCtrl?.value
 
     if (!email) {
       this.toast.error('Email is required for passwordless signup');
@@ -132,12 +94,12 @@ export class LoginComponent implements OnInit {
     }
 
     try {
-      this.localStorage.setItem('email', email);
+      localStorage.setItem('email', email);
 
       if (this.rememberMeCtrl?.value) {
-        this.localStorage.setItem('rememberEmail', 'true');
+        localStorage.setItem('rememberEmail', 'true');
       } else {
-        this.localStorage.removeItem('rememberEmail');
+        localStorage.removeItem('rememberEmail');
       }
 
       const actionCodeSettings = {
@@ -149,13 +111,13 @@ export class LoginComponent implements OnInit {
 
       this.emailLinkSent = true;
       this.cdr.markForCheck();
-    } catch (error: any) {
+    } catch(error: any) {
       const errorCode = error.code;
       console.debug('errorCode', errorCode);
       let errorMessage = 'There was an issue logging you in!';
 
       if (errorCode === 'auth/user-not-found') {
-        errorMessage = 'User Not Found!';
+        errorMessage = 'User Not Found!'
       }
 
       this.toast.error(errorMessage);
@@ -167,45 +129,32 @@ export class LoginComponent implements OnInit {
   async signInWithEmailLink(email?: string): Promise<any> {
     try {
       if (email && this.emailCtrl?.valid) {
-        const userCredential = await signInWithEmailLink(this.auth, email, window.location.href);
-        console.log('userCredential', userCredential);
+        await signInWithEmailLink(this.auth, email, window.location.href);
       } else {
         return false;
       }
 
       if (!this.rememberMeCtrl?.value) {
-        this.localStorage.removeItem('email');
+        localStorage.removeItem('email');
       }
 
       if (this.redirect) {
-        this.localStorage.removeItem('redirect');
+        localStorage.removeItem('redirect');
         return this.router.navigateByUrl(this.redirect);
       }
 
       if (this.isDialog) {
         return this.dialogRef?.close();
+      } else {
+        return this.router.navigate(['/']);
       }
-
-      const claims = await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims)));
-      console.log('claims', claims);
-      let redirectUrl = '/';
-
-      if (claims?.role === 'admin') {
-        redirectUrl = '/app/admin/verifications';
-      } else if (claims?.accountType === 'candidate') {
-        redirectUrl = '/app/candidate/profile';
-      } else if (claims?.accountType === 'company') {
-        redirectUrl = '/app/company/requests';
-      }
-
-      return this.router.navigateByUrl(redirectUrl);
-    } catch (error: any) {
+    } catch(error: any) {
       const errorCode = error?.code;
       console.log('error', error);
       let errorMessage = 'There was an issue logging you in!';
 
       if (errorCode === 'auth/user-not-found') {
-        errorMessage = 'User Not Found!';
+        errorMessage = 'User Not Found!'
       }
 
       this.toast.error(errorMessage);

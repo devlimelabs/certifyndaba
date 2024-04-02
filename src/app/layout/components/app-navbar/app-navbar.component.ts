@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   OnInit,
@@ -18,18 +19,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Router, RouterLink, RouterLinkActive
 } from '@angular/router';
-import orderBy from 'lodash/orderBy';
 // import { PushNotificationsService } from 'src/app/core/push-notifications/push-notifications.service';
 
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatMenuModule } from '@angular/material/menu';
-import { AuthService } from '../../../auth/auth.service';
-import {
-  collection, Firestore, getDocs
-} from '@angular/fire/firestore';
-import { map } from 'rxjs';
+import { collection, Firestore, getDocs, orderBy, query, where } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
+import { AuthStore } from '~auth/state/auth.store';
+import { AuthService } from '~auth/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-app-navbar',
@@ -52,37 +52,50 @@ import { Auth } from '@angular/fire/auth';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppNavbarComponent implements OnInit {
-  @Output() toggleSideNav = new EventEmitter();
 
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private auth = inject(Auth);
   private firestore = inject(Firestore);
 
+  @Output() toggleSideNav = new EventEmitter();
+
+  authStore = inject(AuthStore);
   authSvc = inject(AuthService);
   layoutSvc = inject(LayoutService);
 
-  isAdmin$ = this.authSvc.claims$.pipe(map(claims => claims?.role === 'admin'));
-
-  loggedIn = this.authSvc.isLoggedIn$;
-
   navLinks = signal<any[]>([]);
 
+
   async ngOnInit(): Promise<void> {
-    const appLinksRef = collection(this.firestore, 'app-nav-links');
-    const appLinksSnapshot = (await getDocs(appLinksRef));
-    let links: any[] = [];
+    this.authSvc.claims$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      switchMap(claims => {
+        console.log('this.authStore.claims()?.accountType', this.authStore.claims()?.accountType);
+        console.log('claims', claims);
+        const appLinksRef = query(
+          collection(this.firestore, 'app-nav-links'),
+          where('groups', '==', this.authStore.claims()?.accountType),
+          orderBy('order')
+        );
 
-    appLinksSnapshot.forEach(doc => {
-      links.push({
-        id: doc.id,
-        ...doc.data()
+        return getDocs(appLinksRef);
+      })
+    ).subscribe(appLinksSnapshot => {
+      let links: any[] = [];
+
+      console.log('appLinksSnapshot', appLinksSnapshot);
+      appLinksSnapshot.forEach(doc => {
+        links.push({
+          id: doc.id,
+          ...doc.data()
+        });
       });
+
+      console.log('links', links);
+      this.navLinks.set(links);
     });
-
-    links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$claims()?.accountType));
-
-    this.navLinks.set(orderBy(links, 'order'));
     // this.pushNotificationsSvc.init();
   }
 

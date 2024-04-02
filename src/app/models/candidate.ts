@@ -1,6 +1,7 @@
 export type Candidate = {
   id: string;
   about?: string;
+  accountType?: string;
   address1?: string;
   address2?: string;
   availabilityStatus?: string;

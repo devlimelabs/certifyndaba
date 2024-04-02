@@ -1,4 +1,5 @@
-<ul
+<app-requests-table [requests]="requests$ | async"></app-requests-table>
+<!-- <ul
   *ngIf="requests?.length; else noRequests"
   role="list"
   class="mt-5 pb-8 divide-y divide-gray-200 border-t border-gray-200 sm:mt-0 sm:border-t-0"
@@ -161,3 +162,5 @@
     </div>
   </div>
 </ng-template>
+
+ -->

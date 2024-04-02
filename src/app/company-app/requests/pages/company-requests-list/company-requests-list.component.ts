@@ -12,12 +12,14 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   CompanyRequestsDisplayListComponent
 } from '../../components/company-requests-display-list/company-requests-display-list.component';
+import { RequestsTableComponent } from 'src/app/requests/components/requests-table/requests-table.component';
 
 @UntilDestroy()
 @Component({
   standalone: true,
   imports: [
     CommonModule,
+    RequestsTableComponent,
     RouterModule,
     MatTabsModule,
     CompanyRequestsDisplayListComponent

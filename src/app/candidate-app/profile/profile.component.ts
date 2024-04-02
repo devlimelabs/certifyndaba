@@ -23,16 +23,17 @@ import { StateSelectorComponent } from './components/state-selector/state-select
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import startCase from 'lodash/startCase';
-import { AuthService } from '~auth/auth.service';
 import {
   Firestore, doc, updateDoc
 } from '@angular/fire/firestore';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthStore } from '~auth/state/auth.store';
+import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
 
 @Component({
   standalone: true,
   imports: [
-    // CandidateListItemComponent,
+    CandidateListItemComponent,
     CertificationNumberInputComponent,
     CommonModule,
     MatFormFieldModule,
@@ -50,7 +51,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class ProfileComponent implements OnInit {
 
-  private authSvc = inject(AuthService);
+  private authStore = inject(AuthStore);
   private firestore = inject(Firestore);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -186,7 +187,7 @@ export class ProfileComponent implements OnInit {
   userPushSettings!: any; // UserPushSettings;
 
   get user(): any {
-    return this.authSvc.$user();
+    return this.authStore.userProfile();
   }
 
   ngOnInit(): void {
@@ -196,22 +197,21 @@ export class ProfileComponent implements OnInit {
         this.profile = profile;
         this.userPushSettings = userPushSettings;
         this.profileForm.patchValue(profile);
-        /* TODO: make this form an object */
-        const activePushTopics = [];
-        const pushTopics = [
-          'requests',
-          'messages',
-          'updates'
-        ];
+        // /* TODO: make this form an object */
+        // const activePushTopics = [];
+        // const pushTopics = [
+        //   'requests',
+        //   'messages',
+        //   'updates'
+        // ];
 
-        for (let topic of pushTopics) {
-          if (userPushSettings?.[topic]) {
-            activePushTopics.push(topic);
-          }
-        }
+        // for (let topic of pushTopics) {
+        //   if (userPushSettings?.[topic]) {
+        //     activePushTopics.push(topic);
+        //   }
+        // }
 
-        this.pushNotificationsCtrl.patchValue(activePushTopics);
-
+        // this.pushNotificationsCtrl.patchValue(activePushTopics);
       });
 
     this.profileForm.get('experienceLevel')?.valueChanges
@@ -297,6 +297,7 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.profileChanged) {
+      console.log('this.profileChanged', this.profileChanged);
       const personalInfoDetected = this.checkForPersonalInfoInAbout();
 
       if (personalInfoDetected) {
@@ -309,16 +310,17 @@ export class ProfileComponent implements OnInit {
 
       try {
         const usersRef = doc(this.firestore, `users/${this.profile.id}`);
-        console.log('usersRef', usersRef);
-        this.profile = await updateDoc(usersRef, this.profileForm.value);
 
+        await updateDoc(usersRef, this.profileForm.value);
+
+        this.profile = { ...this.profileForm.value };
         this.profileChanged = false;
 
         this.cdr.markForCheck();
 
         this.toast.success('Profile updates saved!');
 
-        this.router.navigateByUrl('/app/candidate/requests');
+        this.router.navigateByUrl('/app/candidate');
       } catch (err) {
         this.toast.error('There was an error saving the profile! Please try again. If issues persist please contact support for further assistance');
       }

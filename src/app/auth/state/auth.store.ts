@@ -1,22 +1,22 @@
 import {
   patchState, signalStore, withComputed, withHooks, withState
 } from '@ngrx/signals';
-import {
-  Auth, IdTokenResult, User, authState
-} from '@angular/fire/auth';
+import { Auth, User, authState } from '@angular/fire/auth';
 import { Candidate } from '~models/candidate';
 import { CompanyUser } from '~models/company-user';
 
 import {
   DestroyRef, computed, inject
 } from '@angular/core';
-import {
-  map, switchMap, tap
-} from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
+import {
+  Firestore, doc, getDoc
+} from '@angular/fire/firestore';
 
 type AppAuthState = {
+  accountType: 'candidate' | 'company' | 'admin' | null;
   authUser: User | null;
   claims: any;
   companyID: string | null;
@@ -28,6 +28,7 @@ type AppAuthState = {
 }
 
 const initialState: AppAuthState = {
+  accountType: null,
   authUser: null,
   claims: null,
   companyID: null,
@@ -43,24 +44,45 @@ export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ authUser, claims }) => ({
-    companyID: computed(() => claims()?.companyID ?? claims()?.companyId),
-    isAdmin: computed(() => claims().role = 'admin'),
-    isCandidate: computed(() => claims().accountType = 'candidate'),
-    isCompany: computed(() => claims().accountType = 'company'),
-    isLoggedIn: computed(() => !!authUser())
+    accountType: computed(() => claims()?.accountType),
+    companyID: computed(() => claims()?.companyID ?? claims()?.companyId ?? null),
+    isAdmin: computed(() => claims()?.role === 'admin'),
+    isCandidate: computed(() => claims()?.accountType === 'candidate'),
+    isCompany: computed(() => claims()?.accountType === 'company'),
+    isLoggedIn: computed(() => !!authUser()),
+    userId: computed(() => authUser()?.uid)
   })),
   withHooks({
     onInit(store) {
       const auth = inject(Auth);
+      const firestore = inject(Firestore);
       const destroyRef = inject(DestroyRef);
+
       authState(auth)
         .pipe(
           takeUntilDestroyed(destroyRef),
           tap(authUser => patchState(store, { authUser })),
           switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
-          map((token: IdTokenResult | null) => token?.claims ?? null)
+          map((token: any) => token?.claims ?? null),
+          tap(claims => patchState(store, { claims })),
+          switchMap(claims => {
+            console.log('claims in store hook', claims);
+            let userDocPath = `users/${claims?.sub}`;
+
+            if (claims?.accountType === 'company') {
+              userDocPath = `companies/${claims?.companyId }/users/${claims?.sub}`;
+            }
+
+            const userRef = doc(firestore, userDocPath);
+
+            return getDoc(userRef);
+          }),
+          map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
         )
-        .subscribe(claims => patchState(store, { claims }));
+        .subscribe(user => patchState(store, { userProfile: user }));
     }
   })
 );

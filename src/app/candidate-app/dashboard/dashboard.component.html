@@ -3,7 +3,7 @@
     class="h-fit mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap sm:flex-nowrap items-center my-4"
   >
     <h1 class="text-2xl font-semibold leading-tight tracking-tight text-indigo-600 flex-shrink-0 py-8 pr-8">
-      Hello, {{ username$ | async }}
+      Hello, {{ authStore.userProfile()?.firstName ?? authStore.authUser()?.displayName }}
     </h1>
 
     <div class="mx-8 w-full flex justify-center">

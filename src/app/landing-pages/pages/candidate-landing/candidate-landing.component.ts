@@ -46,6 +46,6 @@ export class CandidateLandingComponent {
 
 
   async signup() {
-    this.router.navigateByUrl(`/sign-in?redirect=/app/candidate/profile`);
+    this.router.navigateByUrl(`/sign-in`);
   }
 }

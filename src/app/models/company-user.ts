@@ -1,4 +1,5 @@
 export type CompanyUser = {
+  accountType?: string;
   id: string;
   email?: string | null;
   phone?: string | null;

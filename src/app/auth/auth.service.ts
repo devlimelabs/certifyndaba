@@ -4,22 +4,27 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
-  Auth, AuthProvider, IdTokenResult, User, authState, getAdditionalUserInfo, signInWithPopup, signOut, user
+  Auth,
+  AuthProvider,
+  IdTokenResult,
+  User,
+  authState,
+  signInWithPopup,
+  signOut,
+  user
 } from '@angular/fire/auth';
 import {
   Firestore, doc, getDoc
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
-import {
-  Observable, firstValueFrom, of
-} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { UserClaims } from '~models/user-claims';
 import { LocalStorage } from '../core/local-storage';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from '~env';
+import { AuthStore } from './state/auth.store';
 
 
 @Injectable({
@@ -28,6 +33,7 @@ import { environment } from '~env';
 export class AuthService {
 
   private auth = inject(Auth);
+  private store = inject(AuthStore);
   private destroyRef = inject(DestroyRef);
   private firestore = inject(Firestore);
   private http = inject(HttpClient);
@@ -79,8 +85,6 @@ export class AuthService {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap((claims: any) => {
-          console.log('claims', claims);
-
           let userDocPath = `users/${claims?.sub}`;
 
           if (claims?.accountType === 'company') {
@@ -102,23 +106,13 @@ export class AuthService {
     this.$claims = toSignal(this.claims$, { initialValue: null });
   }
 
-  async initSignIn(provider: AuthProvider): Promise<any> {
+  async initSignIn(provider: AuthProvider, isCompany = false): Promise<any> {
     try {
       const authResult = await signInWithPopup(this.auth, provider);
+      console.log('authResult', authResult);
 
-      const additionalInfo = getAdditionalUserInfo(authResult);
       let idToken: any = await authResult.user.getIdToken();
-
-      if (additionalInfo?.isNewUser) {
-        console.log('authResult', authResult);
-
-        await firstValueFrom(this.http.post(`https://us-central1-${environment.firebase.projectId}.cloudfunctions.net/addClaims`, {
-          accountType: 'candidate',
-          idToken
-        }));
-
-        idToken = await authResult.user.getIdToken(true);
-      }
+      console.log('idToken', idToken);
 
       const redirect = this.localStorage.getItem('redirect');
       console.log('redirect', redirect);
@@ -127,9 +121,11 @@ export class AuthService {
         this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(redirect);
       }
-      console.log('idToken?.claims?.accountType', idToken?.claims?.accountType);
 
-      return this.router.navigateByUrl(`/app/company/requests`);
+      console.log('after login accountType:', this.store.accountType());
+      console.log('after login idToken', idToken );
+
+      return this.router.navigateByUrl(`/app/${this.store.accountType()}/requests`);
     } catch (err) {
       console.error('error', err);
       this.snackBar.open('There was an error logging you in!', 'ok', {

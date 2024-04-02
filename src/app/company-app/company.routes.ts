@@ -8,7 +8,6 @@ import { CompanyRequestDetailComponent } from './requests/pages/company-request-
 import {
   CompanyRequestDetailResolver
 } from './requests/pages/company-request-detail/resolve/company-request-detail.resolver';
-import { CompanyRequestsListComponent } from './requests/pages/company-requests-list/company-requests-list.component';
 import { CompanyRequestsListResolver } from './requests/pages/company-requests-list/resolve/company-requests-list.resolver';
 import { companyInfoResolver } from './candidate-search/resolve/company-info.resolver';
 import { CompanyProfileComponent } from './company-profile/company-profile/company-profile.component';
@@ -32,17 +31,10 @@ export const CompanyRoutes: Routes = [
     children: [
       {
         path: '',
-        component: CompanyRequestsListComponent,
-        children: [
-          {
-            path: ':status',
-            component: CompanyRequestsDisplayListComponent,
-            resolve: {
-              requests: CompanyRequestsListResolver
-            },
-            runGuardsAndResolvers: 'always'
-          }
-        ]
+        component: CompanyRequestsDisplayListComponent,
+        resolve: {
+          requests: CompanyRequestsListResolver
+        }
       },
       {
         path: ':status/:id',

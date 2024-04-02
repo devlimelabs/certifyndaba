@@ -10,7 +10,7 @@
           class="text-base font-semibold leading-7 text-gray-900 flex flex-row flex-nowrap items-center justify-between"
         >
           Personal Information
-          @if (profile.status === 'verified') {
+          @if (profile?.status === 'verified') {
             <small
               class="border border-green-600 bg-green-50 p-1 text-green-600 rounded-lg text-sm flex flex-row items-center"
             >
@@ -26,35 +26,39 @@
           be public. it will only be shared with companies that you choose to connect with.
         </p>
 
-        @if (profile.status === 'verified') {
-          <div class="my-2">
-            <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
-            <div class="border border-blue-600 rounded-lg w-full">
-              <!-- <app-candidate-list-item
-                [candidate]="profile"
-                [showConnect]="false"
-                class="w-full"
-              ></app-candidate-list-item> -->
+        @switch (profile?.status) {
+          @case ('verified') {
+            <div class="my-2">
+              <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
+              <div class="border border-blue-600 rounded-lg w-full">
+                <app-candidate-list-item
+                  [candidate]="profile"
+                  [showConnect]="false"
+                  class="w-full"
+                ></app-candidate-list-item>
+              </div>
             </div>
-          </div>
-        } @else if (profile.status === 'unverified') {
-          <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
-            <div class="text-lg font-semibold mt-2 mb-4">
-              Your profile is awaiting verification, and should be verified in the next 24 hours!
+          }
+          @case ('unverified') {
+            <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
+              <div class="text-lg font-semibold mt-2 mb-4">
+                Your profile is awaiting verification, and should be verified in the next 24 hours!
+              </div>
+              To ensure the best experience for our users, we manually verify the credentials of all accredited
+              therapists on CertifyndABA. In the meantime time, completely fill out your profile so you can be best
+              matched with new opportunities!
             </div>
-            To ensure the best experience for our users, we manually verify the credentials of all accredited therapists
-            on CertifyndABA. In the meantime time, completely fill out your profile so you can be best matched with new
-            opportunities!
-          </div>
-        } @else if (profile.status === 'rejected') {
-          <div class="w-full text-center bg-red-50 border border-red-600 text-red-600 rounded-md p-4 mt-4">
-            <div class="text-lg font-semibold mt-2 mb-4">
-              Your credential verification has been rejected for the following reason:
+          }
+          @case ('rejected') {
+            <div class="w-full text-center bg-red-50 border border-red-600 text-red-600 rounded-md p-4 mt-4">
+              <div class="text-lg font-semibold mt-2 mb-4">
+                Your credential verification has been rejected for the following reason:
+              </div>
+              {{ profile.rejectionReason }}
+              Please update your credential information according to the details provided. Once your credential
+              information is updated and saved, your profile will be automatically resubmitted for verification!
             </div>
-            {{ profile.rejectionReason }}
-            Please update your credential information according to the details provided. Once your credential
-            information is updated and saved, your profile will be automatically resubmitted for verification!
-          </div>
+          }
         }
 
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

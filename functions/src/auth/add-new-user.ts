@@ -1,24 +1,56 @@
-
+import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import * as functions from "firebase-functions";
+import { omit } from 'lodash';
+import { logger } from 'firebase-functions/v2';
 
+const auth = getAuth();
 const db = getFirestore();
-export const addNewUser = functions.auth.user().onCreate((user) => {
+export const addNewUser = functions.auth.user().onCreate(async (user) => {
 
-  const userRef = db.doc(`users/${user.uid}`);
-  const providerId = user.providerData?.[0]?.providerId;
+  functions.logger.log('user', JSON.stringify(user, null, 2));
 
-  functions.logger.log('user', user);
+  const claims: any = {
+    accountType: 'candidate'
+  };
 
-  let verified = true;
+  if (user?.tenantId) {
+    claims.companyID = user.tenantId;
+    claims.accountType = 'company'
 
-  if (providerId === 'password') {
-    verified = false;
+    const companyUserRef = db.doc(`companies/${user?.tenantId}/users/${user.uid}`);
+
+    return companyUserRef.set({
+      id: user.uid,
+      ...omit(user, ['metadata', 'providerData', 'customClaims', 'uid']),
+      ...claims
+    });
+  } else {
+    const userRef = db.doc(`users/${user.uid}`);
+
+    const userObj = {
+      id: user.uid,
+      ...omit(user, ['metadata', 'providerData', 'customClaims', 'uid']),
+      ...claims
+    };
+    console.log('new User data', userObj)
+    logger.log('logger - new user data', userObj)
+    const dbUser = await userRef.set(userObj);
+
+    console.log('new DB User', dbUser)
+    logger.log('logger - new DB user', dbUser)
   }
 
-  return userRef.create({
-    ...user,
-    verified,
-    accountType: 'candidate'
-  });
+  console.log('adding claims', claims)
+  logger.log('logger - adding claims', claims)
+
+  const updateClaimRes = await auth.setCustomUserClaims(user.uid, claims);
+  console.log('updateClaimRes', updateClaimRes)
+  logger.log('logger - updateClaimRes', updateClaimRes)
+
+  user = await auth.getUser(user.uid);
+  console.log('updated Auth User', user)
+  logger.log('logger - updated Auth User', user)
+
+  return user;
 });

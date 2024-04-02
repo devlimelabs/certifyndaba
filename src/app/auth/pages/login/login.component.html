@@ -1,5 +1,21 @@
-<div class="flex min-h-full h-full flex-col justify-center py-4 sm:px-6 lg:px-8 overflow-y-auto">
-  @if (!isDialog) {
+@if (loadingLogin()) {
+  <div
+    class="absolute flex flex-col flex-nowrap justify-center items-center w-full h-full top-0 left-0 bg-black/90 z-50"
+  >
+    <div class="flex flex-row flex-wrap justify-center items-center p-4">
+      <div class="text-blue-400 text-4xl font-bold text-center w-full mb-16">Logging you in from email link...</div>
+      <mat-spinner
+        color="primary"
+        diameter="100"
+      ></mat-spinner>
+    </div>
+  </div>
+}
+<div
+  id="container"
+  class="flex min-h-full h-full flex-col justify-center py-4 sm:px-6 lg:px-8 overflow-y-auto"
+>
+  <!-- @if (!isDialog) {
     <div
       class="-z-0 fixed top-0 left-0 flex flex-row justify-center items-center w-full h-full opacity-20 bg-gradient-to-r from-sky-200 to-indigo-200"
     >
@@ -25,7 +41,7 @@
         </g>
       </svg>
     </div>
-  }
+  } -->
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
     @if (emailLinkSent) {
       <div class="flex flex-row flex-wrap justify-center items-center h-56 w-full">
@@ -35,7 +51,7 @@
       </div>
     } @else {
       @if (!emailMissing) {
-        <h2 class="mt-16 mb-24 text-center text-3xl font-medium tracking-tight text-blue-800">
+        <h2 class="mt-16 mb-12 text-center text-4xl font-medium tracking-tight text-blue-800">
           @if (redirect) {
             You must be logged in to continue
           } @else {
@@ -58,7 +74,7 @@
             <div class="w-full border-t border-b-blue-800"></div>
           </div>
           <div class="relative flex justify-center text-sm">
-            <span class="bg-transparent px-2 text-black font-semibold">OR</span>
+            <span class="bg-transparent px-2 text-black text-xl font-bold">OR</span>
           </div>
         </div>
       }
@@ -130,7 +146,5 @@
         </form>
       </div>
     }
-
-    <ng-template #login></ng-template>
   </div>
 </div>
