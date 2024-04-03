@@ -146,7 +146,7 @@
             <!-- TODO: FIX HARDCODED CANDIDATE LINK -->
             <button
               mat-menu-item
-              [routerLink]="['/', 'app', authStore.claims()?.accountType, 'profile']"
+              [routerLink]="['/', 'app', authStore.accountType(), 'profile']"
             >
               Profile
             </button>

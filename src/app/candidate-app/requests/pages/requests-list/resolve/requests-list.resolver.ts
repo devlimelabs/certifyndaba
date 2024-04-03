@@ -20,10 +20,13 @@ export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRoute
   requestsSvc.setShowBackToList(false);
   requestsSvc.setShowRequestButton(false);
 
+  const companyId = authStore.companyID();
+  const userId = authStore.userId();
+
   const requestsSnapshot = await getDocs(
     query(
-      collectionGroup(inject(Firestore), `requests`),
-      where('candidateID', '==', authStore.authUser()?.uid),
+      collectionGroup(inject(Firestore), `companies/${companyId}/requests`),
+      where('candidateID', '==', userId),
       orderBy('createdAt', 'desc')
     )
   );

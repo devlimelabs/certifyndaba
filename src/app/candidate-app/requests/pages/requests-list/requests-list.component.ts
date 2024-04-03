@@ -8,7 +8,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Dictionary, groupBy } from 'lodash';
 
-import { RequestsDisplayListComponent } from '../../components/requests-display-list/requests-display-list.component';
 import { RequestsTableComponent } from 'src/app/requests/components/requests-table/requests-table.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -18,7 +17,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CommonModule,
     RouterLink,
     MatTabsModule,
-    RequestsDisplayListComponent,
     RequestsTableComponent
   ],
   templateUrl: './requests-list.component.html',
