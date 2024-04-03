@@ -29,6 +29,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthStore } from '~auth/state/auth.store';
 import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
+import { patchState } from '@ngrx/signals';
 
 @Component({
   standalone: true,
@@ -297,7 +298,6 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.profileChanged) {
-      console.log('this.profileChanged', this.profileChanged);
       const personalInfoDetected = this.checkForPersonalInfoInAbout();
 
       if (personalInfoDetected) {
@@ -314,6 +314,8 @@ export class ProfileComponent implements OnInit {
         await updateDoc(usersRef, this.profileForm.value);
 
         this.profile = { ...this.profileForm.value };
+        patchState(this.authStore, { userProfile: this.profile });
+
         this.profileChanged = false;
 
         this.cdr.markForCheck();

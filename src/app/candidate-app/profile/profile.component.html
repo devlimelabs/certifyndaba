@@ -5,6 +5,63 @@
     (ngSubmit)="submit()"
   >
     <div class="space-y-12">
+      @switch (profile?.status) {
+        @case ('verified') {
+          <div class="my-2">
+            <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
+            <div class="border border-blue-600 rounded-lg w-full">
+              <app-candidate-list-item
+                [candidate]="profile"
+                [showConnect]="false"
+                class="w-full"
+              ></app-candidate-list-item>
+            </div>
+          </div>
+        }
+        @case ('unverified') {
+          @if (profile?.experienceLevel) {
+            <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
+              <div class="text-lg font-semibold mt-2 mb-4">
+                Your profile is awaiting verification, and should be verified in the next 24 hours!
+              </div>
+              To ensure the best experience for our users, we manually verify the credentials of all accredited
+              therapists on CertifyndABA. In the meantime time, completely fill out your profile so you can be best
+              matched with new opportunities!
+            </div>
+          } @else {
+            <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
+              <div class="text-lg font-semibold mt-2 mb-4">
+                Welcome to Your Certifynd
+                <span class="text-purple-700 -ml-1.5">ABA</span>
+                Profile!
+              </div>
+              <p>
+                To ensure the best experience, Please completely fill out your profile. Fully completing you profile
+                will ensure you get more requests that align with your experience & interests.
+              </p>
+
+              <div class="flex flex-row flex-wrap mt-4 mb-2">
+                <span class="w-full text-center text-purple-700 font-bold">REMEMBER:</span>
+                <span class="text-sm text-center text-purple-700">
+                  Your personal information will NEVER be shared with any potential employer without your consent (via
+                  accepting a direct connection request)
+                </span>
+              </div>
+            </div>
+          }
+        }
+        @case ('rejected') {
+          <div class="w-full text-center bg-red-50 border border-red-600 text-red-600 rounded-md p-4 mt-4">
+            <div class="text-lg font-semibold mt-2 mb-4">
+              Your credential verification has been rejected for the following reason:
+            </div>
+            {{ profile.rejectionReason }}
+            Please update your credential information according to the details provided. Once your credential
+            information is updated and saved, your profile will be automatically resubmitted for verification!
+          </div>
+        }
+      }
+
       <div class="pb-12">
         <h2
           class="text-base font-semibold leading-7 text-gray-900 flex flex-row flex-nowrap items-center justify-between"
@@ -25,41 +82,6 @@
           <span class="font-semibold">NOT</span>
           be public. it will only be shared with companies that you choose to connect with.
         </p>
-
-        @switch (profile?.status) {
-          @case ('verified') {
-            <div class="my-2">
-              <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
-              <div class="border border-blue-600 rounded-lg w-full">
-                <app-candidate-list-item
-                  [candidate]="profile"
-                  [showConnect]="false"
-                  class="w-full"
-                ></app-candidate-list-item>
-              </div>
-            </div>
-          }
-          @case ('unverified') {
-            <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
-              <div class="text-lg font-semibold mt-2 mb-4">
-                Your profile is awaiting verification, and should be verified in the next 24 hours!
-              </div>
-              To ensure the best experience for our users, we manually verify the credentials of all accredited
-              therapists on CertifyndABA. In the meantime time, completely fill out your profile so you can be best
-              matched with new opportunities!
-            </div>
-          }
-          @case ('rejected') {
-            <div class="w-full text-center bg-red-50 border border-red-600 text-red-600 rounded-md p-4 mt-4">
-              <div class="text-lg font-semibold mt-2 mb-4">
-                Your credential verification has been rejected for the following reason:
-              </div>
-              {{ profile.rejectionReason }}
-              Please update your credential information according to the details provided. Once your credential
-              information is updated and saved, your profile will be automatically resubmitted for verification!
-            </div>
-          }
-        }
 
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="col-span-full">

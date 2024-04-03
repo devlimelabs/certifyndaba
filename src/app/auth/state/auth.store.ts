@@ -1,14 +1,18 @@
 import {
   patchState, signalStore, withComputed, withHooks, withState
 } from '@ngrx/signals';
-import { Auth, User, authState } from '@angular/fire/auth';
+import {
+  Auth, User, authState
+} from '@angular/fire/auth';
 import { Candidate } from '~models/candidate';
 import { CompanyUser } from '~models/company-user';
 
 import {
   DestroyRef, computed, inject
 } from '@angular/core';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  map, switchMap, tap
+} from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import {
@@ -66,7 +70,6 @@ export const AuthStore = signalStore(
           map((token: any) => token?.claims ?? null),
           tap(claims => patchState(store, { claims })),
           switchMap(claims => {
-            console.log('claims in store hook', claims);
             let userDocPath = `users/${claims?.sub}`;
 
             if (claims?.accountType === 'company') {

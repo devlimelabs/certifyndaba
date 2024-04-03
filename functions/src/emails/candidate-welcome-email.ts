@@ -13,10 +13,10 @@ export const candidateWelcomeEmail = onDocumentCreated(`users/{userID}`, event =
 
   const firstName = data?.firstName ?? '';
   const lastName = data?.lastName ?? '';
-  const displayName = data?.lastName ?? '';
   const email = data?.email ?? '';
+  const displayName = data?.displayName ?? email;
 
-  const name = `${firstName}${lastName}`?.length ? `${firstName} ${displayName}` : displayName;
+  const name = `${firstName}${lastName}`?.length ? `${firstName} ${lastName}` : displayName;
 
   db.collection('mail').add({
       to: [

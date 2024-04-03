@@ -61,7 +61,6 @@ export class RequestDetailComponent implements OnInit {
         const requestRef = doc(this.firestore, `requests/${this.request.id}`);
 
         const request = await updateDoc(requestRef, {
-          id: this.request.id,
           status: 'Accepted'
         });
 
@@ -88,7 +87,6 @@ export class RequestDetailComponent implements OnInit {
         const requestRef = doc(this.firestore, `requests/${this.request.id}`);
 
         const request = await updateDoc(requestRef, {
-          id: this.request.id,
           status: 'Rejected'
         });
 
