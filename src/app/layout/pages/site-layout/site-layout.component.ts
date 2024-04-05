@@ -1,13 +1,6 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
-  afterNextRender,
-  Component,
-  DestroyRef,
-  ElementRef,
-  Inject,
-  inject,
-  Renderer2,
-  ViewChild,
+  afterNextRender, Component, DestroyRef, ElementRef, inject, ViewChild
 } from '@angular/core';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -32,7 +25,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class SiteLayoutComponent {
 
-  private renderer = inject(Renderer2);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
@@ -42,9 +34,8 @@ export class SiteLayoutComponent {
   layoutSvc = inject(LayoutService);
   open = false;
 
-  constructor(@Inject(DOCUMENT) document: Document) {
+  constructor() {
     afterNextRender(() => {
-      this.renderer.setStyle(document.getElementById('st-2'), 'display', 'block');
       this.layoutSvc.navigationEnd$
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
