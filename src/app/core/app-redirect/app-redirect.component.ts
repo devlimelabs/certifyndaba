@@ -5,6 +5,7 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from '../../../app/auth/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, firstValueFrom } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -19,17 +20,18 @@ export class AppRedirectComponent implements OnInit {
   private authSvc = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  ngOnInit(): void {
-    this.authSvc.claims$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(user => {
-        console.log('user', user);
-        if (user?.role === 'admin') {
-          this.router.navigateByUrl('/app/admin/verifications');
-        } else if (user?.accountType === 'candidate') {
-          this.router.navigateByUrl('/app/candidate/profile');
-        } else if (user?.accountType === 'company') {
-          this.router.navigateByUrl('/app/company/requests');
-        }
-      });
+  async ngOnInit(): Promise<void> {
+    const user = await firstValueFrom(this.authSvc.claims$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      filter(claims => !!claims)
+    ));
+
+    if (user?.role === 'admin') {
+      this.router.navigateByUrl('/app/admin/verifications');
+    } else if (user?.accountType === 'candidate') {
+      this.router.navigateByUrl('/app/candidate/profile');
+    } else if (user?.accountType === 'company') {
+      this.router.navigateByUrl('/app/company/requests');
+    }
   }
 }
