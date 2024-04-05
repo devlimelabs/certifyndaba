@@ -10,7 +10,8 @@ import {
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { AuthStore } from '~auth/state/auth.store';
 import { AuthService } from '~auth/auth.service';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
+import isEmpty from 'lodash/isEmpty';
 
 
 export const CompanyRequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
@@ -24,11 +25,12 @@ export const CompanyRequestsListResolver: ResolveFn<any> = async (route: Activat
   requestsSvc.setShowRequestButton(false);
 
   const requests: any[] = [];
+
   try {
     let companyID = authStore.companyID();
 
     if (!companyID) {
-      companyID = await firstValueFrom(authSvc.claims$);
+      companyID = (await firstValueFrom(authSvc.claims$.pipe(filter(claims => !isEmpty(claims)))))?.companyID;
     }
 
     const requestsSnapshot = await getDocs(collection(firestore, `companies/${companyID}/requests`));

@@ -57,7 +57,7 @@
     <img
       class="h-16 w-16 rounded-full"
       height="64"
-      [src]="request.candidate?.profileImage ?? 'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidate?.id"
+      [src]="request.candidate?.profileImage ?? 'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
       alt="avatar"
     />
 
@@ -145,7 +145,7 @@
       <img
         class="h-16 w-16 rounded-full"
         height="64"
-        [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidate?.id"
+        [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
         alt="avatar"
       />
 
@@ -170,7 +170,7 @@
   <img
     class="h-16 w-16 rounded-full"
     height="64"
-    [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidate?.id"
+    [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
     alt="avatar"
   />
 

@@ -167,8 +167,7 @@ export class LoginComponent implements OnInit {
   async signInWithEmailLink(email?: string): Promise<any> {
     try {
       if (email && this.emailCtrl?.valid) {
-        const userCredential = await signInWithEmailLink(this.auth, email, window.location.href);
-        console.log('userCredential', userCredential);
+        await signInWithEmailLink(this.auth, email, window.location.href);
       } else {
         return false;
       }
@@ -187,7 +186,7 @@ export class LoginComponent implements OnInit {
       }
 
       const claims = await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims)));
-      console.log('claims', claims);
+
       let redirectUrl = '/';
 
       if (claims?.role === 'admin') {
