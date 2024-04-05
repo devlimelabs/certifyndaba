@@ -12,7 +12,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Router, RouterLink, RouterLinkActive
 } from '@angular/router';
-import orderBy from 'lodash/orderBy';
 import { AuthService } from '../../../auth/auth.service';
 
 import { LayoutService } from '../../service/layout.service';
@@ -20,9 +19,10 @@ import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { lastValueFrom, switchMap } from 'rxjs';
 import {
-  collection, Firestore, getDocs
+  collection, Firestore, getDocs, orderBy, query, where
 } from '@angular/fire/firestore';
 import { LoginComponent } from '../../../auth/pages/login/login.component';
+import { AuthStore } from '~auth/state/auth.store';
 
 @Component({
   selector: 'app-navbar',
@@ -54,6 +54,7 @@ export class NavbarComponent implements OnInit {
   private router = inject(Router);
   private firestore = inject(Firestore);
   authSvc = inject(AuthService);
+  authStore = inject(AuthStore);
   layoutSvc = inject(LayoutService);
 
   loggedIn = signal(false);
@@ -67,9 +68,16 @@ export class NavbarComponent implements OnInit {
           let linksRef;
 
           if (loggedIn) {
-            linksRef = collection(this.firestore, 'app-nav-links');
+            linksRef = query(
+              collection(this.firestore, 'app-nav-links'),
+              where('groups', 'array-contains', this.authStore.accountType()),
+              orderBy('order')
+            );
           } else {
-            linksRef = collection(this.firestore, 'nav-links');
+            linksRef = query(
+              collection(this.firestore, 'nav-links'),
+              orderBy('order')
+            );
           }
 
           return await getDocs(linksRef);
@@ -84,9 +92,7 @@ export class NavbarComponent implements OnInit {
           });
         });
 
-        links = links.filter(link => !link.groups?.length || link.groups?.includes(this.authSvc.$claims()?.accountType));
-
-        this.navLinks.set(orderBy(links, 'order'));
+        this.navLinks.set(links);
       });
   }
 

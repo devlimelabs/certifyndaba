@@ -16,6 +16,7 @@ import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../service/layout.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { switchMap } from 'rxjs/operators';
+import { AuthStore } from '~auth/state/auth.store';
 
 @UntilDestroy()
 @Component({
@@ -42,6 +43,7 @@ export class MobileNavComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   authSvc = inject(AuthService);
+  authStore = inject(AuthStore);
   layoutSvc = inject(LayoutService);
   navLinks = signal<any[]>([]);
 

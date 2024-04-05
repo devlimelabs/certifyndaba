@@ -24,7 +24,9 @@ import {
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatMenuModule } from '@angular/material/menu';
-import { collection, Firestore, getDocs, orderBy, query, where } from '@angular/fire/firestore';
+import {
+  collection, Firestore, getDocs, orderBy, query, where
+} from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { AuthStore } from '~auth/state/auth.store';
 import { AuthService } from '~auth/auth.service';
@@ -76,7 +78,7 @@ export class AppNavbarComponent implements OnInit {
         console.log('claims', claims);
         const appLinksRef = query(
           collection(this.firestore, 'app-nav-links'),
-          where('groups', '==', this.authStore.claims()?.accountType),
+          where('groups', 'array-contains', this.authStore.claims()?.accountType),
           orderBy('order')
         );
 
