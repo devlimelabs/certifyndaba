@@ -20,7 +20,7 @@ export const newRequestEmail = onDocumentCreated(`companies/{companyID}/requests
 
   const user = { id: userRef.id, ...userRef.data() };
 
-  db.collection('emails').add({
+  db.collection('mail').add({
       to: [
         {
           email: user.email,

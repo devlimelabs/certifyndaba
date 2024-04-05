@@ -22,7 +22,7 @@ export const requestRejectedEmail = onDocumentUpdated(`companies/{companyID}/req
 
     const company = { id: companyRef.id, ...companyRef.data() };
 
-    db.collection('emails').add({
+    db.collection('mail').add({
         to: [
           {
             email: company.email,
