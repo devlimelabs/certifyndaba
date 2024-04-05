@@ -26,6 +26,10 @@ export function app(): express.Express {
     maxAge: '1y'
   }));
 
+  server.get('/app/**', (req, res, next) => {
+    return res.sendFile(join(browserDistFolder, 'index.html'));
+  });
+
   // All regular routes use the Angular engine
   server.get('*', (req, res, next) => {
     const {

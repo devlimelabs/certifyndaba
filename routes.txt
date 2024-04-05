@@ -2,7 +2,6 @@
 /about
 /employers
 /faqs
-/individuals
 /legal/privacy-policy
 /legal/terms-of-service
 /resources/aba-therapy
