@@ -1,17 +1,16 @@
-<div class="flex flex-row flex-wrap h-full max-h-full overflow-hidden items-start justify-start overflow-y-auto">
-  <div
-    class="h-fit mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap sm:flex-nowrap items-center my-4"
-  >
-    <h1 class="text-2xl font-semibold leading-tight tracking-tight text-indigo-600 flex-shrink-0 py-8 pr-8">
+<div class="flex flex-col flex-nowrap h-full max-h-full overflow-hidden overflow-y-auto">
+  <div class="h-fit mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap items-center my-4">
+    <h1 class="text-2xl font-semibold leading-tight tracking-tight text-indigo-600 w-auto shrink py-8 pr-8">
       Hello {{ authStore.userProfile()?.firstName ?? authStore.authUser()?.displayName }}
     </h1>
 
-    <div class="mx-8 w-full flex justify-center">
+    <div class="mx-8 w-auto shrink flex flex-row justify-center">
       <div class="max-w-full sm:max-w-4xl rounded-md bg-blue-50 py-4 px-2">
-        <div class="flex">
-          <div class="flex-shrink-0 my-auto">
+        <div class="flex flex-row flex-wrap justify-center md:justify-start md:flex-nowrap">
+          <div class="flex-shrink-0 flex justify-center md:my-auto w-full md:w-auto">
             <svg
-              class="h-10 w-10 text-blue-400"
+              (click)="toggleWelcomeMessage()"
+              class="h-10 w-10 text-blue-400 cursor-pointer"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
@@ -23,15 +22,22 @@
               />
             </svg>
           </div>
-          <div class="ml-3 flex-1">
-            <p class="text-blue-700">
-              <span class="font-semibold text-purple-700">Thank you for joining CertifyndABA!</span>
-              We are committed to your confidentiality and protecting your time. We are onboarding individuals like
-              yourself daily and will launch to Employers in early 2024. In the meantime, we encourage you to share this
-              platform with your colleagues and utilize the community resources on the site. Help us make this a great
-              community by giving us feedback as well.
-            </p>
-          </div>
+          @if (showMessage()) {
+            <div
+              @showHideVertical
+              class="ml-3 flex-1"
+            >
+              <div class="w-full text-center md:text-start md:w-auto font-semibold text-purple-700">
+                Thank you for joining CertifyndABA!
+              </div>
+              <p class="text-blue-700">
+                We are committed to your confidentiality and protecting your time. We are onboarding individuals like
+                yourself daily and will launch to Employers in early 2024. In the meantime, we encourage you to share
+                this platform with your colleagues and utilize the community resources on the site. Help us make this a
+                great community by giving us feedback as well.
+              </p>
+            </div>
+          }
         </div>
       </div>
     </div>

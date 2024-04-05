@@ -17,7 +17,9 @@ import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { lastValueFrom, switchMap } from 'rxjs';
+import {
+  filter, firstValueFrom, lastValueFrom, switchMap
+} from 'rxjs';
 import {
   collection, Firestore, getDocs, orderBy, query, where
 } from '@angular/fire/firestore';
@@ -68,9 +70,15 @@ export class NavbarComponent implements OnInit {
           let linksRef;
 
           if (loggedIn) {
+            let accountType = this.authStore.accountType();
+
+            if (!accountType) {
+              accountType = (await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims))))?.accountType;
+            }
+
             linksRef = query(
               collection(this.firestore, 'app-nav-links'),
-              where('groups', 'array-contains', this.authStore.accountType()),
+              where('groups', 'array-contains', accountType),
               orderBy('order')
             );
           } else {

@@ -3,7 +3,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, OnInit, Output, signal
 } from '@angular/core';
 import {
-  collection, Firestore, getDocs
+  collection, Firestore, getDocs,
+  orderBy,
+  query,
+  where
 } from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -11,12 +14,13 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import orderBy from 'lodash/orderBy';
+import _orderBy from 'lodash/orderBy';
 import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../service/layout.service';
 import { MatMenuModule } from '@angular/material/menu';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { AuthStore } from '~auth/state/auth.store';
+import { firstValueFrom } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -55,9 +59,22 @@ export class MobileNavComponent implements OnInit {
           let linksRef;
 
           if (loggedIn) {
-            linksRef = collection(this.firestore, 'app-nav-links');
+            let accountType = this.authStore.accountType();
+
+            if (!accountType) {
+              accountType = (await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims))))?.accountType;
+            }
+
+            linksRef = query(
+              collection(this.firestore, 'app-nav-links'),
+              where('groups', 'array-contains', accountType),
+              orderBy('order')
+            );
           } else {
-            linksRef = collection(this.firestore, 'nav-links');
+            linksRef = query(
+              collection(this.firestore, 'nav-links'),
+              orderBy('order')
+            );
           }
 
           return await getDocs(linksRef);
@@ -72,7 +89,7 @@ export class MobileNavComponent implements OnInit {
           });
         });
 
-        this.navLinks.set(orderBy(links, 'order'));
+        this.navLinks.set(_orderBy(links, 'order'));
 
         this.cdr.markForCheck();
       });

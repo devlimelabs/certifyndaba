@@ -53,7 +53,6 @@ export const AuthStore = signalStore(
     isAdmin: computed(() => claims()?.role === 'admin'),
     isCandidate: computed(() => claims()?.accountType === 'candidate'),
     isCompany: computed(() => claims()?.accountType === 'company'),
-    isLoggedIn: computed(() => !!authUser()),
     userId: computed(() => authUser()?.uid)
   })),
   withHooks({
@@ -65,7 +64,12 @@ export const AuthStore = signalStore(
       authState(auth)
         .pipe(
           takeUntilDestroyed(destroyRef),
-          tap(authUser => patchState(store, { authUser })),
+          tap(authUser => {
+            patchState(store, {
+              authUser,
+              isLoggedIn: !!authUser
+            });
+          }),
           switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
           map((token: any) => token?.claims ?? null),
           tap(claims => patchState(store, { claims })),

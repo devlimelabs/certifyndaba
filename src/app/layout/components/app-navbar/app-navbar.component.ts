@@ -31,7 +31,7 @@ import { Auth } from '@angular/fire/auth';
 import { AuthStore } from '~auth/state/auth.store';
 import { AuthService } from '~auth/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-app-navbar',
@@ -71,14 +71,15 @@ export class AppNavbarComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-    this.authSvc.claims$.pipe(
+    this.authSvc.isLoggedIn$.pipe(
       takeUntilDestroyed(this.destroyRef),
+      filter(isLoggedIn => !!isLoggedIn),
+      switchMap(() => this.authSvc.claims$),
+      filter(claims => !!claims?.accountType),
       switchMap(claims => {
-        console.log('this.authStore.claims()?.accountType', this.authStore.claims()?.accountType);
-        console.log('claims', claims);
         const appLinksRef = query(
           collection(this.firestore, 'app-nav-links'),
-          where('groups', 'array-contains', this.authStore.claims()?.accountType),
+          where('groups', 'array-contains', claims?.accountType),
           orderBy('order')
         );
 
@@ -87,7 +88,6 @@ export class AppNavbarComponent implements OnInit {
     ).subscribe(appLinksSnapshot => {
       let links: any[] = [];
 
-      console.log('appLinksSnapshot', appLinksSnapshot);
       appLinksSnapshot.forEach(doc => {
         links.push({
           id: doc.id,
@@ -95,7 +95,6 @@ export class AppNavbarComponent implements OnInit {
         });
       });
 
-      console.log('links', links);
       this.navLinks.set(links);
     });
     // this.pushNotificationsSvc.init();

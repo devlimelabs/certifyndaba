@@ -34,7 +34,8 @@ import { STATES } from '~constants/states';
   ],
   templateUrl: './company-profile.component.html',
   styleUrl: './company-profile.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { ngSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class CompanyProfileComponent implements OnInit {
 

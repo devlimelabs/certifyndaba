@@ -13,14 +13,13 @@ export const profileResolver: ResolveFn<any> = async (route, state) => {
   const authStore = inject(AuthStore);
   const authSvc = inject(AuthService);
 
-  let userID = authStore.userId();
-  console.log('userID', userID);
+  let userId = authStore.userId();
 
-  if (!userID) {
-    userID = (await firstValueFrom(authSvc.user$.pipe(filter(user => !!user))))?.uid;
+  if (!userId) {
+    userId = (await firstValueFrom(authSvc.user$.pipe(filter(user => !!user))))?.uid;
   }
 
-  const userRef = doc(firestore, `users/${userID}`);
+  const userRef = doc(firestore, `users/${userId}`);
 
   const userSnapShot = await getDoc(userRef);
 

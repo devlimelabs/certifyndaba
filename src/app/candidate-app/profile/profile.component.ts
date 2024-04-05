@@ -48,7 +48,8 @@ import { patchState } from '@ngrx/signals';
   providers: [ TitleCasePipe ],
   templateUrl: './profile.component.html',
   styleUrls: [ './profile.component.scss' ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { ngSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class ProfileComponent implements OnInit {
 
