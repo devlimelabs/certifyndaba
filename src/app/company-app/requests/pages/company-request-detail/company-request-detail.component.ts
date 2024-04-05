@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Request } from 'src/app/models/request';
 import { CertificationNamePipe } from 'src/app/shared/certification-name/certification-name.pipe';
-import { SanitizePipe } from 'src/app/shared/sanitize.pipe';
+import { SanitizePipe } from '~shared/sanitize.pipe';
 
 @UntilDestroy()
 @Component({

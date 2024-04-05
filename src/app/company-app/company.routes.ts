@@ -1,9 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { RequestsComponent } from '../requests/pages/main/requests.component';
-import {
-  CompanyRequestsDisplayListComponent
-} from './requests/components/company-requests-display-list/company-requests-display-list.component';
 import { CompanyRequestDetailComponent } from './requests/pages/company-request-detail/company-request-detail.component';
 import {
   CompanyRequestDetailResolver
@@ -15,6 +12,7 @@ import { CandidateSearchComponent } from './candidate-search/candidate-search.co
 import { candidateSearchResolver } from './candidate-search/resolve/candidate-search.resolver';
 import { SearchService } from '../search/services/search.service';
 import { SearchState } from '../search/state/search.state';
+import { CompanyRequestsListComponent } from './requests/pages/company-requests-list/company-requests-list.component';
 
 
 export const CompanyRoutes: Routes = [
@@ -28,16 +26,19 @@ export const CompanyRoutes: Routes = [
   {
     path: 'requests',
     component: RequestsComponent,
+    resolve: {
+      requests: CompanyRequestsListResolver
+    },
     children: [
       {
         path: '',
-        component: CompanyRequestsDisplayListComponent,
+        component: CompanyRequestsListComponent,
         resolve: {
           requests: CompanyRequestsListResolver
         }
       },
       {
-        path: ':status/:id',
+        path: ':id',
         component: CompanyRequestDetailComponent,
         resolve: {
           request: CompanyRequestDetailResolver

@@ -10,8 +10,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   standalone: true,
   imports: [ CommonModule ],
   templateUrl: './app-redirect.component.html',
-  styleUrls: [ './app-redirect.component.scss' ],
-  host: { ngskingSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
+  styleUrls: [ './app-redirect.component.scss' ]
+  // host: { ngskingSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class AppRedirectComponent implements OnInit {
 

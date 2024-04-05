@@ -3,34 +3,36 @@
     <div class="my-8 flex flex-row flex-nowrap justify-between items-center">
       <div>
         <h2 class="text-xl font-medium text-indigo-600">Connection Requests</h2>
-        <small
-          *ngIf="showBackToList$ | async"
-          class="flex flex-row flex-nowrap items-center cursor-pointer hover:text-purple-700 transition-colors duration-300"
-          routerLink="{{ backToListLink$ | async }}"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-4 h-4 mr-2"
+        @if (showBackToList$ | async) {
+          <small
+            class="flex flex-row flex-nowrap items-center cursor-pointer hover:text-purple-700 transition-colors duration-300"
+            routerLink="{{ backToListLink$ | async }}"
           >
-            <path
-              fill-rule="evenodd"
-              d="M7.28 7.72a.75.75 0 010 1.06l-2.47 2.47H21a.75.75 0 010 1.5H4.81l2.47 2.47a.75.75 0 11-1.06 1.06l-3.75-3.75a.75.75 0 010-1.06l3.75-3.75a.75.75 0 011.06 0z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span class="text-sm">Back to Requests</span>
-        </small>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-4 h-4 mr-2"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.28 7.72a.75.75 0 010 1.06l-2.47 2.47H21a.75.75 0 010 1.5H4.81l2.47 2.47a.75.75 0 11-1.06 1.06l-3.75-3.75a.75.75 0 010-1.06l3.75-3.75a.75.75 0 011.06 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="text-sm">Back to Requests</span>
+          </small>
+        }
       </div>
-      <button
-        *ngIf="showRequestButton$ | async"
-        mat-raised-button
-        routerLink="/app/company/search"
-        color="primary"
-      >
-        Create New Request
-      </button>
+      @if (showRequestButton$ | async) {
+        <button
+          mat-raised-button
+          routerLink="/app/company/search"
+          color="primary"
+        >
+          Create New Request
+        </button>
+      }
     </div>
 
     <div class="h-[calc(100%-192px)] max-h-[calc(100%-192px)] overflow-y-auto pb-4">

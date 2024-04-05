@@ -43,7 +43,8 @@ import { RefinementListComponent } from '~search/components/refinement-list/refi
   ],
   templateUrl: './candidate-search.component.html',
   styleUrls: [ './candidate-search.component.scss' ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { ngSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class CandidateSearchComponent implements OnInit {
 

@@ -17,7 +17,7 @@ export const RequestDetailResolver: ResolveFn<any> = async (route: ActivatedRout
   const requestsSvc = inject(RequestsService);
 
   requestsSvc.setShowBackToList(true);
-  requestsSvc.setBackToListLink('/app/candidate/requests');
+  requestsSvc.setBackToListLink('/app/candidate');
 
   const requestRef = doc(inject(Firestore), `requests/${requestId}`);
   const requestSnapShot = await getDoc(requestRef);

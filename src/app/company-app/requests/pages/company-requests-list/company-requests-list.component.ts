@@ -1,58 +1,40 @@
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  Component, DestroyRef, inject, OnInit
+  ChangeDetectionStrategy,
+  Component, DestroyRef, inject, OnInit, signal
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import {
-  ActivatedRoute, Router, RouterModule
-} from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
-import {
-  CompanyRequestsDisplayListComponent
-} from '../../components/company-requests-display-list/company-requests-display-list.component';
 import { RequestsTableComponent } from 'src/app/requests/components/requests-table/requests-table.component';
 
-@UntilDestroy()
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     RequestsTableComponent,
     RouterModule,
-    MatTabsModule,
-    CompanyRequestsDisplayListComponent
+    MatTabsModule
   ],
   templateUrl: './company-requests-list.component.html',
-  styleUrls: [ './company-requests-list.component.scss' ]
+  styleUrls: [ './company-requests-list.component.scss' ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { ngSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class CompanyRequestsListComponent implements OnInit {
-  private destroyRef = inject(DestroyRef);
-  public route = inject(ActivatedRoute);
-  private router = inject(Router);
 
-  links = [
-    {
-      label: 'Pending',
-      link: '/app/company/requests/Pending'
-    },
-    {
-      label: 'Accepted',
-      link: '/app/company/requests/Accepted'
-    },
-    {
-      label: 'Rejected',
-      link: '/app/company/requests/Rejected'
-    }
-  ];
+  private destroyRef = inject(DestroyRef);
+  private route = inject(ActivatedRoute);
+
+  allRequests = signal<Request[]>([]);
 
   ngOnInit(): void {
-    this.route.params.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params: any) => {
-        if (!params?.status) {
-          this.router.navigate([ 'Pending' ], { relativeTo: this.route });
-        }
+    this.route.data
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ requests }) => {
+        console.log('requests', requests);
+        this.allRequests.set(requests);
       });
   }
 }

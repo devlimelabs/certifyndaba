@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { StartCasePipe } from "~shared/start-case/start-case.pipe";
 import { pick, some } from 'lodash';
 import { RouterLink } from '@angular/router';
+import { SanitizePipe } from '~shared/sanitize.pipe';
 @Component({
   selector: 'app-requests-table',
   standalone: true,
@@ -28,6 +29,7 @@ import { RouterLink } from '@angular/router';
     MatTableModule,
     MatSortModule,
     RouterLink,
+    SanitizePipe,
     StartCasePipe
   ]
 })
@@ -58,13 +60,7 @@ export class RequestsTableComponent implements OnInit, AfterViewInit {
   showFilter = signal(false);
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource([
-      ...this.requests(),
-      ...this.requests().map(req => ({
-        ...req,
-        status: 'Rejected' 
-      })) 
-    ]);
+    this.dataSource = new MatTableDataSource([ ...this.requests() ]);
 
     this.dataSource.filterPredicate = (request, query) => {
       const queries = query.split(' ');

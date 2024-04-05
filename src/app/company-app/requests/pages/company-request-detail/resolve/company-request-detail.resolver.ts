@@ -14,7 +14,7 @@ export const CompanyRequestDetailResolver: ResolveFn<any> = async (route: Activa
   const { status, id } = route.params;
 
   requestsSvc.setShowBackToList(true);
-  requestsSvc.setBackToListLink(`/app/company/requests/${status}`);
+  requestsSvc.setBackToListLink(`/app/company/requests`);
 
   const requestRef = doc(inject(Firestore), `companies/${inject(AuthService).$companyID()}/requests/${id}`);
   const requestSnapShot = await getDoc(requestRef);

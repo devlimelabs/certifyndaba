@@ -111,8 +111,7 @@ export class AuthService {
       const authResult = await signInWithPopup(this.auth, provider);
       console.log('authResult', authResult);
 
-      let idToken: any = await authResult.user.getIdToken();
-      console.log('idToken', idToken);
+      const idToken: any = await authResult.user.getIdTokenResult();
 
       const redirect = this.localStorage.getItem('redirect');
       console.log('redirect', redirect);
@@ -125,7 +124,13 @@ export class AuthService {
       console.log('after login accountType:', this.store.accountType());
       console.log('after login idToken', idToken );
 
-      return this.router.navigateByUrl(`/app/${this.store.accountType()}/requests`);
+      if (idToken?.claims?.role === 'admin') {
+        this.router.navigateByUrl('/app/admin/verifications');
+      } else if (idToken?.claims?.accountType === 'candidate') {
+        this.router.navigateByUrl('/app/candidate/profile');
+      } else if (idToken?.claims?.accountType === 'company') {
+        this.router.navigateByUrl('/app/company/requests');
+      }
     } catch (err) {
       console.error('error', err);
       this.snackBar.open('There was an error logging you in!', 'ok', {

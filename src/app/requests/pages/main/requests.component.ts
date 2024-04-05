@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, inject
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
@@ -13,7 +15,8 @@ import { RequestsService } from '../../service/requests.service';
     RouterLink,
     RouterOutlet
   ],
-  templateUrl: './requests.component.html'
+  templateUrl: './requests.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RequestsComponent {
 

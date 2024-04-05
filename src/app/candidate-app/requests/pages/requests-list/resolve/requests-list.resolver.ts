@@ -15,6 +15,7 @@ export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRoute
   inject(LayoutService).setRightPanel(true);
 
   const authStore = inject(AuthStore);
+  const firestore = inject(Firestore);
   const requestsSvc = inject(RequestsService);
 
   requestsSvc.setShowBackToList(false);
@@ -25,7 +26,7 @@ export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRoute
 
   const requestsSnapshot = await getDocs(
     query(
-      collectionGroup(inject(Firestore), `companies/${companyId}/requests`),
+      collectionGroup(firestore, `companies/${companyId}/requests`),
       where('candidateID', '==', userId),
       orderBy('createdAt', 'desc')
     )

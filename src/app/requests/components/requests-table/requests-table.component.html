@@ -4,7 +4,7 @@
   <div class="flex w-full h-full overflow-auto">
     <table
       mat-table
-      [dataSource]="requests()"
+      [dataSource]="dataSource"
       matSort
       matSortActive="createdAt"
       matSortDirection="desc"
@@ -45,7 +45,7 @@
           mat-cell
           *matCellDef="let row"
           class="font-medium cursor-pointer"
-          [innerHTML]="row?.description"
+          [innerHTML]="row?.description | appSanitize: 'html'"
         ></td>
       </ng-container>
 

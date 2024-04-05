@@ -34,7 +34,7 @@ service cloud.firestore {
     }
 
     match /app-nav-links/{document=**} {
-      allow read: if isSignedIn() // TODO: add logic for "and group matches"
+      allow read: if isSignedIn() && isInDocumentGroup() // TODO: add logic for "and group matches"
     }
 
     match /nav-links/{document=**} {
@@ -42,14 +42,12 @@ service cloud.firestore {
     }
 
     match /companies/{companyId} {
-      allow read: if true
+      allow read: if isSignedIn()
       allow write: if isCompanyUser(companyId)
 
       match /requests/{requestId} {
-        allow read: if isCompanyUser(companyId) || isRequestCandidate() || isAdmin()
-        allow create: if isCompanyUser(companyId)
-        allow update: if isCompanyUser(companyId) || isAdmin() || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])))
-        allow delete: if isAdmin()
+        allow read: if true
+        allow write: if isCompanyUser(companyId) || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])))
       }
 
       match /users/{userId} {
