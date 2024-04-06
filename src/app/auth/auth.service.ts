@@ -19,11 +19,12 @@ import {
 import { Router } from '@angular/router';
 
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { LocalStorage } from '../core/local-storage';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthStore } from './state/auth.store';
+import { patchState } from '@ngrx/signals';
 
 
 @Injectable({
@@ -43,7 +44,6 @@ export class AuthService {
   readonly isLoggedIn$ = authState(this.auth).pipe(map((aUser: User | null) => !!aUser));
 
   readonly user$ = user(this.auth);
-  readonly userProfile$: Observable<any>;
   readonly claims$: Observable<any>;
 
   private groups = signal<string[]>([]);
@@ -53,59 +53,58 @@ export class AuthService {
     this.claims$ = authState(this.auth)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
+        tap(authUser => patchState(this.store, {
+          authUser,
+          isLoggedIn: !!authUser
+        })),
         switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
-        map((token: IdTokenResult | null) => token?.claims ?? null)
+        map((token: IdTokenResult | null) => token?.claims ?? null),
+        tap(claims => patchState(this.store, { claims }))
       );
 
-    this.userProfile$ = this.claims$
+    this.claims$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        switchMap(async (claims: any) => {
-          if (claims === null) {
-            return of(null);
+        switchMap(async claims => {
+          if (!claims) {
+            return null;
           }
 
-          let userDocPath = `users/${claims?.sub}`;
-
+          let userDocPath = `/users/${claims?.sub}`;
           if (claims?.accountType === 'company') {
-            userDocPath = `companies/${claims?.companyId }/users/${claims?.sub}`;
+            userDocPath = `/companies/${claims?.companyId }/users/${claims?.sub}`;
           }
-
           const userRef = doc(this.firestore, userDocPath);
-
           const user = await getDoc(userRef);
-
           return {
             id: user.id,
             ...user.data()
           };
         })
-      );
-
+      )
+      .subscribe(user => {
+        patchState(this.store, { userProfile: user });
+      });
   }
 
   async initSignIn(provider: AuthProvider, isCompany = false): Promise<any> {
     try {
       const authResult = await signInWithPopup(this.auth, provider);
-      console.log('authResult', authResult);
 
       const idToken: any = await authResult.user.getIdTokenResult();
 
       const redirect = this.localStorage.getItem('redirect');
-      console.log('redirect', redirect);
 
       if (redirect) {
         this.localStorage.removeItem('redirect');
         return this.router.navigateByUrl(redirect);
       }
 
-      console.log('after login accountType:', this.store.accountType());
-      console.log('after login idToken', idToken );
 
       if (idToken?.claims?.role === 'admin') {
         this.router.navigateByUrl('/app/admin/verifications');
       } else if (idToken?.claims?.accountType === 'candidate') {
-        this.router.navigateByUrl('/app/candidate/profile');
+        this.router.navigateByUrl('/app/candidate');
       } else if (idToken?.claims?.accountType === 'company') {
         this.router.navigateByUrl('/app/company/requests');
       }
@@ -115,7 +114,7 @@ export class AuthService {
         duration: 3000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
-        panelClass: 'bg-red-50 text-red-600'
+        panelClass: [ 'bg-red-50', 'text-red-600' ]
       });
 
       return false;

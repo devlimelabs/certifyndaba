@@ -12,7 +12,6 @@ import { filter, firstValueFrom } from 'rxjs';
   imports: [ CommonModule ],
   templateUrl: './app-redirect.component.html',
   styleUrls: [ './app-redirect.component.scss' ]
-  // host: { ngskingSkipHydration: 'true' } // eslint-disable-line @angular-eslint/no-host-metadata-property
 })
 export class AppRedirectComponent implements OnInit {
 
@@ -29,7 +28,7 @@ export class AppRedirectComponent implements OnInit {
     if (user?.role === 'admin') {
       this.router.navigateByUrl('/app/admin/verifications');
     } else if (user?.accountType === 'candidate') {
-      this.router.navigateByUrl('/app/candidate/profile');
+      this.router.navigateByUrl('/app/candidate');
     } else if (user?.accountType === 'company') {
       this.router.navigateByUrl('/app/company/requests');
     }

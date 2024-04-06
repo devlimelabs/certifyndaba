@@ -3,18 +3,20 @@ import {
   ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot
 } from '@angular/router';
 
-import {
-  Firestore, collectionGroup, getDocs, orderBy, query, where
-} from '@angular/fire/firestore';
+import { Firestore, collectionGroup, getDocs, orderBy, query, where } from '@angular/fire/firestore';
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { LayoutService } from 'src/app/layout/service/layout.service';
 import { AuthStore } from '~auth/state/auth.store';
+import { firstValueFrom } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { AuthService } from '~auth/auth.service';
 
 export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 
   inject(LayoutService).setRightPanel(true);
 
   const authStore = inject(AuthStore);
+  const authSvc = inject(AuthService);
   const firestore = inject(Firestore);
   const requestsSvc = inject(RequestsService);
 
@@ -22,11 +24,15 @@ export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRoute
   requestsSvc.setShowRequestButton(false);
 
   const companyId = authStore.companyID();
-  const userId = authStore.userId();
+  let userId = authStore.userId();
+
+  if (!userId) {
+    userId = (await firstValueFrom(authSvc.user$.pipe(filter(user => !!user))))?.uid;
+  }
 
   const requestsSnapshot = await getDocs(
     query(
-      collectionGroup(firestore, `companies/${companyId}/requests`),
+      collectionGroup(firestore, `requests`),
       where('candidateID', '==', userId),
       orderBy('createdAt', 'desc')
     )

@@ -1,23 +1,11 @@
 import {
-  patchState, signalStore, withComputed, withHooks, withState
+  signalStore, withComputed, withState
 } from '@ngrx/signals';
-import {
-  Auth, User, authState
-} from '@angular/fire/auth';
+import { User } from '@angular/fire/auth';
 import { Candidate } from '~models/candidate';
 import { CompanyUser } from '~models/company-user';
 
-import {
-  DestroyRef, computed, inject
-} from '@angular/core';
-import {
-  map, switchMap, tap
-} from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { of } from 'rxjs';
-import {
-  Firestore, doc, getDoc
-} from '@angular/fire/firestore';
+import { computed } from '@angular/core';
 
 type AppAuthState = {
   accountType: 'candidate' | 'company' | 'admin' | null;
@@ -49,47 +37,10 @@ export const AuthStore = signalStore(
   withState(initialState),
   withComputed(({ authUser, claims }) => ({
     accountType: computed(() => claims()?.accountType),
-    companyID: computed(() => claims()?.companyID ?? claims()?.companyId ?? null),
+    companyID: computed(() => claims()?.companyID ?? null),
     isAdmin: computed(() => claims()?.role === 'admin'),
     isCandidate: computed(() => claims()?.accountType === 'candidate'),
     isCompany: computed(() => claims()?.accountType === 'company'),
     userId: computed(() => authUser()?.uid)
-  })),
-  withHooks({
-    onInit(store) {
-      const auth = inject(Auth);
-      const firestore = inject(Firestore);
-      const destroyRef = inject(DestroyRef);
-
-      authState(auth)
-        .pipe(
-          takeUntilDestroyed(destroyRef),
-          tap(authUser => {
-            patchState(store, {
-              authUser,
-              isLoggedIn: !!authUser
-            });
-          }),
-          switchMap(authUser => authUser?.getIdTokenResult() ?? of(null)),
-          map((token: any) => token?.claims ?? null),
-          tap(claims => patchState(store, { claims })),
-          switchMap(claims => {
-            let userDocPath = `users/${claims?.sub}`;
-
-            if (claims?.accountType === 'company') {
-              userDocPath = `companies/${claims?.companyId }/users/${claims?.sub}`;
-            }
-
-            const userRef = doc(firestore, userDocPath);
-
-            return getDoc(userRef);
-          }),
-          map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }))
-        )
-        .subscribe(user => patchState(store, { userProfile: user }));
-    }
-  })
+  }))
 );

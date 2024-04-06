@@ -9,16 +9,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isCompanyUser(companyId) {
-      return request.auth.token.companyID == companyId && exists(/databases/$(database)/documents/companies/$(companyId)/users/$(request.auth.uid))
+    function isCompanyUser() {
+      return request.auth.token.companyID == resource.data.companyID;
     }
 
     function isConnectedCompanyUser() {
-      return request.auth.token.companyID in resource.data.connectedCompanies
-    }
-
-    function isConnectedCandidate() {
-      return resource.data.id in get(/databases/$(database)/documents/companies/$(request.auth.token.companyID)).data.connectedCandidates
+      return request.auth.token.companyID in resource.data.connectedCompanies;
     }
 
     function isRequestCandidate() {
@@ -29,36 +25,50 @@ service cloud.firestore {
       return request.auth.token.accountType in resource.data.groups;
     }
 
-    function isUser(userId) {
+    function isUser() {
+      return request.auth.uid == resource.data.id;
+    }
+
+    function isUserDoc(userId) {
       return request.auth.uid == userId;
     }
 
-    match /app-nav-links/{document=**} {
-      allow read: if isSignedIn() && isInDocumentGroup() // TODO: add logic for "and group matches"
+    function isCandidateOrCompanyUser() {
+      return request.auth.uid == resource.data.candidateID || request.auth.token.companyID == resource.data.companyID;
     }
 
-    match /nav-links/{document=**} {
-      allow read: if true
+    match /app-nav-links/{appNavLink} {
+      allow read: if isSignedIn() && isInDocumentGroup();
     }
 
-    match /companies/{companyId} {
-      allow read: if isSignedIn()
-      allow write: if isCompanyUser(companyId)
-
-      match /requests/{requestId} {
-        allow read: if true
-        allow write: if isCompanyUser(companyId) || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])))
-      }
-
-      match /users/{userId} {
-        allow read: if isUser(userId) || isAdmin()
-        allow write: if isUser(userId) || isAdmin()
-      }
+    match /nav-links/{navLink} {
+      allow read: if true;
     }
 
     match /users/{userId} {
-      allow read: if isUser(userId) || isAdmin() || (isConnectedCompanyUser(userId) && isConnectedCandidate())
-      allow update: if isUser(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status','connectedCompanies']));
+      allow get: if isUserDoc(userId) || isAdmin() || isConnectedCompanyUser();
+      allow update: if isUserDoc(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status','connectedCompanies']));
     }
+
+    match /companies/{company} {
+      allow read: if isSignedIn();
+      allow write: if isCompanyUser();
+
+      match /requests/{requestId} {
+        allow read: if isCompanyUser() || isRequestCandidate();
+        allow write: if isCompanyUser() || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])));
+      }
+
+      match /users/{user} {
+        allow read: if isUser() || isAdmin();
+        allow write: if isUser() || isAdmin();
+      }
+    }
+
+    match /{path=**}/requests/{request} {
+      allow list: if isCandidateOrCompanyUser();
+      allow get: if isCandidateOrCompanyUser();
+    }
+
   }
 }

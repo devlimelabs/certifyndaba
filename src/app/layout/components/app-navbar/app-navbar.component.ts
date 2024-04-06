@@ -71,12 +71,10 @@ export class AppNavbarComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-    this.authSvc.isLoggedIn$.pipe(
+    this.authSvc.claims$.pipe(
       takeUntilDestroyed(this.destroyRef),
-      filter(isLoggedIn => !!isLoggedIn),
-      switchMap(() => this.authSvc.claims$),
       filter(claims => !!claims?.accountType),
-      switchMap(claims => {
+      switchMap(async claims => {
         const appLinksRef = query(
           collection(this.firestore, 'app-nav-links'),
           where('groups', 'array-contains', claims?.accountType),
