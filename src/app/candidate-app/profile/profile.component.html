@@ -1,6 +1,6 @@
 <div class="flex flex-row items-start justify-center pt-8 px-6 lg:px-0 h-full max-h-full overflow-y-auto">
   <form
-    class="relative max-w-screen-md"
+    class="relative max-w-full lg:max-w-screen-md"
     [formGroup]="profileForm"
     (ngSubmit)="submit()"
   >
@@ -9,7 +9,7 @@
         @case ('verified') {
           <div class="my-2">
             <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
-            <div class="border border-blue-600 rounded-lg w-full">
+            <div class="border border-blue-600 rounded-lg w-full overflow-x-auto">
               <app-candidate-list-item
                 [candidate]="profile"
                 [showConnect]="false"

@@ -28,7 +28,7 @@ export class AppRedirectComponent implements OnInit {
     if (user?.role === 'admin') {
       this.router.navigateByUrl('/app/admin/verifications');
     } else if (user?.accountType === 'candidate') {
-      this.router.navigateByUrl('/app/candidate');
+      this.router.navigateByUrl('/app/candidate/profile');
     } else if (user?.accountType === 'company') {
       this.router.navigateByUrl('/app/company/requests');
     }

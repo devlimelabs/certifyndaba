@@ -100,11 +100,10 @@ export class AuthService {
         return this.router.navigateByUrl(redirect);
       }
 
-
       if (idToken?.claims?.role === 'admin') {
         this.router.navigateByUrl('/app/admin/verifications');
       } else if (idToken?.claims?.accountType === 'candidate') {
-        this.router.navigateByUrl('/app/candidate');
+        this.router.navigateByUrl('/app/candidate/profile');
       } else if (idToken?.claims?.accountType === 'company') {
         this.router.navigateByUrl('/app/company/requests');
       }
