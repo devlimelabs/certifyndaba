@@ -1,10 +1,12 @@
 <!-- Hero section -->
 <app-hero
-  title="Exclusive community for ABA professionals"
-  description="We are building this community exclusively for professionals who are passionate about Applied Behavioral Analysis.  The origin of this site is focused in and around connecting professionals.  This is done through a confidential platform using your pre-established parameters ensuring that there is a proper match to your criteria.  Employers will send a connection request with all of their information (company name, locations, roles, compensation, etc.) allowing you to discern whether to accept or reject their connection request.  Ultimately, they will not know who you are until you accept their request hence leaving you in full control. "
+  title="Exclusive Community For ABA Professionals"
+  [description]="description"
   buttonText="Ready to Sign Up?"
   (buttonClick)="signup()"
 ></app-hero>
+
+<app-steps></app-steps>
 
 <!-- Feature Section -->
 <app-features

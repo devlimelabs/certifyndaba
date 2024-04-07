@@ -12,6 +12,7 @@ type AppAuthState = {
   authUser: User | null;
   claims: any;
   companyID: string | null;
+  loginMessage: string | null;
   userProfile: Candidate | CompanyUser | null;
   isAdmin: boolean;
   isCandidate: boolean;
@@ -24,6 +25,7 @@ const initialState: AppAuthState = {
   authUser: null,
   claims: null,
   companyID: null,
+  loginMessage: null,
   userProfile: null,
   isAdmin: false,
   isCandidate: false,

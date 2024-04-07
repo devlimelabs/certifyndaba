@@ -42,7 +42,7 @@
       </svg>
     </div>
   } -->
-  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+  <div class="mt-8 sm:mx-auto sm:w-full">
     @if (emailLinkSent) {
       <div class="flex flex-row flex-wrap justify-center items-center h-56 w-full">
         <h2 class="font-semibold text-2xl text-blue-800">Your login link has been emailed to:</h2>
@@ -51,27 +51,29 @@
       </div>
     } @else {
       @if (!emailMissing) {
-        <h2 class="mt-16 mb-12 text-center text-4xl font-medium tracking-tight text-blue-800">
-          @if (redirect) {
+        <h2 class="mt-8 mb-12 text-center text-4xl font-medium tracking-tight text-blue-800 px-8">
+          @if (authStore.loginMessage()) {
+            {{ authStore.loginMessage() }}
+          } @else if (redirect) {
             You must be logged in to continue
           } @else {
-            Welcome to Certifynd
-            <span class="text-purple-700 -ml-2">ABA</span>
-            <br />
-            <small class="text-purple-700 tracking-tighter text-sm font-semibold">Sign Up / Sign In</small>
+            Sign In or Sign Up
           }
         </h2>
-        <div class="mt-6 flex flex-row flex-wrap justify-center items-center">
-          <app-google-auth-button authType="Login"></app-google-auth-button>
+        <h5 class="text-purple-700 tracking-tighter text-center text-2xl font-light w-full mt-16 mb-8">
+          Sign Up / Sign In
+        </h5>
+        <div class="flex flex-row flex-wrap justify-center items-center">
+          <app-google-auth-button class="h-9"></app-google-auth-button>
           <!-- <app-facebook-auth-button authType="Login"></app-facebook-auth-button> -->
         </div>
 
         <div class="relative mt-6">
           <div
-            class="absolute inset-0 flex items-center"
+            class="absolute inset-0 flex justify-center items-center"
             aria-hidden="true"
           >
-            <div class="w-full border-t border-b-blue-800"></div>
+            <div class="w-full border-t border-b-blue-800 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"></div>
           </div>
           <div class="relative flex justify-center text-sm">
             <span class="bg-transparent px-2 text-black text-xl font-bold">OR</span>
@@ -79,71 +81,73 @@
         </div>
       }
 
-      <div class="mt-6 px-4">
-        <form [formGroup]="emailLoginForm">
-          <mat-form-field
-            class="w-full"
-            color="accent"
-          >
-            <mat-label for="email">
-              {{ emailMissing ? 'Confirm The Login ' : '' }}
-              Email address
-            </mat-label>
-            <input
-              matInput
-              id="email"
-              name="email"
-              title="name"
-              type="email"
-              autocomplete="email"
-              formControlName="email"
-              required
-            />
-            @if (emailCtrl?.hasError('email') && !emailCtrl?.hasError('required')) {
-              <mat-error>Please enter a valid email address</mat-error>
-            }
-            @if (emailCtrl?.hasError('required')) {
-              <mat-error>
-                Email is
-                <strong>required</strong>
-              </mat-error>
-            }
-          </mat-form-field>
+      <div class="flex flex-row flex-wrap justify-center mt-6 px-4 w-full">
+        <div class="w-full max-w-md">
+          <form [formGroup]="emailLoginForm">
+            <mat-form-field
+              class="w-full"
+              color="accent"
+            >
+              <mat-label for="email">
+                {{ emailMissing ? 'Confirm The Login ' : '' }}
+                Email address
+              </mat-label>
+              <input
+                matInput
+                id="email"
+                name="email"
+                title="name"
+                type="email"
+                autocomplete="email"
+                formControlName="email"
+                required
+              />
+              @if (emailCtrl?.hasError('email') && !emailCtrl?.hasError('required')) {
+                <mat-error>Please enter a valid email address</mat-error>
+              }
+              @if (emailCtrl?.hasError('required')) {
+                <mat-error>
+                  Email is
+                  <strong>required</strong>
+                </mat-error>
+              }
+            </mat-form-field>
 
-          <div class="flex items-center justify-between -mt-2 mb-4">
-            <div class="flex items-center">
-              <mat-checkbox
-                formControlName="rememberMe"
-                color="accent"
-              >
-                Remember Me
-              </mat-checkbox>
+            <div class="flex items-center justify-between -mt-2 mb-4">
+              <div class="flex items-center">
+                <mat-checkbox
+                  formControlName="rememberMe"
+                  color="accent"
+                >
+                  Remember Me
+                </mat-checkbox>
+              </div>
             </div>
-          </div>
 
-          <div>
-            @if (emailMissing) {
-              <button
-                type="submit"
-                class="w-full"
-                mat-raised-button
-                color="accent"
-                (click)="signInWithEmailLink(emailCtrl?.value)"
-              >
-                Complete Sign in
-              </button>
-            } @else {
-              <button
-                type="submit"
-                class="w-full !bg-blue-800 !text-white"
-                mat-raised-button
-                (click)="getEmailLink()"
-              >
-                Send Login Link
-              </button>
-            }
-          </div>
-        </form>
+            <div>
+              @if (emailMissing) {
+                <button
+                  type="submit"
+                  class="w-full"
+                  mat-raised-button
+                  color="accent"
+                  (click)="signInWithEmailLink(emailCtrl?.value)"
+                >
+                  Complete Sign in
+                </button>
+              } @else {
+                <button
+                  type="submit"
+                  class="w-full !bg-blue-800 !text-white"
+                  mat-raised-button
+                  (click)="getEmailLink()"
+                >
+                  Send Login Link
+                </button>
+              }
+            </div>
+          </form>
+        </div>
       </div>
     }
   </div>

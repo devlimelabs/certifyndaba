@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../app/auth/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, firstValueFrom } from 'rxjs';
+import { LocalStorage } from '../local-storage';
 
 @Component({
   standalone: true,
@@ -18,6 +19,7 @@ export class AppRedirectComponent implements OnInit {
   private router = inject(Router);
   private authSvc = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private localStorage = inject(LocalStorage);
 
   async ngOnInit(): Promise<void> {
     const user = await firstValueFrom(this.authSvc.claims$.pipe(
@@ -25,7 +27,12 @@ export class AppRedirectComponent implements OnInit {
       filter(claims => !!claims)
     ));
 
-    if (user?.role === 'admin') {
+    const redirect = this.localStorage.getItem('redirect');
+
+    if (redirect) {
+      this.localStorage.removeItem('redirect');
+      this.router.navigateByUrl(redirect);
+    } else if (user?.role === 'admin') {
       this.router.navigateByUrl('/app/admin/verifications');
     } else if (user?.accountType === 'candidate') {
       this.router.navigateByUrl('/app/candidate/profile');

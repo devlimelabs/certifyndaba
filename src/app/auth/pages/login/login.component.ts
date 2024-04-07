@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, DestroyRef, OnInit, afterNextRender, inject, signal
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal
 } from '@angular/core';
 import {
   Auth, sendSignInLinkToEmail, signInWithEmailLink
@@ -22,12 +27,12 @@ import { FacebookAuthButtonComponent } from '../../components/facebook-auth-butt
 import { GoogleAuthButtonComponent } from '../../components/google-auth-button/google-auth-button.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LocalStorage } from 'src/app/core/local-storage';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '~auth/auth.service';
 import { firstValueFrom } from 'rxjs';
+import { AuthStore } from '~auth/state/auth.store';
 
 @UntilDestroy()
 @Component({
@@ -53,6 +58,7 @@ import { firstValueFrom } from 'rxjs';
 export class LoginComponent implements OnInit {
 
   private auth = inject(Auth);
+  authStore = inject(AuthStore);
   private authSvc = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -81,15 +87,14 @@ export class LoginComponent implements OnInit {
   isDialog = false;
   redirect!: string | null;
 
-  constructor() {
-    afterNextRender(() => this.redirect = this.localStorage.getItem('redirect'));
-  }
-
   ngOnInit(): void {
+    this.redirect = this.localStorage.getItem('redirect');
     this.fromEmailLink = this.route.snapshot?.queryParams?.['loginWithEmailLink'];
+
     if (this.fromEmailLink) {
       this.loadingLogin.set(true);
     }
+
     this.emailCtrl = this.emailLoginForm.get('email');
     this.rememberMeCtrl = this.emailLoginForm.get('rememberMe');
 
@@ -109,18 +114,6 @@ export class LoginComponent implements OnInit {
       this.emailMissing = true;
       this.cdr.markForCheck();
     }
-
-
-    /* TODO: Probably dont need this any more. remove it */
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        this.redirect = params?.['redirect'];
-
-        if (this.redirect) {
-          this.localStorage.setItem('redirect', this.redirect);
-        }
-      });
   }
 
   async getEmailLink(): Promise<any> {
@@ -172,6 +165,8 @@ export class LoginComponent implements OnInit {
         return false;
       }
 
+      const claims = await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims)));
+
       if (!this.rememberMeCtrl?.value) {
         this.localStorage.removeItem('email');
       }
@@ -184,8 +179,6 @@ export class LoginComponent implements OnInit {
       if (this.isDialog) {
         return this.dialogRef?.close();
       }
-
-      const claims = await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims)));
 
       let redirectUrl = '/';
 

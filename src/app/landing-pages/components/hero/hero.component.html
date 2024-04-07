@@ -4,7 +4,10 @@
       <div class="mx-auto max-w-screen-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center lg:justify-between">
         <div class="w-full max-w-xl lg:shrink-0 xl:max-w-2xl">
           <h1 class="text-4xl font-bold tracking-tight text-indigo-600 sm:text-6xl">{{ title }}</h1>
-          <p class="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none">{{ description }}</p>
+          <p
+            class="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none"
+            [innerHTML]="description | appSanitize: 'html'"
+          ></p>
           <div class="mt-10 flex items-center justify-start gap-x-6">
             @if (buttonLink?.length) {
               <a
@@ -23,7 +26,9 @@
             }
           </div>
         </div>
-        <div class="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0 relative">
+        <div
+          class="hidden mt-14 md:flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0 relative"
+        >
           <svg
             class="absolute right-8 top-24 md:right-36 md:top-0 opacity-80"
             width="450px"

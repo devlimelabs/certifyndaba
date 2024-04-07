@@ -7,6 +7,7 @@ import { Feature, FeaturesComponent } from '../../components/features/features.c
 import { HeroComponent } from '../../components/hero/hero.component';
 import { MissonComponent } from '../../components/misson/misson.component';
 import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.component';
+import { StepsComponent } from '../../components/steps/steps.component';
 
 @Component({
   standalone: true,
@@ -17,7 +18,8 @@ import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.compone
     FeaturesComponent,
     MissonComponent,
     OurvaluesComponent,
-    RouterLink
+    RouterLink,
+    StepsComponent
   ],
   templateUrl: './candidate-landing.component.html',
   styleUrls: [ './candidate-landing.component.scss' ]
@@ -25,6 +27,8 @@ import { OurvaluesComponent } from '../../components/ourvalues/ourvalues.compone
 export class CandidateLandingComponent {
 
   private router = inject(Router);
+
+  description = 'Flip the job search narrative. In our ABA-exclusive community, let employers compete for you. Craft your profile, set your terms, and <span class="text-purple-700 font-semibold">take charge of your professional journey!</span>';
 
   features: Feature[] = [
     {

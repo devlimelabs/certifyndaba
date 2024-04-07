@@ -15,6 +15,20 @@
       "request": "launch",
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "runtimeArgs": ["--incognito"],
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:4200",
+      "sourceMaps": true,
+      "webRoot": "${workspaceFolder}",
+      "userDataDir": "${workspaceRoot}/.vscode/chrome",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceRoot}/node_modules/*",
+        "webpack:///./src/*": "${workspaceRoot}/src/*"
+      }
     }
   ]
 }
