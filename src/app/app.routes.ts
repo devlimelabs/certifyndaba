@@ -13,6 +13,10 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        loadComponent: () => import('./landing-pages/pages/candidate-landing/candidate-landing.component').then(c => c.CandidateLandingComponent)
+      },
+      {
+        path: 'about',
         loadComponent: () => import('./about/about.component').then(c => c.AboutComponent)
       },
       {
@@ -30,10 +34,6 @@ export const routes: Routes = [
       {
         path: 'faqs',
         loadComponent: () => import('./faqs/faqs.component').then(c => c.FaqsComponent)
-      },
-      {
-        path: 'individuals',
-        loadComponent: () => import('./landing-pages/pages/candidate-landing/candidate-landing.component').then(c => c.CandidateLandingComponent)
       },
       {
         path: 'legal',
