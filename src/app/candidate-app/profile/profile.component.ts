@@ -352,7 +352,7 @@ export class ProfileComponent implements OnInit {
     const about = this.profileForm.get('about');
 
     const matchingFields: any = filter(personalInfoFields, (field: string) => {
-      const fieldValue = this.profileForm?.get(field)?.value?.toLowerCase();
+      const fieldValue = `${this.profileForm?.get(field)?.value}`?.toLowerCase() ?? '';
 
       return fieldValue?.length && about?.value?.toLowerCase()?.includes(fieldValue);
     });

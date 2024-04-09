@@ -8,10 +8,17 @@ import { LayoutService } from 'src/app/layout/service/layout.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthStore } from '~auth/state/auth.store';
 import { showHideVertical } from '~animations/show-hide-vertical';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   standalone: true,
-  imports: [ CommonModule, RouterOutlet ],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterOutlet
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.component.scss' ],
   animations: [ showHideHorizontal(), showHideVertical() ]
@@ -25,7 +32,7 @@ export class DashboardComponent {
   showRightPanel = toSignal(this.layoutSvc.showRightPanel$);
   showMessage = signal(true);
 
-  toggleWelcomeMessage() {
-    this.showMessage.update(show => !show);
+  closeWelcomeMessage() {
+    this.showMessage.set(false);
   }
 }

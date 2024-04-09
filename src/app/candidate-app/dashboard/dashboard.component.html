@@ -1,46 +1,43 @@
 <div class="flex flex-col flex-nowrap h-full max-h-full overflow-hidden overflow-y-auto">
-  <div class="h-fit mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap items-center my-4">
-    <h1 class="text-2xl font-semibold leading-tight tracking-tight text-indigo-600 w-auto shrink py-8 pr-8">
+  <div class="h-fit mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-row flex-wrap items-center my-4">
+    <h1 class="text-2xl font-semibold leading-tight tracking-tight text-purple-700 w-full shrink py-8 pr-8">
       Hello {{ authStore.userProfile()?.firstName ?? authStore.authUser()?.displayName }}
     </h1>
 
-    <div class="mx-8 w-auto shrink flex flex-row justify-center">
-      <div class="max-w-full sm:max-w-4xl rounded-md bg-blue-50 py-4 px-2">
-        <div class="flex flex-row flex-wrap justify-center md:justify-start md:flex-nowrap">
-          <div class="flex-shrink-0 flex justify-center md:my-auto w-full md:w-auto">
-            <svg
-              (click)="toggleWelcomeMessage()"
-              class="h-10 w-10 text-blue-400 cursor-pointer"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          @if (showMessage()) {
-            <div
-              @showHideVertical
-              class="ml-3 flex-1"
-            >
-              <div class="w-full text-center md:text-start md:w-auto font-semibold text-purple-700">
-                Thank you for joining CertifyndABA!
-              </div>
-              <p class="text-blue-700">
-                We are committed to your confidentiality and protecting your time. We are onboarding individuals like
-                yourself daily and will launch to Employers in early 2024. In the meantime, we encourage you to share
-                this platform with your colleagues and utilize the community resources on the site. Help us make this a
-                great community by giving us feedback as well.
-              </p>
-            </div>
-          }
+    @if (showMessage()) {
+      <div
+        @showHideVertical
+        class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 w-full max-w-5xl"
+        role="alert"
+      >
+        <div class="flex flex-row flex-nowrap items-center justify-between w-full">
+          <p class="flex flex-row flex-wrap font-bold">
+            <span class="w-full md:w-auto">Welcome to CertifyndABA</span>
+            <span class="text-purple-700 w-full text-xs md:text-base md:w-auto ml-1">— We're so glad you're here!</span>
+          </p>
+          <button
+            mat-icon-button
+            class="!p-0"
+            (click)="closeWelcomeMessage()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
+        <p class="text-blue-700 text-sm">
+          As we continuously welcome new ABA professionals, like yourself, we have also begun onboarding select
+          employers to start sending requests. We encourage share CertifyndABA with your colleagues and explore the
+          resources we offer, which will continue to expand.
+        </p>
+        <p class="text-purple-700 text-sm mt-4">
+          As always, We are committed to protecting your privacy as well as your time. We aim to be transparent in our
+          approach & welcome any and all feedback from you.
+          <span class="font-semibold">
+            CertifyndABA is here to serve the you, and the ABA community as a whole, help us make this a great
+            community!
+          </span>
+        </p>
       </div>
-    </div>
+    }
   </div>
   <div class="mx-auto max-w-[1750px] px-4 sm:px-6 lg:px-8 relative pb-12">
     <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
