@@ -16,6 +16,7 @@
           <div class="col-span-full">
             <app-image-upload-field
               formControlName="logoImage"
+              path="company/{{ companyProfile.id }}/"
               label="Company Logo"
               accountType="company"
               [accountID]="companyProfile.id"

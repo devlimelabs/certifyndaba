@@ -5,9 +5,11 @@ import {
 import { ResolveFn } from '@angular/router';
 
 export const candidateVerificationsResolver: ResolveFn<any[]> = async (route, state) => {
+  const firestore = inject(Firestore);
+
   const unverifiedUsersSnapshot = await getDocs(
     query(
-      collection(inject(Firestore), `users`),
+      collection(firestore, `users`),
       where('status', '==', 'unverified'),
       orderBy('createdAt', 'desc')
     )

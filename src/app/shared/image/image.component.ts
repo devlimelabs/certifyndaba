@@ -30,7 +30,6 @@ export class ImageComponent implements OnChanges {
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['imageKey'] && this.imageKey) {
       // const imageData = await this.getImageDataUrl(this.imageKey);
-      console.log(`https://images.certifyndaba.com/fit-in/${this.width}x0/${this.imageKey}`);
       this.imageData.set(`https://images.certifyndaba.com/fit-in/${this.width}x0/${this.imageKey}`);
     } else if (changes['imageDataUrl'] && this.imageDataUrl) {
       this.imageData.set(this.imageDataUrl);

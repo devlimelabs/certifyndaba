@@ -47,15 +47,16 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow get: if isUserDoc(userId) || isAdmin() || isConnectedCompanyUser();
+      allow list: if isAdmin();
       allow update: if isUserDoc(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status','connectedCompanies']));
     }
 
-    match /companies/{company} {
+    match /companies/{companyId} {
       allow read: if isSignedIn();
-      allow write: if isCompanyUser();
+      allow write: if request.auth.token.companyID == companyId;
 
       match /requests/{requestId} {
-        allow read: if isCompanyUser() || isRequestCandidate();
+        allow read: if isCompanyUser() || isRequestCandidate() || request.auth.token.companyID == companyId;
         allow write: if isCompanyUser() || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])));
       }
 

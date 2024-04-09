@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, Input, OnInit, WritableSignal, computed, inject, signal
+  ChangeDetectionStrategy, Component, DestroyRef, Input, OnInit, WritableSignal, computed, inject, input, signal
 } from '@angular/core';
 import { ValueAccessorDirective } from '../value-accessor/value-accessor.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,6 +35,8 @@ export class ImageUploadFieldComponent implements OnInit {
   @Input({ required: true }) label!: string;
 
   fileName = computed(() => last(this.value()?.split('/')) ?? '');
+
+  path = input('');
 
   showInput = signal(true);
 

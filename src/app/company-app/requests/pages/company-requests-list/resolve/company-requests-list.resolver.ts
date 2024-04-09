@@ -5,7 +5,12 @@ import {
 
 
 import {
-  Firestore, collection, getDocs
+  Firestore,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where
 } from '@angular/fire/firestore';
 import { RequestsService } from 'src/app/requests/service/requests.service';
 import { AuthStore } from '~auth/state/auth.store';
@@ -33,7 +38,13 @@ export const CompanyRequestsListResolver: ResolveFn<any> = async (route: Activat
       companyID = (await firstValueFrom(authSvc.claims$.pipe(filter(claims => !isEmpty(claims)))))?.companyID;
     }
 
-    const requestsSnapshot = await getDocs(collection(firestore, `companies/${companyID}/requests`));
+    const requestsSnapshot = await getDocs(
+      query(
+        collection(firestore, `companies/${companyID}/requests`),
+        where('companyID', '==', companyID),
+        orderBy('createdAt', 'desc')
+      )
+    );
 
     requestsSnapshot.forEach((doc: any) => {
       requests.push({

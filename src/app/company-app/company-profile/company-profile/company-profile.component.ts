@@ -59,6 +59,7 @@ export class CompanyProfileComponent implements OnInit {
     address1: [ '', Validators.required ],
     address2: '',
     city: [ '', Validators.required ],
+    country: [ '', Validators.required ],
     email: [ '', [ Validators.email, Validators.required ] ],
     linkedInUrl: '',
     logoImage: '',
@@ -119,9 +120,7 @@ export class CompanyProfileComponent implements OnInit {
       try {
         const companyRef = doc(this.firestore, `companies/${this.companyProfile.id}`);
 
-        this.companyProfile = await updateDoc(companyRef, {
-          ...this.companyProfileForm.value
-        });
+        await updateDoc(companyRef, this.companyProfileForm.value);
 
         this.companyProfileChanged = false;
 
@@ -129,7 +128,7 @@ export class CompanyProfileComponent implements OnInit {
 
         this.toast.success('Company Profile updates saved!');
 
-        this.router.navigateByUrl('/app/candidate/requests');
+        this.router.navigateByUrl('/app/company/requests');
       } catch (err) {
         this.toast.error('There was an error saving the company profile! Please try again. If issues persist please contact support for further assistance');
       }
