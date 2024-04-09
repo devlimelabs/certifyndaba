@@ -18,7 +18,7 @@ export const candidateWelcomeEmail = onDocumentCreated(`users/{userID}`, event =
 
   const name = `${firstName}${lastName}`?.length ? `${firstName} ${lastName}` : displayName;
 
-  db.collection('mail').add({
+  db.collection('emails').add({
       to: [
         {
           email,

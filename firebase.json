@@ -14,12 +14,6 @@
   "hosting": {
     "source": ".",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "/api/addClaims",
-        "function": "addClaims"
-      }
-    ],
     "frameworksBackend": {
       "region": "us-east1"
     }
