@@ -13,6 +13,7 @@
 /resources/autism/the-evolution-of-autism-diagnosis-understanding-aspergers-syndromes-integration-into-asd
 /resources/autism/understanding-autism-comprehensive-guide
 /resources/autism/autism-unraveling-5-key-misconceptions-myths
+/resources/continuing-education/unlocking-free-ceus-for-aba-therapists-a-guide-to-professional-development
 /resources/job-search-tips
 /resources/job-search-tips/navigating-aba-certification-a-comprehensive-guide-for-aspiring-autism-therapists
 /resources/job-search-tips/exploring-options-in-aba
