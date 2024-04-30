@@ -16,7 +16,7 @@ import {
   CandidateVerificationCardComponent
 } from '../../components/candidate-verification-card/candidate-verification-card.component';
 import {
-  collection, Firestore, getDocs, orderBy, query, where
+  and, collection, Firestore, getDocs, or, query, where
 } from '@angular/fire/firestore';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -51,7 +51,7 @@ export class VerificationsComponent implements OnInit {
 
   candidates: any[] = [];
 
-  showProcess = true;
+  showProcess = false;
 
   ngOnInit() {
     this.route.data
@@ -67,8 +67,16 @@ export class VerificationsComponent implements OnInit {
     const unverifiedUsersSnapshot = await getDocs(
       query(
         collection(this.firestore, `users`),
-        where('status', '==', 'unverified'),
-        orderBy('createdAt', 'desc')
+        and(
+          where('status', '==', 'unverified'),
+          or(
+            where('certificationNumber', '>=', '1'),
+            where('certificationNumber', '>=', '0'),
+            where('certificationNumber', '>=', 'RBT'),
+            where('experienceLevel', '==', 'NONE'),
+            where('experienceLevel', '==', 'BT')
+          )
+        )
       )
     );
 

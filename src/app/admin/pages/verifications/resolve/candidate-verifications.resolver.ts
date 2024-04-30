@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import {
-  Firestore, collection, getDocs, orderBy, query, where
+  Firestore, and, collection, getDocs, or, query, where
 } from '@angular/fire/firestore';
 import { ResolveFn } from '@angular/router';
 
@@ -10,8 +10,16 @@ export const candidateVerificationsResolver: ResolveFn<any[]> = async (route, st
   const unverifiedUsersSnapshot = await getDocs(
     query(
       collection(firestore, `users`),
-      where('status', '==', 'unverified'),
-      orderBy('createdAt', 'desc')
+      and(
+        where('status', '==', 'unverified'),
+        or(
+          where('certificationNumber', '>=', '1'),
+          where('certificationNumber', '>=', '0'),
+          where('certificationNumber', '>=', 'RBT'),
+          where('experienceLevel', '==', 'NONE'),
+          where('experienceLevel', '==', 'BT')
+        )
+      )
     )
   );
 

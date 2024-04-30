@@ -17,12 +17,8 @@ import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../service/layout.service';
 import { NavMenuLinkComponent } from '../nav-menu-link/nav-menu-link.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import {
-  filter, firstValueFrom, lastValueFrom, switchMap
-} from 'rxjs';
-import {
-  collection, Firestore, getDocs, orderBy, query, where
-} from '@angular/fire/firestore';
+import { lastValueFrom } from 'rxjs';
+import { collection, Firestore, getDocs, orderBy, query } from '@angular/fire/firestore';
 import { LoginComponent } from '../../../auth/pages/login/login.component';
 import { AuthStore } from '~auth/state/auth.store';
 
@@ -63,45 +59,25 @@ export class NavbarComponent implements OnInit {
 
   navLinks = signal<any[]>([]);
 
-  ngOnInit(): void {
-    this.authSvc.isLoggedIn$
-      .pipe(
-        switchMap(async loggedIn => {
-          let linksRef;
+  async ngOnInit(): Promise<void> {
 
-          if (loggedIn) {
-            let accountType = this.authStore.accountType();
+    const linksRef = query(
+      collection(this.firestore, 'nav-links'),
+      orderBy('order')
+    );
 
-            if (!accountType) {
-              accountType = (await firstValueFrom(this.authSvc.claims$.pipe(filter(claims => !!claims))))?.accountType;
-            }
+    const linksSnapshot = await getDocs(linksRef);
 
-            linksRef = query(
-              collection(this.firestore, 'app-nav-links'),
-              where('groups', 'array-contains', accountType),
-              orderBy('order')
-            );
-          } else {
-            linksRef = query(
-              collection(this.firestore, 'nav-links'),
-              orderBy('order')
-            );
-          }
+    let links: any[] = [];
 
-          return await getDocs(linksRef);
-        })
-      ).subscribe(linksSnapshot => {
-        let links: any[] = [];
-
-        linksSnapshot.forEach(doc => {
-          links.push({
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-
-        this.navLinks.set(links);
+    linksSnapshot.forEach(doc => {
+      links.push({
+        id: doc.id,
+        ...doc.data()
       });
+    });
+
+    this.navLinks.set(links);
   }
 
   async signIn(): Promise<any> {

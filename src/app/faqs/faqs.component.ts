@@ -39,7 +39,7 @@ export class FaqsComponent {
     },
     {
       question: "How do I refer other ABA colleagues to this community?",
-      answer: "Use the share buttons on the left hand side to send on a specific platform. Or send them the URL directly."
+      answer: "Send them the URL directly or share it on social media. We are working on a referral program to reward you for your referrals in the future."
     },
     {
       question: "How can we make your user experience better?",
@@ -66,11 +66,11 @@ export class FaqsComponent {
     },
     {
       question: "What if there is no response to my notification request?",
-      answer: "We will leave the request open for one week and then close the request and issue you a credit for your connection request."
+      answer: "Ensure you have completed all the material in your employer profile and focus on the positives of your organization by listing all the benefits (compensation, health, dental, PTO).  Focus on why your best employees work there today and ensure it comes through in your employer profile.  Double check your digital reviews (Glassdoor, Google, etc.) to ensure you know what people are saying about your organization."
     },
     {
       question: "I’m a hiring authority for my employer but I also want to be aware of opportunities – how do I do this?",
-      answer: " Sign up for by logging in as an Individual (free)."
+      answer: " Sign up by logging in as an Individual (free)."
     },
     {
       question: "How can we make your user experience better?",

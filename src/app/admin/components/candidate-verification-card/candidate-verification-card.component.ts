@@ -85,6 +85,7 @@ export class CandidateVerificationCardComponent {
 
     try {
       const usersRef = doc(this.firestore, `users/${this.candidate.id}`);
+
       const user = await updateDoc(usersRef, {
         id: this.candidate.id,
         originalCertificationDate,
@@ -117,6 +118,7 @@ export class CandidateVerificationCardComponent {
 
     try {
       const usersRef = doc(this.firestore, `users/${this.candidate.id}`);
+
       const user = await updateDoc(usersRef, {
         id: this.candidate.id,
         rejectionReason: null,

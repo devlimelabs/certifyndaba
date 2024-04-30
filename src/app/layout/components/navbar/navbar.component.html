@@ -53,7 +53,7 @@
       @if (authStore.isLoggedIn()) {
         <img
           class="h-10 w-10 rounded-full cursor-pointer"
-          [routerLink]="['/app/candidate/profile']"
+          [routerLink]="['/app']"
           [matTooltip]="authStore.userProfile()?.email ?? ''"
           height="40"
           [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + authStore.userId()"

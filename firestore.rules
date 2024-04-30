@@ -48,7 +48,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if isUserDoc(userId) || isAdmin() || isConnectedCompanyUser();
       allow list: if isAdmin();
-      allow update: if isUserDoc(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status','connectedCompanies']));
+      allow update: if isAdmin() || isUserDoc(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status','connectedCompanies']));
     }
 
     match /companies/{companyId} {
