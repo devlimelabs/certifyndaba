@@ -40,6 +40,7 @@ export const addCustomClaims = beforeUserCreated(async (event): Promise<any> => 
 
       const userProfile = await userRef.set({
         email: user.email,
+        createdAt: new Date().getTime(),
         phone: user.phoneNumber,
         displayName: user?.displayName ?? user.email,
         profileImage: user.photoURL,
