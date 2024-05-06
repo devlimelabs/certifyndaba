@@ -11,16 +11,13 @@ export const newRequestEmail = onDocumentCreated(`companies/{companyID}/requests
 
   logger.log('event.data.data()', data);
 
-  const title = data?.title ?? '';
-  const salary = data?.salary ?? '';
-  const city = data?.city ?? '';
-  const state = data?.state ?? '';
-
   const userRef: any = await db.collection('users').doc(data?.candidateID).get();
-
   const user = { id: userRef.id, ...userRef.data() };
 
-  db.collection('emails').add({
+  const companyRef: any = await db.collection('companies').doc(data?.companyID).get();
+  const company = { id: companyRef.id, ...companyRef.data() };
+
+  await db.collection('emails').add({
       to: [
         {
           email: user.email,
@@ -28,7 +25,18 @@ export const newRequestEmail = onDocumentCreated(`companies/{companyID}/requests
         }
       ],
       subject: `You have a new request on CertifyndABA!`,
-      html: `<h1>You have a new request from a company on CertifyndABA!</h1><br/><p>${title} ${salary} - ${city}, ${state}\n\nTo view the details & respond to this request go to <a href="https://certifyndaba.com/app/candidate/requests/${event?.params?.requestID}">Your Dashboard</a></p>`,
-      text: `You have a new request from a company on CertifyndABA!\n\n${title} ${salary} - ${city}, ${state}\n\nTo view the details & respond to this request go to https://certifyndaba.com/app/candidate/requests/${event?.params?.requestID}`
+      template_id: '3zxk54vrw3pgjy6v',
+      personalization: [
+        {
+          email: user.email,
+          data: {
+            name: user?.firstName ?? user?.displayName,
+            company,
+            request: data
+          }
+        }
+      ]
   });
+
+  logger.info(`New Request Email sent to ${user.email}, from ${company.name}`);
 });

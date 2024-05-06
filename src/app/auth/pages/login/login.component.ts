@@ -5,11 +5,12 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal
 } from '@angular/core';
 import {
-  Auth, sendSignInLinkToEmail, signInWithEmailLink
+  Auth, linkWithCredential, sendSignInLinkToEmail, signInWithEmailLink
 } from '@angular/fire/auth';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators
@@ -87,6 +88,14 @@ export class LoginComponent implements OnInit {
   isDialog = false;
   redirect!: string | null;
 
+  authType = computed(() => this.authStore.authAccountLink() ? 'Link' : 'Login');
+
+  isFacebookLink = computed(() => this.authStore.providerToLink()?.providerId === 'facebook.com');
+
+  isGoogleLink = computed(() => this.authStore.providerToLink()?.providerId === 'google.com');
+
+  isEmailLink = computed(() => this.authStore.providerToLink()?.providerId === 'email');
+
   ngOnInit(): void {
     this.redirect = this.localStorage.getItem('redirect');
     this.fromEmailLink = this.route.snapshot?.queryParams?.['loginWithEmailLink'];
@@ -160,7 +169,13 @@ export class LoginComponent implements OnInit {
   async signInWithEmailLink(email?: string): Promise<any> {
     try {
       if (email && this.emailCtrl?.valid) {
-        await signInWithEmailLink(this.auth, email, window.location.href);
+        const authResult = await signInWithEmailLink(this.auth, email, window.location.href);
+
+        if (this.authStore.authAccountLink()) {
+          await linkWithCredential(authResult.user, this.authStore.credentialToLink());
+          this.toast.success('Account linked successfully!');
+          this.authSvc.cancelAccountLinking();
+        }
       } else {
         return false;
       }

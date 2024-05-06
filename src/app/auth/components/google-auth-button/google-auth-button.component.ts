@@ -35,7 +35,7 @@ export class GoogleAuthButtonComponent {
   private sanitizer = inject(DomSanitizer);
   private snackBar = inject(MatSnackBar);
 
-  @Input() authType: 'Login' | 'Sign Up' = 'Login';
+  @Input() authType: string = 'Login';
 
   @Input() isDialog = false;
 

@@ -1,7 +1,7 @@
 import {
   signalStore, withComputed, withState
 } from '@ngrx/signals';
-import { User } from '@angular/fire/auth';
+import { AuthProvider, User } from '@angular/fire/auth';
 import { Candidate } from '~models/candidate';
 import { CompanyUser } from '~models/company-user';
 
@@ -9,10 +9,14 @@ import { computed } from '@angular/core';
 
 type AppAuthState = {
   accountType: 'candidate' | 'company' | 'admin' | null;
+  authAccountLink: boolean;
   authUser: User | null;
   claims: any;
   companyID: string | null;
+  credentialToLink: any;
+  emailToLink: string | null;
   loginMessage: string | null;
+  providerToLink: AuthProvider | null;
   userProfile: Candidate | CompanyUser | null;
   isAdmin: boolean;
   isCandidate: boolean;
@@ -22,10 +26,14 @@ type AppAuthState = {
 
 const initialState: AppAuthState = {
   accountType: null,
+  authAccountLink: false,
+  credentialToLink: null,
   authUser: null,
   claims: null,
   companyID: null,
+  emailToLink: null,
   loginMessage: null,
+  providerToLink: null,
   userProfile: null,
   isAdmin: false,
   isCandidate: false,

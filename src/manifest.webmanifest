@@ -1,6 +1,7 @@
 {
   "name": "CertifyndABA",
   "short_name": "CertifyndABA",
+  "version": "1.0.0",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

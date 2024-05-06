@@ -1,6 +1,4 @@
-import {
-  ApplicationConfig, importProvidersFrom, isDevMode
-} from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -48,7 +46,7 @@ export const appConfig: ApplicationConfig = {
     // }
 
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: true,
       registrationStrategy: 'registerWhenStable:30000'
     })
   ]

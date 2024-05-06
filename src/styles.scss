@@ -1,4 +1,7 @@
 @use 'node_modules/@ngneat/hot-toast/src/styles/styles.scss';
+@use '@angular/material' as mat;
+@use '@angular/material-experimental' as matx;
+
 
 @tailwind base;
 @tailwind components;
@@ -7,6 +10,40 @@
 @import 'node_modules/tippy.js/dist/tippy.css';
 @import 'node_modules/tippy.js/themes/light.css';
 @import 'node_modules/tippy.js/animations/scale.css';
+
+$light-theme: matx.define-theme((
+  color: (
+    theme-type: light,
+    primary: matx.$m3-azure-palette,
+    tertiary: matx.$m3-violet-palette
+  ),
+  density: (
+    scale: -1
+  )
+));
+
+// $dark-theme: matx.define-theme((
+//   color: (
+//     theme-type: dark,
+//     primary: matx.$m3-cyan-palette,
+//     tertiary: matx.$m3-rose-palette
+//   ),
+//   typography: (
+//     brand-family: 'Comic Sans',
+//     bold-weight: 900
+//   ),
+//   density: (
+//     scale: -1
+//   )
+// ));
+
+// .dark-theme {
+//   @include mat.all-component-themes($dark-theme);
+// }
+
+.light-theme {
+  @include mat.all-component-themes($light-theme);
+}
 
 body, html {
   height: 100%;

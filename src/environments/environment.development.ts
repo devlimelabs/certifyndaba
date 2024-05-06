@@ -4,7 +4,7 @@ export const environment = {
   butterCMSKey: "eb9cdf117f079d57a1626d86e31755816f20362b",
   firebase: {
     apiKey: "AIzaSyARZGtoxOTsTqC6ROWHiWl7WpM65cejkBQ",
-    authDomain: "certifyndaba.firebaseapp.com",
+    authDomain: "certifyndaba.com",
     projectId: "certifyndaba",
     storageBucket: "certifyndaba.appspot.com",
     messagingSenderId: "706271314549",

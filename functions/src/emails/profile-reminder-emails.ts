@@ -4,7 +4,7 @@ import { logger } from 'firebase-functions';
 import * as admin from 'firebase-admin';
 // Run once a day at midnight, to process profile emails
 // Manually run the task here https://console.cloud.google.com/cloudscheduler
-exports.profileReminders = onSchedule("every day 23:00", async (event) => {
+export const profileReminderEmails = onSchedule("every day 23:15", async (event) => {
   const db = admin.firestore();
 
   const userProfilesSnapshot = await db.collection('users').where('status', '==', 'unverified').get();
@@ -44,7 +44,7 @@ exports.profileReminders = onSchedule("every day 23:00", async (event) => {
         // /* TODO: Send Deactivated email */
 
       } else if (daysSince >= 24 && !userProfile?.profileEmails?.['24d']) {
-        updateData = { profileEmails: { '24d': true } };
+        updateData = { profileEmails: { '24d': true, '10d': true, '3d': true, '1d': true } };
 
         emailData = {
           ...emailData,
@@ -53,7 +53,7 @@ exports.profileReminders = onSchedule("every day 23:00", async (event) => {
         };
 
       } else if (daysSince >= 10 && !userProfile?.profileEmails?.['10d']) {
-        updateData = { profileEmails: { '10d': true } };
+        updateData = { profileEmails: { '10d': true, '3d': true, '1d': true } };
 
         emailData = {
           ...emailData,
@@ -62,7 +62,7 @@ exports.profileReminders = onSchedule("every day 23:00", async (event) => {
         };
 
       } else if (daysSince >= 3 && !userProfile?.profileEmails?.['3d']) {
-        updateData = { profileEmails: { '3d': true } };
+        updateData = { profileEmails: { '3d': true, '1d': true } };
 
         emailData = {
           ...emailData,

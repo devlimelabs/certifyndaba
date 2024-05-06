@@ -5,10 +5,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Auth,
-  AuthProvider,
-  IdTokenResult,
+  AuthProvider, IdTokenResult,
   User,
+  UserCredential,
   authState,
+  linkWithCredential,
   signInWithPopup,
   signOut,
   user
@@ -18,13 +19,17 @@ import {
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
-import { Observable, of } from 'rxjs';
+import {
+  Observable, of
+} from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/operators';
 import { LocalStorage } from '../core/local-storage';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthStore } from './state/auth.store';
 import { patchState } from '@ngrx/signals';
+import { MatDialog } from '@angular/material/dialog';
+import { HotToastService } from '@ngneat/hot-toast';
 
 
 @Injectable({
@@ -38,8 +43,10 @@ export class AuthService {
   private firestore = inject(Firestore);
   private http = inject(HttpClient);
   private localStorage = inject(LocalStorage);
+  private dialog = inject(MatDialog);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private toast = inject(HotToastService);
 
   readonly isLoggedIn$ = authState(this.auth).pipe(map((aUser: User | null) => !!aUser));
 
@@ -89,35 +96,73 @@ export class AuthService {
 
   async initSignIn(provider: AuthProvider, isCompany = false): Promise<any> {
     try {
-      const authResult = await signInWithPopup(this.auth, provider);
+      let authResult = await signInWithPopup(this.auth, provider);
 
-      const idToken: any = await authResult.user.getIdTokenResult();
-
-      const redirect = this.localStorage.getItem('redirect');
-
-      if (redirect) {
-        this.localStorage.removeItem('redirect');
-        return this.router.navigateByUrl(redirect);
+      if (this.store.authAccountLink() && this.store.credentialToLink()) {
+        await linkWithCredential(authResult.user, this.store.credentialToLink());
+        this.toast.success('Account linked successfully!');
+        this.cancelAccountLinking();
       }
 
-      if (idToken?.claims?.role === 'admin') {
-        this.router.navigateByUrl('/app/admin/verifications');
-      } else if (idToken?.claims?.accountType === 'candidate') {
-        this.router.navigateByUrl('/app/candidate/profile');
-      } else if (idToken?.claims?.accountType === 'company') {
-        this.router.navigateByUrl('/app/company/requests');
-      }
-    } catch (err) {
-      console.error('error', err);
-      this.snackBar.open('There was an error logging you in!', 'ok', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-        panelClass: [ 'bg-red-50', 'text-red-600' ]
-      });
+      this.redirectToApp(authResult);
 
-      return false;
+    } catch (err: any) {
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        console.log('err', err);
+        console.log('err', JSON.stringify(err, null, 2));
+        console.table(err);
+        patchState(this.store, {
+          authAccountLink: true,
+          credentialToLink: err.customData?._tokenResponse, // The pending Facebook credential.
+          providerToLink: provider,
+          emailToLink: err.customData.email, // The provider account's email address.
+          loginMessage: `Email Already Exists!`
+        });
+
+        return;
+      } else {
+        console.error('error', err);
+        this.snackBar.open('There was an error logging you in!', 'ok', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: [ 'bg-red-50', 'text-red-600' ]
+        });
+
+        return false;
+      }
     }
+  }
+
+
+
+  async redirectToApp(authResult: UserCredential): Promise<any> {
+    const idToken: any = await authResult.user.getIdTokenResult();
+
+    const redirect = this.localStorage.getItem('redirect');
+
+    if (redirect) {
+      this.localStorage.removeItem('redirect');
+      return this.router.navigateByUrl(redirect);
+    }
+
+    if (idToken?.claims?.role === 'admin') {
+      this.router.navigateByUrl('/app/admin/verifications');
+    } else if (idToken?.claims?.accountType === 'candidate') {
+      this.router.navigateByUrl('/app/candidate/profile');
+    } else if (idToken?.claims?.accountType === 'company') {
+      this.router.navigateByUrl('/app/company/requests');
+    }
+  }
+
+  async cancelAccountLinking(): Promise<void> {
+    patchState(this.store, {
+      authAccountLink: false,
+      credentialToLink: null,
+      providerToLink: null,
+      emailToLink: null,
+      loginMessage: null
+    });
   }
 
   async signOut(): Promise<void> {

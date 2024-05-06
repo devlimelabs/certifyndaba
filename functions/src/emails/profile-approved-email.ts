@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 
 const db = admin.firestore();
 
-export const profileRejectedEmail = onDocumentUpdated(`users/{userID}`, async event => {
+export const profileApprovedEmail = onDocumentUpdated(`users/{userID}`, async event => {
   logger.log('event', event);
 
   const before = event?.data?.before.data();
@@ -17,9 +17,8 @@ export const profileRejectedEmail = onDocumentUpdated(`users/{userID}`, async ev
   const newStatus = after?.status;
   const email = after?.email;
   const name = `${after?.firstName} ${after?.lastName}`;
-  const reason = after?.rejectionReason;
 
-  if (oldStatus !== 'rejected' && newStatus === 'rejected') {
+  if (oldStatus !== 'verified' && newStatus === 'verified') {
     db.collection('emails').add({
         to: [
           {
@@ -27,17 +26,16 @@ export const profileRejectedEmail = onDocumentUpdated(`users/{userID}`, async ev
             name
           }
         ],
-        subject: `Your Profile Was Rejected on CertifyndABA!`,
+        subject: `Your Profile Was Approved on CertifyndABA!`,
+        template_id: 'pxkjn41jn504z781',
         personalization: [
           {
             email,
             data: {
-              name,
-              reason
+              name
             }
           }
-        ],
-        template_id: 'jy7zpl9m9w3g5vx6'
+        ]
     });
   }
 
