@@ -169,6 +169,7 @@ export class LoginComponent implements OnInit {
   async signInWithEmailLink(email?: string): Promise<any> {
     try {
       if (email && this.emailCtrl?.valid) {
+        this.auth.config.authDomain = 'https://certifyndaba.com';
         const authResult = await signInWithEmailLink(this.auth, email, window.location.href);
 
         if (this.authStore.authAccountLink()) {

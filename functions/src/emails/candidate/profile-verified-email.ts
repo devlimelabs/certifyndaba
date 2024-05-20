@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 
 const db = admin.firestore();
 
-export const profileApprovedEmail = onDocumentUpdated(`users/{userID}`, async event => {
+export const profileVerifiedEmail = onDocumentUpdated(`users/{userID}`, async event => {
   logger.log('event', event);
 
   const before = event?.data?.before.data();
@@ -38,6 +38,5 @@ export const profileApprovedEmail = onDocumentUpdated(`users/{userID}`, async ev
         ]
     });
   }
-
 });
 

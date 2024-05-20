@@ -11,7 +11,7 @@ export const trackRequestCount = onDocumentCreated(`companies/{companyId}/reques
   const request = snapshot?.data();
   const companyId = event?.params?.companyId
 
-  logger.log(`Removing 1 request from ${companyId}, for ${request?.title} to candidate ${request?.candidateID}`);
+  logger.info(`Removing 1 request from ${companyId}, for ${request?.title} to candidate ${request?.candidateID}`);
 
   const companyRef = db.doc(`companies/${companyId}`);
 
