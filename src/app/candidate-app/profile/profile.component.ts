@@ -1,6 +1,11 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit
 } from '@angular/core';
 import {
   FormControl, ReactiveFormsModule, UntypedFormBuilder, Validators
@@ -30,6 +35,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthStore } from '~auth/state/auth.store';
 import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
 import { patchState } from '@ngrx/signals';
+import { MatSelectModule } from '@angular/material/select';
+import { InputComponent } from 'src/app/forms/input/input.component';
+import { InputConfig, inputConfig } from 'src/app/forms/forms';
+import { CANDIDATE_PROFILE_INPUT_CONFIGS } from './candidate-profile-input-configs';
+import { LocationSearchComponent } from 'src/app/forms/location-search/location-search.component';
 
 @Component({
   standalone: true,
@@ -37,9 +47,12 @@ import { patchState } from '@ngrx/signals';
     CandidateListItemComponent,
     CertificationNumberInputComponent,
     CommonModule,
+    InputComponent,
+    LocationSearchComponent,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
     MatSliderModule,
     MultiCheckboxComponent,
     ReactiveFormsModule,
@@ -63,70 +76,7 @@ export class ProfileComponent implements OnInit {
   private titleCase = inject(TitleCasePipe);
   private toast = inject(HotToastService);
 
-  readonly clientPopulations = [
-    {
-      label: 'Children',
-      value: 'Children'
-    },
-    {
-      label: 'Adolescents',
-      value: 'Adolescents'
-    },
-    {
-      label: 'Adults',
-      value: 'Adults'
-    },
-    {
-      label: 'Elderly',
-      value: 'Elderly'
-    }
-  ];
-
-  readonly employmentTypes = [
-    {
-      label: 'Full-Time',
-      value: 'full-time'
-    },
-    {
-      label: 'Part-Time',
-      value: 'part-time'
-    },
-    {
-      label: 'Contract',
-      value: 'contract'
-    },
-    {
-      label: 'Internship',
-      value: 'internship'
-    },
-    {
-      label: 'Temporary',
-      value: 'temporary'
-    }
-  ];
-
-  readonly environments = [
-    {
-      label: 'Clinic',
-      value: 'clinic'
-    },
-    {
-      label: 'Home',
-      value: 'home'
-    },
-    {
-      label: 'School',
-      value: 'school'
-    },
-    {
-      label: 'Residence / Group Home',
-      value: 'residence'
-    },
-    {
-      label: 'Other',
-      value: 'other'
-    }
-  ];
+  readonly inputConfigs: InputConfig[] = map(CANDIDATE_PROFILE_INPUT_CONFIGS, (config: Partial<InputConfig>) => inputConfig(config)) as unknown as InputConfig[];
 
   readonly notifications = [
     {
@@ -154,6 +104,10 @@ export class ProfileComponent implements OnInit {
   profileChanged = false;
 
   profileForm = this.fb.group({
+    _geo: this.fb.group({
+      lat: '',
+      lng: ''
+    }),
     id: [ '', Validators.required ],
     about: '',
     address1: '',
@@ -376,5 +330,14 @@ export class ProfileComponent implements OnInit {
       'BCBA',
       'BACBD'
     ].includes(this.profileForm?.value?.experienceLevel ?? '');
+  }
+
+  setLatLng({ latitude, longitude }: { latitude: number; longitude: number }): void {
+    this.profileForm.patchValue({
+      _geo: {
+        lat: latitude,
+        lng: longitude
+      }
+    });
   }
 }

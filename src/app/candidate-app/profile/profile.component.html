@@ -11,7 +11,7 @@
             <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
             <div class="border border-blue-600 rounded-lg w-full overflow-x-auto">
               <app-candidate-list-item
-                [candidate]="profile"
+                [candidate]="profileForm.value"
                 [showConnect]="false"
                 class="w-full"
               ></app-candidate-list-item>
@@ -113,196 +113,54 @@
             </div>
           </div>
 
-          <div class="sm:col-span-3">
-            <label
-              for="first-name"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              First name
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="firstName"
-                type="text"
-                name="first-name"
-                id="first-name"
-                autocomplete="given-name"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+          @for (config of inputConfigs; track $index) {
+            @if (!config?.conditional || config?.conditional(profileForm.value)) {
+              @switch (config.template) {
+                @case ('certification-number') {
+                  @if (isCertified()) {
+                    <div class="sm:col-span-5 flex flex-row flex-nowrap items-center justify-between">
+                      <app-certification-number-input
+                        formControlName="certificationNumber"
+                        [type]="profileForm.get('experienceLevel')?.value"
+                      ></app-certification-number-input>
 
-          <div class="sm:col-span-3">
-            <label
-              for="last-name"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Last name
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="lastName"
-                type="text"
-                name="last-name"
-                id="last-name"
-                autocomplete="family-name"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+                      @if (profile?.status === 'verified') {
+                        <div class="border border-green-600 bg-green-50 p-2 text-green-600 rounded-lg text-sm">
+                          VERIFIED
+                        </div>
+                      }
+                    </div>
+                  }
+                }
 
-          <div class="col-span-full">
-            <label
-              for="street-address"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Street address
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="address1"
-                type="text"
-                name="street-address"
-                id="street-address"
-                autocomplete="address-line1"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+                @case ('location-search') {
+                  <app-location-search
+                    [ngClass]="config.class"
+                    [formControlName]="config.formControlName"
+                    [inputConfig]="config"
+                    (latLng)="setLatLng($event)"
+                  ></app-location-search>
+                }
 
-            <div class="mt-2">
-              <input
-                formControlName="address2"
-                type="text"
-                name="street-address2"
-                id="street-address2"
-                autocomplete="address-line2"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+                @case ('multi-checkbox') {
+                  <app-multi-checkbox
+                    [options]="config?.options ?? []"
+                    [name]="config.name"
+                    [label]="config.label"
+                    [formControlName]="config.formControlName"
+                  ></app-multi-checkbox>
+                }
 
-          <div class="sm:col-span-2 sm:col-start-1">
-            <label
-              for="city"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              City
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="city"
-                type="text"
-                name="city"
-                id="city"
-                autocomplete="address-level2"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div class="sm:col-span-2">
-            <label
-              for="region"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              State / Province
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="state"
-                id="state"
-                name="state"
-                autocomplete="address-level1"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option
-                  *ngFor="let state of states"
-                  [value]="state"
-                >
-                  {{ state }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="sm:col-span-2">
-            <label
-              for="postal-code"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              ZIP / Postal code
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="zip"
-                type="text"
-                name="postal-code"
-                id="postal-code"
-                autocomplete="postal-code"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div class="sm:col-span-4">
-            <label
-              for="country"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Country
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="country"
-                id="country"
-                name="country"
-                autocomplete="country-name"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="sm:col-span-3">
-            <label
-              for="email"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Email address
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="email"
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div class="sm:col-span-3">
-            <label
-              for="phone"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Phone Number
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="phone"
-                id="phone"
-                name="phone"
-                type="tel"
-                autocomplete="tel"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+                @default {
+                  <app-input
+                    [formControlName]="config.formControlName"
+                    [ngClass]="config.class"
+                    [inputConfig]="config"
+                  ></app-input>
+                }
+              }
+            }
+          }
 
           <div class="sm:col-span-full">
             <label
@@ -326,68 +184,6 @@
               />
             </div>
           </div>
-
-          <div class="sm:col-span-full">
-            <label
-              for="employer"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Current Employer
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="employer"
-                id="employer"
-                name="employer"
-                type="text"
-                autocomplete="organization"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div class="sm:col-span-4">
-            <label
-              for="position"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Current Position
-            </label>
-            <div class="mt-2">
-              <input
-                formControlName="position"
-                id="position"
-                name="position"
-                type="text"
-                autocomplete="organization-title"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div class="sm:col-span-2">
-            <label
-              for="length-of-employment"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Length of Employment
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="lengthOfEmployment"
-                id="length-of-employment"
-                name="length-of-employment"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option value="< 1 Year">< 1 Year</option>
-                <option value="1-2 Years">1-2 Years</option>
-                <option value="2-3 Years">2-3 Years</option>
-                <option value="3-4 Years">3-4 Years</option>
-                <option value="4-5 Years">4-5 Years</option>
-                <option value="5+ Years">5+ Years</option>
-              </select>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -397,216 +193,6 @@
           This information will be displayed publicly in the candidate search to our paid companies, employers, and
           recruiters.
         </p>
-
-        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div class="sm:col-span-5">
-            <label
-              for="experience-level"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Level of Experience
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="experienceLevel"
-                id="experience-level"
-                name="experience-level"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option value="NONE">No Experience</option>
-                <option value="BT">Behavioral Therapist (uncertified)</option>
-                <option value="RBT">Registered Behavioral Therapist (RBT)</option>
-                <option value="BCaBA">Board Certified Assistant Behavior Analyst (BCaBA)</option>
-                <option value="BCBA">Board Certified Behavior Analyst (BCBA)</option>
-                <option value="BCBA-D">Board Certified Behavior Analyst - Doctoral (BCBA-D)</option>
-              </select>
-            </div>
-          </div>
-
-          <div
-            *ngIf="isCertified()"
-            class="sm:col-span-5 flex flex-row flex-nowrap items-center justify-between"
-          >
-            <app-certification-number-input
-              formControlName="certificationNumber"
-              [type]="profileForm.get('experienceLevel')?.value"
-            ></app-certification-number-input>
-
-            <div
-              *ngIf="profile?.status === 'verified'"
-              class="border border-green-600 bg-green-50 p-2 text-green-600 rounded-lg text-sm"
-            >
-              VERIFIED
-            </div>
-          </div>
-
-          <div class="sm:col-span-5">
-            <label
-              for="years-of-experience"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Years of Experience
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="yearsOfExperience"
-                id="years-of-experience"
-                name="years-of-experience"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option value="< 1 Year">< 1 Year</option>
-                <option value="1-2 Years">1-2 Years</option>
-                <option value="2-3 Years">2-3 Years</option>
-                <option value="3-4 Years">3-4 Years</option>
-                <option value="4-5 Years">4-5 Years</option>
-                <option value="5+ Years">5+ Years</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="sm:col-span-2">
-            <app-multi-checkbox
-              [options]="employmentTypes"
-              name="employment-types"
-              label="Employment Type"
-              formControlName="employmentTypes"
-            ></app-multi-checkbox>
-          </div>
-
-          <div class="sm:col-span-2">
-            <app-multi-checkbox
-              [options]="clientPopulations"
-              name="client-populations"
-              label="Client Populations"
-              formControlName="clientPopulations"
-            ></app-multi-checkbox>
-          </div>
-
-          <div class="sm:col-span-2">
-            <app-multi-checkbox
-              [options]="environments"
-              name="environments"
-              label="Therapy Environments"
-              formControlName="environments"
-            ></app-multi-checkbox>
-          </div>
-
-          <div class="sm:col-start-2 sm:col-span-4">
-            <label class="text-sm font-medium leading-6 text-gray-900 flex justify-between">
-              <span>Minimum Salary</span>
-              <span class="text-indigo-700">
-                {{ profileForm.get('salary')?.value | currency: 'USD' : 'symbol' : '0.0' }}
-              </span>
-            </label>
-            <mat-slider
-              min="0"
-              max="150000"
-              step="500"
-              discrete
-              [displayWith]="formatLabel"
-              class="!w-full"
-            >
-              <input
-                matSliderThumb
-                formControlName="salary"
-              />
-            </mat-slider>
-          </div>
-          <div class="sm:col-span-2">
-            <label
-              for="relocation"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Are you willing to relocate?
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="relocation"
-                id="relocation"
-                name="relocation"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="true">Yes - only with relocation assistance</option>
-                <option [ngValue]="false">No</option>
-              </select>
-            </div>
-          </div>
-
-          <app-state-selector
-            *ngIf="profileForm.get('relocation')?.value === true"
-            formControlName="locationsOfInterest"
-            class="sm:col-span-4 w-full sm:mt-4"
-          ></app-state-selector>
-
-          <div class="sm:col-start-1 sm:col-span-3">
-            <label
-              for="availability-status"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Availability Status
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="availabilityStatus"
-                id="availability-status"
-                name="availability-status"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option value="active">Actively Looking</option>
-                <option value="open">Open to Opportunities</option>
-                <option value="curious">Just Curious</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="sm:col-span-3">
-            <label
-              for="start-date"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Start Date
-            </label>
-            <div class="mt-2">
-              <select
-                formControlName="startDate"
-                id="start-date"
-                name="start-date"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option value="immediate">Immediate</option>
-                <option value="twoWeeks">Within Two Weeks of Accepted Offer</option>
-                <option value="negotiable">Negotiable</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-span-full">
-            <label
-              for="about"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              About
-            </label>
-            <div class="mt-2">
-              <textarea
-                formControlName="about"
-                id="about"
-                name="about"
-                rows="3"
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              ></textarea>
-            </div>
-            <p class="mt-3 text-sm leading-6 text-gray-600">
-              Write a few sentences about yourself. You can use this section to stand out, by adding any personal
-              accomplishments or traits, or even what you are looking for in an opportunity.
-              <span class="font-medium">
-                Just remember this section is public, so don't include any personal identifiable information like name
-                or contact info.
-              </span>
-            </p>
-          </div>
-        </div>
       </div>
 
       <!-- <div class="border-b border-gray-900/10 pb-12">

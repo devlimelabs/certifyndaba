@@ -1,4 +1,5 @@
-export const STATES = [
+
+export const STATES_OPTIONS = [
   {
     label: 'Alabama',
     value: 'Alabama'
@@ -195,8 +196,5 @@ export const STATES = [
     label: 'Wisconsin',
     value: 'Wisconsin'
   },
-  {
-    label: 'Wyoming',
-    value: 'Wyoming'
-  }
+  'Wyoming'
 ];

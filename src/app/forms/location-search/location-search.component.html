@@ -1,0 +1,62 @@
+<mat-form-field
+  class="w-full"
+  [appearance]="config().matAppearance"
+>
+  <mat-label [attr.for]="config().name">{{ config().label }}</mat-label>
+
+  @if (config().prefixIcon) {
+    <mat-icon matPrefix>{{ config().prefixIcon }}</mat-icon>
+  }
+
+  @if (config().prefixText) {
+    <span matPrefixText>{{ config().prefixText }}</span>
+  }
+
+  <input
+    matInput
+    [formControl]="inputCtrl"
+    type="text"
+    [name]="config().name"
+    [id]="config().name"
+    [required]="!!config().required"
+    [matAutocomplete]="auto"
+  />
+
+  @if (config().suffixIcon) {
+    <mat-icon matIconSuffix>{{ config().suffixIcon }}</mat-icon>
+  }
+
+  @if (config().suffixText) {
+    <span matSuffixText>{{ config().suffixText }}</span>
+  }
+
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="selectPlace($event.option.value)"
+  >
+    @for (place of places(); track place.placeId) {
+      <mat-option [value]="place">
+        {{ place?.text }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+
+  @if (inputCtrl.hasError('required')) {
+    <mat-error>
+      {{ config().label }} is
+      <strong>Required</strong>
+    </mat-error>
+  }
+
+  @if (config()?.hint) {
+    <mat-hint
+      class="flex flex-row items-center py-1"
+      [ngClass]="config()?.hintClass"
+    >
+      @if (config()?.hintIcon) {
+        <mat-icon class="mr-1">{{ config().hintIcon }}</mat-icon>
+      }
+      {{ config().hint }}
+    </mat-hint>
+  }
+</mat-form-field>

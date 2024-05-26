@@ -30,7 +30,15 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
-    importProvidersFrom(ConfirmationModule, provideFirebaseApp(() => initializeApp(environment.firebase)), provideAnalytics(() => getAnalytics()), provideAuth(() => getAuth()), provideStorage(() => getStorage()), provideFirestore(() => getFirestore()), EditorModule),
+    importProvidersFrom(
+      ConfirmationModule,
+      provideFirebaseApp(() => initializeApp(environment.firebase)),
+      provideAnalytics(() => getAnalytics()),
+      provideAuth(() => getAuth()),
+      provideStorage(() => getStorage()),
+      provideFirestore(() => getFirestore()),
+      EditorModule
+    ),
     provideHotToastConfig(),
     provideTippyConfig({
       defaultVariation: 'tooltip',
