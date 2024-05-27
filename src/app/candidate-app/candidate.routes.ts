@@ -8,13 +8,15 @@ import { RequestsListResolver } from './requests/pages/requests-list/resolve/req
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BlogFeedComponent } from '../blog-feed/blog-feed.component';
 import { ProfileComponent } from './profile/profile.component';
+import { profileInputGroupsResolver } from './profile/resolve/profile-input-groups.resolver';
 
 
 export const CandidateRoutes: Routes = [
   {
     path: 'profile',
     resolve: {
-      profile: profileResolver
+      profile: profileResolver,
+      inputGroups: profileInputGroupsResolver
     },
     component: ProfileComponent
   },

@@ -15,6 +15,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     autocomplete: HtmlInputAutocomplete.GivenName,
     class: 'sm:col-span-3',
     formControlName: 'firstName',
+    section: 'required-info',
     suffixIcon: 'shield_check',
     suffixIconClass: '!text-blue-400 !text-lg',
     suffixTooltip: 'Your first name will NOT be displayed publicly.',
@@ -27,6 +28,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     suffixTooltip: 'Your last name will NOT be displayed publicly.',
     formControlName: 'lastName',
     required: true,
+    section: 'required-info',
     suffixIcon: 'shield_check',
     suffixIconClass: '!text-blue-400 !text-lg',
     validators: [ Validators.required ]
@@ -35,8 +37,9 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     autocomplete: HtmlInputAutocomplete.Email,
     class: 'sm:col-span-3',
     formControlName: 'email',
-    suffixTooltip: 'Your email will NOT be displayed publicly.',
     label: 'Email Address',
+    section: 'required-info',
+    suffixTooltip: 'Your email will NOT be displayed publicly.',
     suffixIcon: 'shield_check',
     suffixIconClass: '!text-blue-400 !text-lg',
     type: HtmlInputType.Email,
@@ -45,19 +48,29 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
   {
     autocomplete: HtmlInputAutocomplete.Tel,
     class: 'sm:col-span-3',
+    formControlName: 'phone',
+    label: 'Phone Number',
+    required: true,
+    section: 'required-info',
     suffixIcon: 'shield_check',
     suffixIconClass: '!text-blue-400 !text-lg',
     suffixTooltip: 'Your phone number will NOT be displayed publicly.',
-    label: 'Phone Number',
-    formControlName: 'phone',
-    required: true,
     validators: [ Validators.required ]
+  },
+  {
+    autocomplete: HtmlInputAutocomplete.AddressLine1,
+    label: 'Address / Location',
+    name: 'street-address',
+    formControlName: 'address',
+    section: 'required-info',
+    template: 'location-search'
   },
   {
     class: 'sm:col-span-full',
     label: 'Level of Experience',
     formControlName: 'experienceLevel',
     validators: [ Validators.required ],
+    section: 'required-info',
     template: 'select',
     options: EXPERIENCE_LEVELS
   },
@@ -66,11 +79,13 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     label: 'Certification Number',
     formControlName: 'certificationNumber',
     hint: 'Your certification number will NOT be displayed publicly.',
+    section: 'required-info',
     template: 'certification-number'
   },
   {
     class: 'sm:col-span-2',
     formControlName: 'yearsOfExperience',
+    section: 'required-info',
     type: HtmlInputType.Number,
     min: 0,
     max: 100
@@ -79,6 +94,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     class: 'sm:col-span-3',
     label: 'Availability',
     formControlName: 'availabilityStatus',
+    section: 'experience-profile',
     template: 'select',
     options: AVAILABILITIES
   },
@@ -87,17 +103,20 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     label: 'Minimum Salary',
     formControlName: 'salary',
     prefixIcon: 'attach_money',
+    section: 'experience-profile',
     type: HtmlInputType.Number
   },
   {
     label: 'Start Date',
     formControlName: 'startDate',
+    section: 'experience-profile',
     template: 'select',
     options: START_DATES
   },
   {
     class: 'sm:col-span-2',
     formControlName: 'clientPopulations',
+    section: 'experience-profile',
     template: 'select',
     multi: true,
     options: CLIENT_POPULATIONS
@@ -105,6 +124,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
   {
     class: 'sm:col-span-2',
     formControlName: 'employmentTypes',
+    section: 'experience-profile',
     template: 'select',
     multi: true,
     options: EMPLOYMENT_TYPES
@@ -113,6 +133,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     label: 'Work Environments',
     class: 'sm:col-span-2',
     formControlName: 'environments',
+    section: 'experience-profile',
     template: 'select',
     multi: true,
     options: WORK_ENVIRONMENTS
@@ -122,6 +143,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     class: 'sm:col-span-2',
     label: 'Are You Willing to Relocate?',
     formControlName: 'relocation',
+    section: 'experience-profile',
     template: 'select',
     options: [
       {
@@ -138,6 +160,7 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     class: 'sm:col-span-3',
     conditional: (form: any) => form.relocation === true,
     formControlName: 'locationsOfInterest',
+    section: 'experience-profile',
     template: 'select',
     options: STATES,
     multi: true
@@ -146,85 +169,79 @@ export const CANDIDATE_PROFILE_INPUT_CONFIGS: Partial<InputConfig>[] = [
     formControlName: 'about',
     hint: `Just remember this section is public, so don't include any personal identifiable information like name or contact info.`,
     placeholder: `Write a few sentences about yourself, or what you are looking for in an opportunity. You can use this section to stand out by adding any personal accomplishments or traits.`,
+    section: 'experience-profile',
     template: 'textarea',
     rows: 5
   },
-  {
-    autocomplete: HtmlInputAutocomplete.AddressLine1,
-    label: 'Street Address',
-    name: 'street-address',
-    formControlName: 'address1',
-    template: 'location-search'
-  },
-  {
-    autocomplete: HtmlInputAutocomplete.AddressLine2,
-    label: 'Apt / Suite / Other',
-    name: 'street-address2',
-    formControlName: 'address2'
-  },
-  {
-    class: 'sm:col-span-2',
-    label: 'city',
-    formControlName: 'city',
-    autocomplete: HtmlInputAutocomplete.AddressLevel2
-  },
-  {
-    autocomplete: HtmlInputAutocomplete.AddressLevel1,
-    class: 'sm:col-span-2',
-    label: 'State / Province',
-    formControlName: 'state',
-    template: 'select',
-    options: STATES
-  },
-  {
-    class: 'sm:col-span-2',
-    autocomplete: HtmlInputAutocomplete.PostalCode,
-    formControlName: 'zip'
-  },
-  {
-    autocomplete: HtmlInputAutocomplete.Country,
-    formControlName: 'country',
-    template: 'select',
-    options: [
-      {
-        label: 'United States',
-        value: 'US'
-      },
-      {
-        label: 'Canada',
-        value: 'CA'
-      },
-      {
-        label: 'Mexico',
-        value: 'MX'
-      },
-      {
-        label: 'Other',
-        value: 'OTHER'
-      }
-    ]
-  },
+  // {
+  //   autocomplete: HtmlInputAutocomplete.AddressLine2,
+  //   label: 'Apt / Suite / Other',
+  //   name: 'street-address2',
+  //   formControlName: 'address2'
+  // },
+  // {
+  //   class: 'sm:col-span-2',
+  //   label: 'city',
+  //   formControlName: 'city',
+  //   autocomplete: HtmlInputAutocomplete.AddressLevel2
+  // },
+  // {
+  //   autocomplete: HtmlInputAutocomplete.AddressLevel1,
+  //   class: 'sm:col-span-2',
+  //   label: 'State / Province',
+  //   formControlName: 'state',
+  //   template: 'select',
+  //   options: STATES
+  // },
+  // {
+  //   class: 'sm:col-span-2',
+  //   autocomplete: HtmlInputAutocomplete.PostalCode,
+  //   formControlName: 'zip'
+  // },
+  // {
+  //   autocomplete: HtmlInputAutocomplete.Country,
+  //   formControlName: 'country',
+  //   template: 'select',
+  //   options: [
+  //     {
+  //       label: 'United States',
+  //       value: 'US'
+  //     },
+  //     {
+  //       label: 'Canada',
+  //       value: 'CA'
+  //     },
+  //     {
+  //       label: 'Mexico',
+  //       value: 'MX'
+  //     },
+  //     {
+  //       label: 'Other',
+  //       value: 'OTHER'
+  //     }
+  //   ]
+  // },
   {
     autocomplete: HtmlInputAutocomplete.Organization,
     label: 'Current Employer',
+    section: 'current-employer',
     formControlName: 'employer'
   },
   {
     autocomplete: HtmlInputAutocomplete.OrganizationTitle,
     formControlName: 'position',
-    label: 'Current Position'
+    label: 'Current Position',
+    section: 'current-employer'
   },
   {
-    formControlName: 'lengthOfEmployment'
-
+    formControlName: 'lengthOfEmployment',
+    section: 'current-employer',
+    type: HtmlInputType.Number
   },
   {
     formControlName: 'linkedInProfileUrl',
-    hint: 'Your LinkedIn profile url will not be displayed publicly.'
-  },
-
-  {
-    formControlName: 'profileImage',
-    template: 'file'
+    hint: 'Your LinkedIn profile url will not be displayed publicly.',
+    label: 'LinkedIn Profile URL',
+    section: 'current-employer'
   }
 ];

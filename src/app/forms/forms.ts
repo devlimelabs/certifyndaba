@@ -100,11 +100,13 @@ export interface InputConfig {
   multi?: boolean;
   name: string;
   options?: { label: string; value: any; description?: string; }[];
+  order?: number;
   placeholder?: string;
   prefixIcon?: string;
   prefixText?: string;
   required?: boolean;
   rows?: number;
+  section?: string;
   suffixIcon?: string;
   suffixIconClass?: string;
   suffixTooltip?: string;
@@ -112,6 +114,17 @@ export interface InputConfig {
   template: 'certification-number' | 'file' | 'input' | 'location-search' | 'multi-checkbox' | 'select' | 'textarea' ;
   type: HtmlInputType;
   validators?: ValidatorFn[];
+}
+
+export interface InputGroup {
+  id: string;
+  order: number;
+  name?: string;
+  description?: string;
+  icon?: string;
+  inputs?: InputConfig[];
+  isOpen?: boolean;
+  title?: string;
 }
 
 export function inputConfig(inputConfig: Partial<InputConfig> | undefined): InputConfig {

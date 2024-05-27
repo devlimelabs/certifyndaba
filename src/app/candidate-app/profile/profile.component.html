@@ -5,21 +5,9 @@
     (ngSubmit)="submit()"
   >
     <div class="space-y-12">
-      @switch (profile?.status) {
-        @case ('verified') {
-          <div class="my-2">
-            <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
-            <div class="border border-blue-600 rounded-lg w-full overflow-x-auto">
-              <app-candidate-list-item
-                [candidate]="profileForm.value"
-                [showConnect]="false"
-                class="w-full"
-              ></app-candidate-list-item>
-            </div>
-          </div>
-        }
+      @switch (profile()?.status) {
         @case ('unverified') {
-          @if (profile?.experienceLevel) {
+          @if (profile()?.experienceLevel) {
             <div class="w-full text-center bg-blue-50 border border-blue-600 text-blue-600 rounded-md p-4 mt-4">
               <div class="text-lg font-semibold mt-2 mb-4">
                 Your profile is awaiting verification, and should be verified in the next 24 hours!
@@ -55,7 +43,7 @@
             <div class="text-lg font-semibold mt-2 mb-4">
               Your credential verification has been rejected for the following reason:
             </div>
-            {{ profile.rejectionReason }}
+            {{ profile()?.rejectionReason }}
             Please update your credential information according to the details provided. Once your credential
             information is updated and saved, your profile will be automatically resubmitted for verification!
           </div>
@@ -67,7 +55,7 @@
           class="text-base font-semibold leading-7 text-gray-900 flex flex-row flex-nowrap items-center justify-between"
         >
           Personal Information
-          @if (profile?.status === 'verified') {
+          @if (profile()?.status === 'verified') {
             <small
               class="border border-green-600 bg-green-50 p-1 text-green-600 rounded-lg text-sm flex flex-row items-center"
             >
@@ -113,103 +101,92 @@
             </div>
           </div>
 
-          @for (config of inputConfigs; track $index) {
-            @if (!config?.conditional || config?.conditional(profileForm.value)) {
-              @switch (config.template) {
-                @case ('certification-number') {
-                  @if (isCertified()) {
-                    <div class="sm:col-span-5 flex flex-row flex-nowrap items-center justify-between">
-                      <app-certification-number-input
-                        formControlName="certificationNumber"
-                        [type]="profileForm.get('experienceLevel')?.value"
-                      ></app-certification-number-input>
+          @for (inputGroup of inputGroups(); track inputGroup.id) {
+            <div class="col-span-full w-full max-w-4xl">
+              <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                  <div class="flex items-center">
+                    @if (inputGroup?.icon) {
+                      <mat-icon>{{ inputGroup.icon }}</mat-icon>
+                    }
+                    <h2 class="text-2xl font-semibold text-gray-800">{{ inputGroup?.title }}</h2>
+                  </div>
 
-                      @if (profile?.status === 'verified') {
-                        <div class="border border-green-600 bg-green-50 p-2 text-green-600 rounded-lg text-sm">
-                          VERIFIED
-                        </div>
-                      }
-                    </div>
+                  <button
+                    mat-icon-button
+                    color="primary"
+                  >
+                    <mat-icon>{{ inputGroup?.isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+                </div>
+
+                <p class="text-gray-600 mb-4">{{ inputGroup.description }}</p>
+                <hr class="border-gray-300" />
+              </div>
+            </div>
+            @for (config of inputGroup?.inputs; track $index) {
+              @if (!config?.conditional || config?.conditional(profileForm.value)) {
+                @switch (config.template) {
+                  @case ('certification-number') {
+                    @if (isCertified()) {
+                      <div class="sm:col-span-5 flex flex-row flex-nowrap items-center justify-between">
+                        <app-certification-number-input
+                          formControlName="certificationNumber"
+                          [type]="profileForm.get('experienceLevel')?.value"
+                        ></app-certification-number-input>
+
+                        @if (profile()?.status === 'verified') {
+                          <div class="border border-green-600 bg-green-50 p-2 text-green-600 rounded-lg text-sm">
+                            VERIFIED
+                          </div>
+                        }
+                      </div>
+                    }
                   }
-                }
 
-                @case ('location-search') {
-                  <app-location-search
-                    [ngClass]="config.class"
-                    [formControlName]="config.formControlName"
-                    [inputConfig]="config"
-                    (latLng)="setLatLng($event)"
-                  ></app-location-search>
-                }
+                  @case ('location-search') {
+                    <app-location-search
+                      [ngClass]="config.class"
+                      [formControlName]="config.formControlName"
+                      [inputConfig]="config"
+                      (latLng)="setLatLng($event)"
+                    ></app-location-search>
+                  }
 
-                @case ('multi-checkbox') {
-                  <app-multi-checkbox
-                    [options]="config?.options ?? []"
-                    [name]="config.name"
-                    [label]="config.label"
-                    [formControlName]="config.formControlName"
-                  ></app-multi-checkbox>
-                }
+                  @case ('multi-checkbox') {
+                    <app-multi-checkbox
+                      [options]="config?.options ?? []"
+                      [name]="config.name"
+                      [label]="config.label"
+                      [formControlName]="config.formControlName"
+                    ></app-multi-checkbox>
+                  }
 
-                @default {
-                  <app-input
-                    [formControlName]="config.formControlName"
-                    [ngClass]="config.class"
-                    [inputConfig]="config"
-                  ></app-input>
+                  @default {
+                    <app-input
+                      [formControlName]="config.formControlName"
+                      [ngClass]="config.class"
+                      [inputConfig]="config"
+                    ></app-input>
+                  }
                 }
               }
             }
+            @if (inputGroup.name === 'experience-profile' && profile()?.status === 'verified') {
+              <div class="my-2">
+                <div class="font-medium text-blue-600 mb-2">How your profile appears in search results:</div>
+                <div class="border border-blue-600 rounded-lg w-full overflow-x-auto">
+                  <app-candidate-list-item
+                    [candidate]="profileForm.value"
+                    [showConnect]="false"
+                    class="w-full"
+                  ></app-candidate-list-item>
+                </div>
+              </div>
+            }
           }
-
-          <div class="sm:col-span-full">
-            <label
-              for="linkedin-profile"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              LinkedIn Profile URL
-            </label>
-            <div class="mt-2 flex rounded-md shadow-sm">
-              <span
-                class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm"
-              >
-                https://linkedin.com/
-              </span>
-              <input
-                type="text"
-                name="linkedin-profile"
-                id="linkedin-profile"
-                class="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="username"
-              />
-            </div>
-          </div>
         </div>
       </div>
-
-      <div class="border-b border-gray-900/10 pb-12">
-        <h2 class="text-base font-semibold leading-7 text-gray-900">Candidate Profile & Interests</h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">
-          This information will be displayed publicly in the candidate search to our paid companies, employers, and
-          recruiters.
-        </p>
-      </div>
-
-      <!-- <div class="border-b border-gray-900/10 pb-12">
-        <h2 class="text-base font-semibold leading-7 text-gray-900">Notifications</h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">
-          We'll always let you know about important changes, but you pick what else you want to hear about.
-        </p>
-
-        <div class="mt-10 space-y-10">
-          <app-multi-checkbox
-            label="Push Notifications"
-            description="These are delivered via SMS to your mobile phone."
-            [options]="notifications"
-            [formControl]="pushNotificationsCtrl"
-          ></app-multi-checkbox>
-        </div>
-      </div> -->
     </div>
 
     <div
@@ -226,8 +203,8 @@
         class="rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         [ngClass]="{
           'text-white bg-indigo-600  focus-visible:outline-indigo-600 hover:bg-indigo-500 cursor-pointer':
-            profileChanged,
-          'text-gray-400 bg-gray-200  focus-visible:outline-gray-200 cursor-default': !profileChanged
+            profileChanged(),
+          'text-gray-400 bg-gray-200  focus-visible:outline-gray-200 cursor-default': !profileChanged()
         }"
       >
         Save

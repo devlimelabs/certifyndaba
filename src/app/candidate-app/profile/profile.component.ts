@@ -3,8 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   DestroyRef,
   inject,
+  input,
   OnInit
 } from '@angular/core';
 import {
@@ -23,7 +25,6 @@ import {
   CertificationNumberInputComponent
 } from 'src/app/shared/certification-number-input/certification-number-input.component';
 import { MultiCheckboxComponent } from 'src/app/shared/multi-checkbox/multi-checkbox.component';
-import { STATES } from '~constants/states';
 import { StateSelectorComponent } from './components/state-selector/state-selector.component';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
@@ -31,15 +32,15 @@ import startCase from 'lodash/startCase';
 import {
   Firestore, doc, updateDoc
 } from '@angular/fire/firestore';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AuthStore } from '~auth/state/auth.store';
 import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
 import { patchState } from '@ngrx/signals';
 import { MatSelectModule } from '@angular/material/select';
 import { InputComponent } from 'src/app/forms/input/input.component';
-import { InputConfig, inputConfig } from 'src/app/forms/forms';
-import { CANDIDATE_PROFILE_INPUT_CONFIGS } from './candidate-profile-input-configs';
+import { InputGroup } from 'src/app/forms/forms';
 import { LocationSearchComponent } from 'src/app/forms/location-search/location-search.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   standalone: true,
@@ -49,6 +50,7 @@ import { LocationSearchComponent } from 'src/app/forms/location-search/location-
     CommonModule,
     InputComponent,
     LocationSearchComponent,
+    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -76,7 +78,10 @@ export class ProfileComponent implements OnInit {
   private titleCase = inject(TitleCasePipe);
   private toast = inject(HotToastService);
 
-  readonly inputConfigs: InputConfig[] = map(CANDIDATE_PROFILE_INPUT_CONFIGS, (config: Partial<InputConfig>) => inputConfig(config)) as unknown as InputConfig[];
+
+  inputGroups = input<InputGroup[]>();
+  profile = input<any>();
+  userPushSettings = input<any>();
 
   readonly notifications = [
     {
@@ -96,12 +101,17 @@ export class ProfileComponent implements OnInit {
     }
   ];
 
-  readonly states = STATES;
-  showAreasOfInterest = false;
-  profile!: any;
-
   profileChanged$!: Observable<boolean>;
-  profileChanged = false;
+  profileChanged = computed(() => {
+    const formValue = this.$profileFormValue();
+    const profile = this.profile();
+
+    return !(isEqual(formValue, omit(profile, [
+      '__typename',
+      'createdAt',
+      'updatedAt'
+    ])));
+  });
 
   profileForm = this.fb.group({
     _geo: this.fb.group({
@@ -123,6 +133,7 @@ export class ProfileComponent implements OnInit {
     environments: [],
     experienceLevel: [ '', Validators.required ],
     firstName: [ '', Validators.required ],
+    happyAtCurrentEmployer: '',
     lastName: [ '', Validators.required ],
     lengthOfEmployment: '',
     linkedInProfileUrl: '',
@@ -138,37 +149,18 @@ export class ProfileComponent implements OnInit {
     zip: ''
   });
 
+  $profileFormValue = toSignal(this.profileForm.valueChanges);
+
   pushNotificationsCtrl = new FormControl();
 
-  userPushSettings!: any; // UserPushSettings;
+  showAreasOfInterest = false;
 
   get user(): any {
     return this.authStore.userProfile();
   }
 
   ngOnInit(): void {
-    this.route.data
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ profile, userPushSettings }) => {
-        this.profile = profile;
-        this.userPushSettings = userPushSettings;
-        this.profileForm.patchValue(profile);
-        // /* TODO: make this form an object */
-        // const activePushTopics = [];
-        // const pushTopics = [
-        //   'requests',
-        //   'messages',
-        //   'updates'
-        // ];
-
-        // for (let topic of pushTopics) {
-        //   if (userPushSettings?.[topic]) {
-        //     activePushTopics.push(topic);
-        //   }
-        // }
-
-        // this.pushNotificationsCtrl.patchValue(activePushTopics);
-      });
+    this.profileForm.patchValue(this.profile());
 
     this.profileForm.get('experienceLevel')?.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -184,35 +176,6 @@ export class ProfileComponent implements OnInit {
           this.profileForm.removeControl('certificationNumber');
         }
       });
-
-    this.profileForm.valueChanges
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(profileFormValue => {
-        this.profileChanged = !(isEqual(profileFormValue, omit(this.profile, [
-          '__typename',
-          'createdAt',
-          'updatedAt'
-        ])));
-
-        this.cdr.markForCheck();
-      });
-
-
-    // this.pushNotificationsCtrl.valueChanges
-    //   .pipe(
-    //     takeUntilDestroyed(this.destroyRef),
-    //     switchMap(async pushTopics => this.api.UpdateUserPushSettings({
-    //       userID: this.user.sub,
-    //       requests: pushTopics.includes('requests'),
-    //       messages: pushTopics.includes('messages'),
-    //       updates: pushTopics.includes('updates')
-    //     }))
-    //   )
-    //   .subscribe(() => {
-    //     this.toast.success('Notification Settings Updated!');
-    //   });
   }
 
   async submit(): Promise<void> {
@@ -252,7 +215,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    if (this.profileChanged) {
+    if (this.profileChanged()) {
       const personalInfoDetected = this.checkForPersonalInfoInAbout();
 
       if (personalInfoDetected) {
@@ -264,14 +227,12 @@ export class ProfileComponent implements OnInit {
       }
 
       try {
-        const usersRef = doc(this.firestore, `users/${this.profile.id}`);
+        const usersRef = doc(this.firestore, `users/${this.profile().id}`);
 
         await updateDoc(usersRef, this.profileForm.value);
 
         this.profile = { ...this.profileForm.value };
-        patchState(this.authStore, { userProfile: this.profile });
-
-        this.profileChanged = false;
+        patchState(this.authStore, { userProfile: this.profile() });
 
         this.cdr.markForCheck();
 
