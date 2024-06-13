@@ -1,0 +1,77 @@
+<div class="flex flex-row flex-wrap justify-center gap-16 p-4">
+  <div class="w-full mt-16 mx-16 md:mx-32">
+    <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-3xl">Welcome to the CertifyndABA Blog</h2>
+    <p class="mt-4 text-lg leading-8 text-gray-600">
+      We are building a community around ABA Therapy in an effort to support the amazing individuals in this career.
+      Here are our latest blog posts:
+    </p>
+  </div>
+
+  @for (post of blogList(); track post.slug) {
+    <mat-card
+      class="w-[500px] h-auto cursor-pointer"
+      routerLink="{{ post.slug }}"
+    >
+      <img
+        mat-card-image
+        [src]="post?.featured_image"
+        [alt]="post?.featured_image_alt"
+      />
+      <mat-card-header class="mb-3">
+        <mat-card-title>
+          <span class="font-semibold">{{ post?.title }}</span>
+        </mat-card-title>
+        <mat-card-subtitle>
+          <div class="flex flex-row flex-nowrap font-normal text-gray-600 italic">
+            <address>
+              Posted by
+              <span
+                rel="author"
+                class="font-medium"
+              >
+                {{ post?.author?.first_name }} {{ post?.author?.last_name }}
+              </span>
+            </address>
+            <span class="ml-1">
+              on
+              <time
+                [attr.pubdate]="post?.published"
+                [attr.datetime]="post?.published | date"
+                class="font-medium"
+                [title]="post?.published | date"
+              >
+                {{ post?.published | date }}
+              </time>
+            </span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="h-full">
+        <p>
+          {{ post?.summary }}
+        </p>
+      </mat-card-content>
+      <mat-card-actions class="bg-slate-400/10 rounded-b-lg">
+        <mat-chip-set aria-label="Post Categories">
+          @for (category of post?.categories; track category.slug) {
+            <mat-chip
+              class="!bg-primary !cursor-pointer z-50"
+              (click)="$event.stopPropagation()"
+              routerLink="/resources/{{ category.slug }}"
+            >
+              <span class="!text-white">{{ category.name }}</span>
+            </mat-chip>
+          }
+        </mat-chip-set>
+
+        <!-- <span class="flex-grow"></span>
+        <button
+          mat-button
+          disabled
+        >
+          SHARE
+        </button> -->
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>
