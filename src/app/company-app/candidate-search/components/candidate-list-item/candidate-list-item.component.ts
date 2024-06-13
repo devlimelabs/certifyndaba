@@ -69,8 +69,11 @@ export class CandidateListItemComponent {
 
     if (connectionRequest) {
       try {
+        console.log('`companies/${this.authStore.companyID()}/requests`', `companies/${this.authStore.companyID()}/requests`);
         const requestRef = collection(this.firestore, `companies/${this.authStore.companyID()}/requests`);
+        console.log('requestRef', requestRef);
         const request = await addDoc(requestRef, connectionRequest);
+        console.log('Connection request sent:', request.id);
         this.toast.success('Connection request sent!');
       } catch (err) {
         this.toast.error('There was an error sending the connection request, please try again later');
