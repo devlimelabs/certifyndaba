@@ -131,8 +131,8 @@ export function inputConfig(inputConfig: Partial<InputConfig> | undefined): Inpu
   const config = {
     matAppearance: 'outline',
     class: 'col-span-full',
-    hintClass: '!text-blue-700',
-    hintIcon: 'shield_check',
+    hintClass: 'bg-blue-100 !text-blue-700',
+    hintIcon: 'info',
     template: 'input',
     type: HtmlInputType.Text,
     ...(inputConfig ?? {})

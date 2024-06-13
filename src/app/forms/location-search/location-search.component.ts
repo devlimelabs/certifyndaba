@@ -5,9 +5,8 @@ import {
   signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  FormControl, FormsModule, ReactiveFormsModule
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +19,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { PlacesAutocompleteResponse, LocationAutocompleteSuggestion } from './google-places-autocomplete';
 import map from 'lodash/map';
+
+
 @Component({
   selector: 'app-location-search',
   standalone: true,
@@ -28,6 +29,7 @@ import map from 'lodash/map';
     CommonModule,
     FormsModule,
     MatAutocompleteModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -43,34 +45,34 @@ export class LocationSearchComponent implements OnInit {
   private http = inject(HttpClient);
 
   inputConfig = input<InputConfig>();
+
   latLng = output<{ latitude: number; longitude: number;}>();
+
+  locations = signal<any[]>([]);
+
   places = signal<any[]>([]);
 
   config = computed(() => inputConfig(this.inputConfig()));
 
-  inputCtrl = new FormControl();
-
   async ngOnInit() {
-    if (this.inputConfig()?.validators) {
-      this.inputCtrl.setValidators(this.inputConfig()?.validators ?? []);
-    }
-
     this.valueAccessor.value
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
-        if (value !== this.inputCtrl.value) {
-          this.inputCtrl.patchValue(value ?? null);
-        }
+        this.locations.set(value ?? []);
       });
-
-    this.inputCtrl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(query => this.search(query));
   }
 
-  async search(query: string): Promise<void> {
+  remove(location: any): void {
+    this.locations.update;
+  }
+
+  addPlace(place: any): void {
+    console.log('place', place);
+  }
+
+  async search(event: any): Promise<void> {
     // console.log('event', event);
-    // const query = event?.target?.value ?? '';
+    const query = event?.target?.value ?? '';
 
     if (query.length > 0) {
       try {
@@ -102,9 +104,15 @@ export class LocationSearchComponent implements OnInit {
       params
     }));
 
-    this.updateValue(placeDetails.formattedAddress);
+    console.log('locations', this.locations());
+    console.log('Selected place:', place);
+    let value = this.locations();
 
-    this.latLng.emit(placeDetails.location);
+    this.updateValue(value);
+
+    if (!this.config().multi) {
+      this.latLng.emit(placeDetails.location);
+    }
   }
 
   updateValue(value: any): void {

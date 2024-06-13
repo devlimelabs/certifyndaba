@@ -7,7 +7,8 @@ import {
   DestroyRef,
   inject,
   input,
-  OnInit
+  model,
+  OnInit,
 } from '@angular/core';
 import {
   FormControl, ReactiveFormsModule, UntypedFormBuilder, Validators
@@ -79,7 +80,7 @@ export class ProfileComponent implements OnInit {
   private toast = inject(HotToastService);
 
 
-  inputGroups = input<InputGroup[]>();
+  inputGroups = model<InputGroup[]>();
   profile = input<any>();
   userPushSettings = input<any>();
 
@@ -106,11 +107,13 @@ export class ProfileComponent implements OnInit {
     const formValue = this.$profileFormValue();
     const profile = this.profile();
 
+
     return !(isEqual(formValue, omit(profile, [
       '__typename',
       'createdAt',
       'updatedAt'
     ])));
+
   });
 
   profileForm = this.fb.group({
@@ -215,7 +218,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    if (this.profileChanged()) {
+    if (this?.profileChanged()) {
       const personalInfoDetected = this.checkForPersonalInfoInAbout();
 
       if (personalInfoDetected) {
@@ -299,6 +302,14 @@ export class ProfileComponent implements OnInit {
         lat: latitude,
         lng: longitude
       }
+    });
+  }
+
+  toggleInputGroup(index: number): void {
+    this.inputGroups.update(groups => {
+      (groups ??= [])[index].isOpen = !groups[index].isOpen;
+
+      return groups;
     });
   }
 }

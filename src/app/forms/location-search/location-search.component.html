@@ -12,15 +12,44 @@
     <span matPrefixText>{{ config().prefixText }}</span>
   }
 
-  <input
-    matInput
-    [formControl]="inputCtrl"
-    type="text"
-    [name]="config().name"
-    [id]="config().name"
-    [required]="!!config().required"
-    [matAutocomplete]="auto"
-  />
+  @if (config().multi) {
+    <mat-chip-grid
+      #chipGrid
+      aria-label="locations of interest"
+    >
+      @for (location of locations(); track location) {
+        <mat-chip-row (removed)="remove(location)">
+          {{ location }}
+          <button
+            matChipRemove
+            aria-label="remove"
+          >
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input
+      [placeholder]="config().placeholder ?? ''"
+      #locationInput
+      [matChipInputFor]="chipGrid"
+      [matAutocomplete]="auto"
+      (matChipInputTokenEnd)="addPlace($event)"
+      (input)="search($event)"
+      (focus)="search($event)"
+    />
+  } @else {
+    <input
+      matInput
+      (input)="search($event)"
+      (focus)="search($event)"
+      type="text"
+      [name]="config().name"
+      [id]="config().name"
+      [required]="!!config().required"
+      [matAutocomplete]="auto"
+    />
+  }
 
   @if (config().suffixIcon) {
     <mat-icon matIconSuffix>{{ config().suffixIcon }}</mat-icon>
@@ -40,13 +69,6 @@
       </mat-option>
     }
   </mat-autocomplete>
-
-  @if (inputCtrl.hasError('required')) {
-    <mat-error>
-      {{ config().label }} is
-      <strong>Required</strong>
-    </mat-error>
-  }
 
   @if (config()?.hint) {
     <mat-hint
