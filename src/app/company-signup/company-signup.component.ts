@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef, Component, inject, Input, OnInit 
+  ChangeDetectorRef, Component, inject, Input, OnInit
 } from '@angular/core';
 import {
   AbstractControl,
@@ -12,19 +12,17 @@ import {
   Validators
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { NgFormsManager } from '@ngneat/forms-manager';
 import { HotToastService } from '@ngneat/hot-toast';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Auth } from 'aws-amplify';
-import { camelCase, upperFirst } from 'lodash';
+
 import { InputErrorComponent } from 'src/app/shared/input-error/input-error.component';
 import ERROR_MESSAGES from '~constants/error-messages';
 import { STATES } from '~constants/states';
 
-import { UserConfirmationComponent } from '../auth/components/user-confirmation/user-confirmation.component';
+
 import { LayoutService } from '../layout/service/layout.service';
-import { CompanyPlanOptionsComponent } from './components/company-plan-options/company-plan-options.component';
+import { CompanyPlanOptionsComponent } from './company-plan-options/company-plan-options.component';
 
 @UntilDestroy()
 @Component({
@@ -35,15 +33,13 @@ import { CompanyPlanOptionsComponent } from './components/company-plan-options/c
     CompanyPlanOptionsComponent,
     InputErrorComponent,
     ReactiveFormsModule,
-    RouterLink,
-    UserConfirmationComponent
+    RouterLink
   ],
   standalone: true,
   styleUrls: [ './company-signup.component.scss' ]
 })
 export class CompanySignupComponent implements OnInit {
 
-  private authenticator = inject(AuthenticatorService);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
   private formsManager = inject(NgFormsManager);
@@ -144,26 +140,26 @@ export class CompanySignupComponent implements OnInit {
     }
 
     try {
-      await Auth.signUp({
-        username: email ?? '',
-        password: password ?? '',
-        attributes: {
-          given_name: firstName,
-          family_name: lastName,
-          email,
-          phone_number: phoneNumber,
-          'custom:accountType': 'company',
-          'custom:address1': address1,
-          'custom:address2': address2,
-          'custom:city': city,
-          'custom:state': state,
-          'custom:zip': zip,
-          'custom:companyName': companyName,
-          'custom:companyGroupID': `company${upperFirst(camelCase(companyName?.replace(/\s+/g, '')))}`,
-          'custom:plan': plan,
-          'custom:position': position
-        }
-      });
+      // await Auth.signUp({
+      //   username: email ?? '',
+      //   password: password ?? '',
+      //   attributes: {
+      //     given_name: firstName,
+      //     family_name: lastName,
+      //     email,
+      //     phone_number: phoneNumber,
+      //     'custom:accountType': 'company',
+      //     'custom:address1': address1,
+      //     'custom:address2': address2,
+      //     'custom:city': city,
+      //     'custom:state': state,
+      //     'custom:zip': zip,
+      //     'custom:companyName': companyName,
+      //     'custom:companyGroupID': `company${upperFirst(camelCase(companyName?.replace(/\s+/g, '')))}`,
+      //     'custom:plan': plan,
+      //     'custom:position': position
+      //   }
+      // });
 
       this.signedUp = true;
       this.layoutSvc.scrollToTop();

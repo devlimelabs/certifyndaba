@@ -24,6 +24,10 @@ export const routes: Routes = [
         loadComponent: () => import('./layout/pages/not-found/not-found.component').then(x => x.NotFoundComponent)
       },
       {
+        path: 'company/sign-up',
+        loadComponent: () => import('./company-signup/company-signup.component').then(c => c.CompanySignupComponent)
+      },
+      {
         path: 'contact',
         loadComponent: () => import('./contact/contact.component').then(c => c.ContactComponent)
       },
