@@ -5,7 +5,7 @@
   {{ data?.company?.availableRequests ? 'Send Connection Request' : 'Out of Requests' }}
 </h1>
 <mat-dialog-content>
-  @if (data?.company?.availableRequests) {
+  @if (data?.company?.availableRequests > 0) {
     <div class="text-lg font-semibold mt-4 p-2">Requesting connection with candidate:</div>
     <div class="border border-blue-600 rounded-lg w-full">
       <app-candidate-list-item
@@ -63,31 +63,16 @@
           for="salary"
           class="block text-sm font-medium leading-6 text-gray-900"
         >
-          Salary Range
+          Salary
         </label>
         <div class="mt-2 w-full">
-          <mat-slider
-            class="!min-w-[300px] w-full"
-            min="0"
-            max="250000"
-            step="1000"
-            showTickMarks
-            discrete
-            [displayWith]="formatLabel"
-          >
-            <input
-              [value]="salaryStart"
-              matSliderStartThumb
-              (valueChange)="setStartingSalary($event)"
-            />
-            <input
-              [value]="salaryEnd"
-              matSliderEndThumb
-              (valueChange)="setEndingSalary($event)"
-            />
-          </mat-slider>
-
-          <mat-hint>{{ salaryCtrl.value }}</mat-hint>
+          <input
+            formControlName="salary"
+            type="number"
+            name="salary"
+            id="salary"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
         </div>
       </div>
 

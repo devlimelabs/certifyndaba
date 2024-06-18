@@ -11,6 +11,7 @@ import { LayoutService } from 'src/app/layout/service/layout.service';
 
 export const RequestDetailResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const requestId = route.params?.['id'];
+  const companyId = route.params?.['companyId'];
 
   inject(LayoutService).setRightPanel(false);
 
@@ -19,8 +20,10 @@ export const RequestDetailResolver: ResolveFn<any> = async (route: ActivatedRout
   requestsSvc.setShowBackToList(true);
   requestsSvc.setBackToListLink('/app/candidate');
 
-  const requestRef = doc(inject(Firestore), `requests/${requestId}`);
+  const requestRef = doc(inject(Firestore), `companies/${companyId}/requests/${requestId}`);
   const requestSnapShot = await getDoc(requestRef);
+
+  console.log('requestSnapshot', requestSnapShot);
 
   return {
     id: requestSnapShot.id,

@@ -33,7 +33,7 @@ export const CandidateRoutes: Routes = [
         }
       },
       {
-        path: ':id',
+        path: ':companyId/:id',
         component: RequestDetailComponent,
         resolve: {
           request: RequestDetailResolver

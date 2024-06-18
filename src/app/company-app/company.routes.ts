@@ -13,6 +13,7 @@ import { candidateSearchResolver } from './candidate-search/resolve/candidate-se
 import { SearchService } from '../search/services/search.service';
 import { SearchState } from '../search/state/search.state';
 import { CompanyRequestsListComponent } from './requests/pages/company-requests-list/company-requests-list.component';
+import { companyProfileInputGroupsResolver } from './company-profile/company-profile/resolvers/company-profile-input-groups.resolver';
 
 
 export const CompanyRoutes: Routes = [
@@ -20,7 +21,8 @@ export const CompanyRoutes: Routes = [
     path: 'profile',
     component: CompanyProfileComponent,
     resolve: {
-      company: companyInfoResolver
+      company: companyInfoResolver,
+      inputGroups: companyProfileInputGroupsResolver
     }
   },
   {

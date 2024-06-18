@@ -12,13 +12,19 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { ValueAccessorDirective } from '../value-accessor/value-accessor.directive';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 export type CertificationType = 'RBT' | 'BCaBA' | 'BCBA' | 'BCBAD';
 @UntilDestroy()
 @Component({
   selector: 'app-certification-number-input',
   standalone: true,
-  imports: [ CommonModule ],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   templateUrl: './certification-number-input.component.html',
   styleUrls: [ './certification-number-input.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,16 +1,19 @@
-<label
-  *ngIf="showLabel"
-  for="certification-number"
-  class="block text-sm font-medium leading-6 text-gray-900"
->
-  Certification Number
-</label>
+@if (showLabel) {
+  <label
+    for="certification-number"
+    class="block text-sm font-medium leading-6 text-gray-900"
+  >
+    Certification Number
+  </label>
+}
+
 <div class="mt-2 flex flex-row flex-nowrap w-full items-center">
   <input
     id="certification-prefix"
     name="certification-prefix"
     type="text"
     disabled
+    matInput
     [value]="certPrefix"
     class="block w-14 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
   />
@@ -18,6 +21,7 @@
   <input
     id="certification-number-1"
     name="certification-number-1"
+    matInput
     type="text"
     class="block w-12 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
     maxlength="2"
@@ -26,6 +30,7 @@
   />
   <span class="px-1">-</span>
   <input
+    matInput
     id="certification-number-2"
     name="certification-number-2"
     type="text"

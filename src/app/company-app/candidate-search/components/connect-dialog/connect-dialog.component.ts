@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, OnInit
+} from '@angular/core';
 import {
   FormBuilder, FormControl, ReactiveFormsModule, Validators
 } from '@angular/forms';
@@ -59,14 +61,16 @@ export class ConnectDialogComponent implements OnInit {
 
   connectionForm = this.fb.group({
     candidateID: this.data.candidate.id,
+    companyName: this.data.company.name,
     companyID: '',
     companyGroupID: '',
+    createdAt: new Date().toISOString(),
     address: [ '', Validators.required ],
     city: [ '', Validators.required ],
     state: [ '', Validators.required ],
     zip: [ '', Validators.required ],
     description: [ '', Validators.required ],
-    salary: [ '$10000 - 50000', Validators.required ],
+    salary: [ '$100000', Validators.required ],
     startTimeFrame: [ '', Validators.required ],
     title: [ '', Validators.required ],
     status: 'Pending'
@@ -80,13 +84,13 @@ export class ConnectDialogComponent implements OnInit {
     return this.connectionForm.get('salary') as FormControl;
   }
 
-  get salaryStart(): number {
-    return +(this.salaryCtrl.value?.split(' - ')?.[0]?.trim('$') ?? 10000);
-  }
+  // get salaryStart(): number {
+  //   return +(this.salaryCtrl.value?.split(' - ')?.[0]?.trim('$') ?? 10000);
+  // }
 
-  get salaryEnd(): number {
-    return +(this.salaryCtrl.value?.split(' - ')?.[1]?.trim('$') ?? 50000);
-  }
+  // get salaryEnd(): number {
+  //   return +(this.salaryCtrl.value?.split(' - ')?.[1]?.trim('$') ?? 50000);
+  // }
 
   async ngOnInit(): Promise<void> {
     this.connectionForm.patchValue({
@@ -143,13 +147,13 @@ export class ConnectDialogComponent implements OnInit {
       });
   }
 
-  setStartingSalary(value: any): void {
-    this.salaryCtrl.patchValue(`$${value} - ${this.salaryEnd}`);
-  }
+  // setStartingSalary(value: any): void {
+  //   this.salaryCtrl.patchValue(`$${value} - ${this.salaryEnd}`);
+  // }
 
-  setEndingSalary(value: any): void {
-    this.salaryCtrl.patchValue(`${this.salaryCtrl.value.split(' - ')?.[0]} - ${value}`);
-  }
+  // setEndingSalary(value: any): void {
+  //   this.salaryCtrl.patchValue(`${this.salaryCtrl.value.split(' - ')?.[0]} - ${value}`);
+  // }
 
   submitRequest(): void {
     this.dialogRef.close(this.connectionForm.value);

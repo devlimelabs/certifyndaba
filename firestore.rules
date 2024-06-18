@@ -57,7 +57,7 @@ service cloud.firestore {
 
       match /requests/{requestId} {
         allow read: if isCompanyUser() || isRequestCandidate() || request.auth.token.companyID == companyId;
-        allow write: if isCompanyUser() || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])));
+        allow write: if request.auth.token.companyID == companyId || isCompanyUser() || (isRequestCandidate() && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])));
       }
 
       match /users/{user} {
@@ -66,7 +66,11 @@ service cloud.firestore {
       }
     }
 
-    match /{path=**}/requests/{request} {
+    match /profile-input-groups/{inputGroupId} {
+      allow read: if isSignedIn();
+    }
+
+    match /{path=**}/requests/{requestId} {
       allow list: if isCandidateOrCompanyUser();
       allow get: if isCandidateOrCompanyUser();
     }

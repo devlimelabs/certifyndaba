@@ -42,12 +42,14 @@ export class RequestsTableComponent implements OnInit, AfterViewInit {
   sort = viewChild(MatSort);
 
   columns: string[] = [
+    'companyName',
     'title',
     'salary',
     'status'
   ];
 
   displayedColumns: string[] = [
+    'companyName',
     'title',
     'description',
     'createdAt',

@@ -1,13 +1,20 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  input,
+  model
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Firestore, doc, updateDoc
 } from '@angular/fire/firestore';
 import {
-  FormBuilder, ReactiveFormsModule, Validators
+  ReactiveFormsModule, UntypedFormBuilder, Validators
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +24,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HotToastService } from '@ngneat/hot-toast';
 import { isEqual, omit } from 'lodash';
 import { filter, switchMap } from 'rxjs/operators';
+import { InputGroup } from 'src/app/forms/forms';
+import { InputComponent } from 'src/app/forms/input/input.component';
+import { LocationSearchComponent } from 'src/app/forms/location-search/location-search.component';
 import { ImageUploadFieldComponent } from 'src/app/shared/image-upload-field/image-upload-field.component';
 import { STATES } from '~constants/states';
 
@@ -26,6 +36,8 @@ import { STATES } from '~constants/states';
   imports: [
     CommonModule,
     ImageUploadFieldComponent,
+    InputComponent,
+    LocationSearchComponent,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -42,41 +54,37 @@ export class CompanyProfileComponent implements OnInit {
   private firestore = inject(Firestore);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
-  private fb = inject(FormBuilder);
+  private fb = inject(UntypedFormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toast = inject(HotToastService);
 
   readonly states = STATES;
 
+  inputGroups = model<InputGroup[]>();
+  company = input<any>();
   companyProfile!: any;
-
   companyProfileChanged = false;
 
   companyProfileForm = this.fb.group({
+    _geo: this.fb.group({
+      lat: '',
+      lng: ''
+    }),
     id: '',
     about: '',
-    address1: [ '', Validators.required ],
-    address2: '',
-    city: [ '', Validators.required ],
-    country: [ '', Validators.required ],
+    location: [ '', Validators.required ],
     email: [ '', [ Validators.email, Validators.required ] ],
     linkedInUrl: '',
     logoImage: '',
     name: [ '', Validators.required ],
     phone: [ '', Validators.required ],
-    state: [ '', Validators.required ],
-    website: '',
-    zip: [ '', Validators.required ]
+    website: ''
   });
 
   ngOnInit(): void {
-    this.route.data
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ company }) => {
-        this.companyProfile = company;
-        this.companyProfileForm.patchValue(company);
-      });
+    this.companyProfile = this.company();
+    this.companyProfileForm.patchValue(this.company());
 
     this.companyProfileForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -103,10 +111,19 @@ export class CompanyProfileComponent implements OnInit {
         })
       )
       .subscribe(updatedCompany => {
-        this.companyProfile = updatedCompany;
+        this.companyProfile.set(updatedCompany);
         this.companyProfileForm.patchValue(updatedCompany as any);
       });
 
+  }
+
+  setLatLng({ latitude, longitude }: { latitude: number; longitude: number }): void {
+    this.companyProfileForm.patchValue({
+      _geo: {
+        lat: latitude,
+        lng: longitude
+      }
+    });
   }
 
   async submit(): Promise<void> {
@@ -118,7 +135,7 @@ export class CompanyProfileComponent implements OnInit {
 
     if (this.companyProfileChanged) {
       try {
-        const companyRef = doc(this.firestore, `companies/${this.companyProfile.id}`);
+        const companyRef = doc(this.firestore, `companies/${this.companyProfile().id}`);
 
         await updateDoc(companyRef, this.companyProfileForm.value);
 

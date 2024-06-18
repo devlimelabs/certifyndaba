@@ -8,7 +8,7 @@ import {
   inject,
   input,
   model,
-  OnInit,
+  OnInit
 } from '@angular/core';
 import {
   FormControl, ReactiveFormsModule, UntypedFormBuilder, Validators
@@ -123,13 +123,10 @@ export class ProfileComponent implements OnInit {
     }),
     id: [ '', Validators.required ],
     about: '',
-    address1: '',
-    address2: '',
+    location: '',
     availabilityStatus: '',
     certificationNumber: '',
-    city: '',
     clientPopulations: [],
-    country: '',
     email: [ '', Validators.required ],
     employer: '',
     employmentTypes: [],
@@ -148,8 +145,7 @@ export class ProfileComponent implements OnInit {
     salary: '',
     startDate: '',
     state: '',
-    yearsOfExperience: '',
-    zip: ''
+    yearsOfExperience: ''
   });
 
   $profileFormValue = toSignal(this.profileForm.valueChanges);
