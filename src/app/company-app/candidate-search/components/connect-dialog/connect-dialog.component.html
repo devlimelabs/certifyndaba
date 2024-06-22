@@ -15,34 +15,133 @@
       ></app-candidate-list-item>
     </div>
     <div
-      class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 pt-4"
+      class="grid max-w-2xl grid-cols-1 gap-x-6 sm:grid-cols-6 pt-4"
       [formGroup]="connectionForm"
     >
-      <div class="sm:col-span-full">
-        <label
-          for="title"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Title
-        </label>
-        <div class="mt-2">
-          <input
-            formControlName="title"
-            type="text"
-            name="title"
-            id="title"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
+      <mat-form-field
+        class="sm:col-span-full mt-4"
+        appearance="outline"
+      >
+        <mat-label for="title">Request Title</mat-label>
 
-      <div class="sm:col-span-full">
-        <label
-          for="description"
-          class="block text-sm font-medium leading-6 text-gray-900"
+        <input
+          matInput
+          formControlName="title"
+          type="text"
+          name="title"
+          id="title"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-full"
+        appearance="outline"
+      >
+        <mat-label for="title">Position Title</mat-label>
+
+        <input
+          matInput
+          formControlName="position"
+          type="text"
+          name="title"
+          id="title"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-3"
+        appearance="outline"
+      >
+        <mat-label for="salary">Salary</mat-label>
+        <input
+          matInput
+          formControlName="salary"
+          type="number"
+          name="salary"
+          id="salary"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-3"
+        appearance="outline"
+      >
+        <mat-label for="start-time-frame">Start Time Frame</mat-label>
+        <input
+          matInput
+          formControlName="startTimeFrame"
+          id="start-time-frame"
+          name="start-time-frame"
+          type="text"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="col-span-full"
+        appearance="outline"
+      >
+        <mat-label for="street-address">Street address</mat-label>
+        <input
+          matInput
+          formControlName="address"
+          type="text"
+          name="street-address"
+          id="street-address"
+          autocomplete="street-address"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-2 sm:col-start-1"
+        appearance="outline"
+      >
+        <mat-label for="city">City</mat-label>
+        <input
+          matInput
+          formControlName="city"
+          type="text"
+          name="city"
+          id="city"
+          autocomplete="address-level2"
+        />
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-2"
+        appearance="outline"
+      >
+        <mat-label for="region">State / Province</mat-label>
+        <mat-select
+          formControlName="state"
+          id="state"
+          name="state"
+          autocomplete="address-level1"
         >
-          Details
-        </label>
+          @for (state of states; track state.value) {
+            <mat-option [value]="state.value">
+              {{ state.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        class="sm:col-span-2"
+        appearance="outline"
+      >
+        <mat-label for="postal-code">ZIP / Postal code</mat-label>
+        <input
+          matInput
+          formControlName="zip"
+          type="text"
+          name="postal-code"
+          id="postal-code"
+          autocomplete="postal-code"
+        />
+      </mat-form-field>
+
+      <div class="sm:col-span-full my-4">
+        <label for="description">Details</label>
         <div class="mt-2">
           <editor
             class="min-h-[300px] w-full"
@@ -55,123 +154,6 @@
                 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | spellcheckdialog | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat'
             }"
           ></editor>
-        </div>
-      </div>
-
-      <div class="sm:col-span-3">
-        <label
-          for="salary"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Salary
-        </label>
-        <div class="mt-2 w-full">
-          <input
-            formControlName="salary"
-            type="number"
-            name="salary"
-            id="salary"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
-
-      <div class="sm:col-span-3">
-        <label
-          for="start-time-frame"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Start Time Frame
-        </label>
-        <div class="mt-2">
-          <input
-            formControlName="startTimeFrame"
-            id="start-time-frame"
-            name="start-time-frame"
-            type="text"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
-
-      <div class="col-span-full">
-        <label
-          for="street-address"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Street address
-        </label>
-        <div class="mt-2">
-          <input
-            formControlName="address"
-            type="text"
-            name="street-address"
-            id="street-address"
-            autocomplete="street-address"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
-
-      <div class="sm:col-span-2 sm:col-start-1">
-        <label
-          for="city"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          City
-        </label>
-        <div class="mt-2">
-          <input
-            formControlName="city"
-            type="text"
-            name="city"
-            id="city"
-            autocomplete="address-level2"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
-
-      <div class="sm:col-span-2">
-        <label
-          for="region"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          State / Province
-        </label>
-        <div class="mt-2">
-          <select
-            formControlName="state"
-            id="state"
-            name="state"
-            autocomplete="address-level1"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          >
-            @for (state of states; track state.value) {
-              <option [value]="state.value">
-                {{ state.label }}
-              </option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="sm:col-span-2">
-        <label
-          for="postal-code"
-          class="block text-sm font-medium leading-6 text-gray-900"
-        >
-          ZIP / Postal code
-        </label>
-        <div class="mt-2">
-          <input
-            formControlName="zip"
-            type="text"
-            name="postal-code"
-            id="postal-code"
-            autocomplete="postal-code"
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
         </div>
       </div>
 
