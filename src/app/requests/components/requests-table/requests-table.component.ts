@@ -39,6 +39,8 @@ export class RequestsTableComponent implements OnInit, AfterViewInit {
 
   requests = input<any[]>([]);
 
+  useCompanyIdLink = input(false);
+
   sort = viewChild(MatSort);
 
   columns: string[] = [

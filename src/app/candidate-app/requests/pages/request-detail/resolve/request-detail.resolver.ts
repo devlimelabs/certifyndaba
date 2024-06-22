@@ -23,8 +23,6 @@ export const RequestDetailResolver: ResolveFn<any> = async (route: ActivatedRout
   const requestRef = doc(inject(Firestore), `companies/${companyId}/requests/${requestId}`);
   const requestSnapShot = await getDoc(requestRef);
 
-  console.log('requestSnapshot', requestSnapShot);
-
   return {
     id: requestSnapShot.id,
     ...requestSnapShot.data()
