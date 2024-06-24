@@ -5,7 +5,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
-import { RequestsService } from '../../service/requests.service';
+import { RequestsStore } from '../../state/requests.state';
 
 @Component({
   standalone: true,
@@ -20,10 +20,5 @@ import { RequestsService } from '../../service/requests.service';
 })
 export class RequestsComponent {
 
-  private requestsSvc = inject(RequestsService);
-
-  showBackToList$ = this.requestsSvc.showBacktoList$;
-  showRequestButton$ = this.requestsSvc.showRequestButton$;
-  backToListLink$ = this.requestsSvc.backToListLink$;
-
+  store = inject(RequestsStore);
 }

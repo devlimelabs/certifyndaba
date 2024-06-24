@@ -1,183 +1,67 @@
-<div class="md:px-4 px-0 flex flex-row flex-nowrap items-center justify-between w-full my-4">
-  <div>
-    <h3 class="text-base font-semibold leading-7 text-gray-900">Connection Request Information</h3>
-    <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Position Details</p>
-  </div>
-  <div
-    class="rounded-md border w-36 p-4 text-lg font-semibold text-center"
-    [ngClass]="{
-      'bg-blue-50 border-blue-500 text-blue-500': request.status === 'Pending',
-      'bg-green-50 border-green-500 text-green-600': request.status === 'Accepted',
-      'bg-red-50 border-red-500 text-red-600': request.status === 'Rejected'
-    }"
-  >
-    {{ request.status }}
-  </div>
-</div>
-
-<div class="flex flex-row flex-nowrap justify-evenly">
-  <div class="my-8 border-t border-gray-100 w-[40%]">
-    <dl class="divide-y divide-gray-100">
-      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Position</dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ request.title }}</dd>
-      </div>
-      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Location</dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-          {{ request.address }}
-        </dd>
-        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:col-start-2 sm:mt-0">
-          {{ request.city }}, {{ request.state }} {{ request.zip }}
-        </dd>
-      </div>
-      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Approx. Salary</dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">${{ request.salary }}</dd>
-      </div>
-      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Start Time Frame</dt>
-        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ request.startTimeFrame }}</dd>
-      </div>
-      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <dt class="text-sm font-medium leading-6 text-gray-900">Description</dt>
-        <dd
-          class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"
-          [innerHTML]="request.description | appSanitize: 'html'"
-        ></dd>
-      </div>
-    </dl>
-  </div>
-  <div
-    *ngIf="request?.status === 'Accepted'; else partialCandidateInfo"
-    class="hidden p-4 rounded-lg bg-gray-100 md:flex flex-row flex-wrap justify-center items-center w-[50%] text-center"
-  >
-    <h5 class="text-lg font-bold text-blue-700 w-full mb-8">Connected Candidate:</h5>
-
-    <img
-      class="h-16 w-16 rounded-full"
-      height="64"
-      [src]="request.candidate?.profileImage ?? 'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
-      alt="avatar"
-    />
-
-    <div class="flex flex-row flex-wrap justify-center items-start">
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">
-        {{ request.candidate?.firstName }} {{ request.candidate?.lastName }}
-      </p>
-      <p class="text-base text-gray-500 w-full mt-2">
-        {{ request.candidate?.about }}
-      </p>
-
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Certification Info</p>
-      <p class="text-base text-gray-500 w-full">
-        {{ request.candidate?.experienceLevel | certificationName }}
-      </p>
-      <p class="text-base text-gray-500 w-full">
-        {{ request.candidate?.certificationNumber }}
-      </p>
-
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Phone Number</p>
-      <p class="text-base text-gray-500 w-full">
-        <a href="tel:{{ request.candidate?.phone }}">{{ request.candidate?.phone }}</a>
-      </p>
-
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Email</p>
-      <p class="text-base text-gray-500 w-full">
-        <a href="mailto:{{ request.candidate?.email }}">{{ request.candidate?.email }}</a>
-      </p>
-
-      <ng-container *ngIf="request.candidate?.linkedInProfileUrl">
-        <p class="text-base font-semibold leading-6 text-black w-full">LinkedIn Profile:</p>
-        <p class="text-base text-gray-500 w-full">
-          <a
-            [href]="request.candidate?.linkedInProfileUrl"
-            target="_blank"
+<div class="flex flex-col flex-nowrap items-center w-full">
+  <div class="max-w-screen-lg">
+    <div class="flex flex-1 justify-center py-5">
+      <div class="layout-content-container flex flex-col py-5 flex-1">
+        <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+          <div class="flex min-w-72 flex-col gap-3">
+            <p class="text-[#0e161b] tracking-light text-[32px] font-bold leading-tight">{{ request()?.jobTitle }}</p>
+            <p class="text-[#507a95] text-sm font-normal leading-normal">
+              {{ request()?.employmentType }} {{ request()?.employmentType ? '/' : '' }} {{ request()?.location }}
+            </p>
+          </div>
+          <div
+            class="rounded-full border py-1 px-4 text-lg font-semibold"
+            [ngClass]="statusClasses()"
           >
-            {{ request.candidate?.linkedInProfileUrl }}
-          </a>
+            {{ request()?.status | uppercase }}
+          </div>
+        </div>
+
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Request Title</h3>
+        <p class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4">{{ request()?.title }}</p>
+
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
+          Job Description
+        </h3>
+        <p
+          class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4"
+          [innerHTML]="request()?.description"
+        ></p>
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Job Location</h3>
+        <p class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4">{{ request()?.location }}</p>
+
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Salary Range</h3>
+        <p class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4">{{ request()?.salary }}</p>
+
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
+          Employment Type
+        </h3>
+        <p class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4">
+          {{ request()?.employmentType }}
         </p>
-      </ng-container>
 
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Address</p>
-      <p class="text-base text-gray-500 w-full">
-        {{ request.candidate?.address1 }}
-      </p>
-      <p
-        *ngIf="request.candidate?.address2"
-        class="text-base text-gray-500 w-full"
-      >
-        {{ request.candidate?.address2 }}
-      </p>
-      <p class="text-base text-gray-500 w-full">
-        {{ request.candidate?.city }}, {{ request.candidate?.state }} {{ request.candidate?.zip }}
-      </p>
-
-      <ng-container *ngIf="request.candidate?.relocation">
-        <p class="text-base font-semibold leading-6 text-black w-full mt-4">Willing to Relocate to</p>
-        <p class="text-base text-gray-500 w-full">
-          {{ request.candidate?.locationsOfInterest?.join(', ') }}
+        <h3 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
+          Start Time Frame
+        </h3>
+        <p class="text-[#0e161b] text-base font-normal leading-normal pb-3 pt-1 px-4">
+          {{ request()?.startTimeFrame }}
         </p>
-      </ng-container>
-
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Current Employment</p>
-      <p class="text-base text-gray-500 w-full">
-        <small>Works &#64;</small>
-        {{ request.candidate?.employer }}
-      </p>
-      <p class="text-base text-gray-500 w-full">
-        <small>as</small>
-        {{ request.candidate?.position }}
-      </p>
-      <p class="text-base text-gray-500 w-full">
-        <small>for the last</small>
-        {{ request.candidate?.lengthOfEmployment }}
-      </p>
-    </div>
-  </div>
-
-  <ng-template #partialCandidateInfo>
-    <div
-      class="hidden p-4 rounded-lg bg-gray-100 md:flex flex-row flex-wrap justify-center items-center w-96 text-center"
-    >
-      <h5 class="text-lg font-semibold w-full">Requested Candidate:</h5>
-
-      <img
-        class="h-16 w-16 rounded-full"
-        height="64"
-        [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
-        alt="avatar"
-      />
-
-      <div class="flex flex-row flex-wrap justify-center items-start">
-        <p class="text-base font-semibold leading-6 text-black w-full">
-          {{ request.candidate?.experienceLevel | certificationName }}
-        </p>
-        <p class="text-sm text-gray-500">Living in: {{ request.candidate?.city }}, {{ request.candidate?.state }}</p>
       </div>
-
-      <div class="p-4 rounded-md bg-blue-50 text-blue-700">{{ request.status }}</div>
     </div>
-  </ng-template>
-</div>
 
-<div
-  *ngIf="request.status === 'Pending'"
-  class="md:hidden p-4 rounded-lg bg-gray-100 flex flex-row flex-wrap justify-center items-center w-full my-4 text-center"
->
-  <h5 class="text-lg font-semibold w-full">Requested Candidate:</h5>
+    <div class="flex flex-row flex-wrap justify-start grow">
+      <div class="text-lg font-semibold mt-4 p-2 text-blue-700 w-full">Request Sent to Candidate(s):</div>
+      <div class="flex flex-row flex-nowrap justify-center">
+        <app-candidate-list-item
+          [candidate]="candidate()"
+          [showConnect]="false"
+          class="border border-blue-600 rounded-lg w-auto"
+        ></app-candidate-list-item>
+      </div>
+    </div>
 
-  <img
-    class="h-16 w-16 rounded-full"
-    height="64"
-    [src]="'https://api.dicebear.com/6.x/shapes/svg?seed=' + request.candidateID"
-    alt="avatar"
-  />
-
-  <div class="flex flex-row flex-wrap justify-center items-start">
-    <p class="text-base font-semibold leading-6 text-black w-full">
-      {{ request.candidate?.experienceLevel | certificationName }}
-    </p>
-    <p class="text-sm text-gray-500">Living in: {{ request.candidate?.city }}, {{ request.candidate?.state }}</p>
+    @if (request()?.status === 'Accepted') {
+      <app-connected-candidate-card [candidate]="candidate()"></app-connected-candidate-card>
+    }
   </div>
 </div>

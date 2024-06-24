@@ -1,44 +1,50 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component, inject, OnInit
+  Component, computed, inject, input
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { CandidateListItemComponent } from 'src/app/company-app/candidate-search/components/candidate-list-item/candidate-list-item.component';
 import { Request } from 'src/app/models/request';
 import { CertificationNamePipe } from 'src/app/shared/certification-name/certification-name.pipe';
 import { SanitizePipe } from '~shared/sanitize.pipe';
+import { ConnectedCandidateCardComponent } from '../components/connected-candidate-card/connected-candidate-card.component';
+import { Candidate } from '~models/candidate';
 
 @UntilDestroy()
 @Component({
   standalone: true,
   imports: [
+    CandidateListItemComponent,
     CertificationNamePipe,
     CommonModule,
+    ConnectedCandidateCardComponent,
     MatButtonModule,
     SanitizePipe
   ],
   templateUrl: './company-request-detail.component.html'
 })
-export class CompanyRequestDetailComponent implements OnInit {
+export class CompanyRequestDetailComponent {
 
   private route = inject(ActivatedRoute);
 
-  request!: Request;
+  candidate = input<Candidate>();
+  request = input<Request>();
 
-  ngOnInit() {
-    this.route.data
-      .pipe(untilDestroyed(this))
-      .subscribe(({ request }) => {
-        this.request = request;
-      });
-  }
+  statusClasses = computed(() => {
+    const classMap = {
+      'Pending': 'bg-blue-100 border-blue-800 text-blue-800',
+      'Accepted':'bg-green-50 border-green-500 text-green-600',
+      'Rejected': 'bg-red-50 border-red-500 text-red-600'
+    };
 
-  async acceptRequest(): Promise<void> {
+    const status = this.request()?.status ?? 'Pending';
 
-  }
+    return classMap[status];
+  });
 
-  async rejectRequest(): Promise<void> {
+  async cancelRequest(): Promise<void> {
 
   }
 }

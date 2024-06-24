@@ -12,22 +12,26 @@ import {
   query,
   where
 } from '@angular/fire/firestore';
-import { RequestsService } from 'src/app/requests/service/requests.service';
 import { AuthStore } from '~auth/state/auth.store';
 import { AuthService } from '~auth/auth.service';
 import { filter, firstValueFrom } from 'rxjs';
 import isEmpty from 'lodash/isEmpty';
+import { RequestsStore } from 'src/app/requests/state/requests.state';
+import { patchState } from '@ngrx/signals';
 
 
 export const CompanyRequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 
-  const requestsSvc = inject(RequestsService);
+  const requestsStore = inject(RequestsStore);
   const authStore = inject(AuthStore);
   const authSvc = inject(AuthService);
   const firestore = inject(Firestore);
 
-  requestsSvc.setShowBackToList(false);
-  requestsSvc.setShowRequestButton(false);
+  patchState(requestsStore, {
+    showBackToList: false,
+    showRequestButton: true,
+    requestPageTitle: 'Connection Requests'
+  });
 
   const requests: any[] = [];
 

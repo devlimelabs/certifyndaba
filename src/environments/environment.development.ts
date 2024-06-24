@@ -13,5 +13,6 @@ export const environment = {
     vapidKey: "BPu4cPpVhm8sAVKXY3OZ_TRaNHtDXg69tdvIdBPrZ89Nz4HEMIvQoWz71lcUpP3O2eMml_5L9stOZdWR-dReHCQ",
   },
   meilisearch_domain: "https://search.certifyndaba.com",
-  meilisearch_apikey: "ba171de0aaa836a98a6a5ca14eb13a2b00de68674d1141e1b89aaec9f369bf8c"
+  meilisearch_apikey: "12e4ee8616f83d3a4ef806998ff52b8d9de14c54d14f3cf79bf110bcf5722df4",
+  meilisearch_index: "candidates"
 };

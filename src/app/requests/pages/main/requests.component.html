@@ -2,11 +2,11 @@
   <div class="px-4 sm:px-0">
     <div class="my-8 flex flex-row flex-nowrap justify-between items-center">
       <div>
-        <h2 class="text-xl font-medium text-indigo-600">Connection Requests</h2>
-        @if (showBackToList$ | async) {
+        <h2 class="text-xl font-medium text-indigo-600">{{ store.requestPageTitle() }}</h2>
+        @if (store.showBackToList()) {
           <small
             class="flex flex-row flex-nowrap items-center cursor-pointer hover:text-purple-700 transition-colors duration-300"
-            routerLink="{{ backToListLink$ | async }}"
+            routerLink="{{ store.backToListLink() }}"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +24,7 @@
           </small>
         }
       </div>
-      @if (showRequestButton$ | async) {
+      @if (store.showRequestButton()) {
         <button
           mat-raised-button
           routerLink="/app/company/search"

@@ -14,6 +14,7 @@ import { SearchService } from '../search/services/search.service';
 import { SearchState } from '../search/state/search.state';
 import { CompanyRequestsListComponent } from './requests/pages/company-requests-list/company-requests-list.component';
 import { companyProfileInputGroupsResolver } from './company-profile/company-profile/resolvers/company-profile-input-groups.resolver';
+import { requestCandidateResolver } from './requests/pages/company-request-detail/resolve/request-candidate.resolver';
 
 
 export const CompanyRoutes: Routes = [
@@ -43,6 +44,7 @@ export const CompanyRoutes: Routes = [
         path: ':id',
         component: CompanyRequestDetailComponent,
         resolve: {
+          candidate: requestCandidateResolver,
           request: CompanyRequestDetailResolver
         }
       }

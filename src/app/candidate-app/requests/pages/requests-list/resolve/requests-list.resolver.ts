@@ -3,13 +3,16 @@ import {
   ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot
 } from '@angular/router';
 
-import { Firestore, collectionGroup, getDocs, orderBy, query, where } from '@angular/fire/firestore';
-import { RequestsService } from 'src/app/requests/service/requests.service';
+import {
+  Firestore, collectionGroup, getDocs, orderBy, query, where
+} from '@angular/fire/firestore';
 import { LayoutService } from 'src/app/layout/service/layout.service';
 import { AuthStore } from '~auth/state/auth.store';
 import { firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '~auth/auth.service';
+import { RequestsStore } from 'src/app/requests/state/requests.state';
+import { patchState } from '@ngrx/signals';
 
 export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 
@@ -18,10 +21,13 @@ export const RequestsListResolver: ResolveFn<any> = async (route: ActivatedRoute
   const authStore = inject(AuthStore);
   const authSvc = inject(AuthService);
   const firestore = inject(Firestore);
-  const requestsSvc = inject(RequestsService);
+  const requestsStore = inject(RequestsStore);
 
-  requestsSvc.setShowBackToList(false);
-  requestsSvc.setShowRequestButton(false);
+  patchState(requestsStore, {
+    showBackToList: false,
+    showRequestButton: false,
+    requestPageTitle: 'Connection Requests'
+  });
 
   const companyId = authStore.companyID();
   let userId = authStore.userId();

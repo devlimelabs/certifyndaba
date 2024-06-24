@@ -47,7 +47,7 @@ export class CandidateListItemComponent {
   private dialog = inject(MatDialog);
   private toast = inject(HotToastService);
 
-  candidate = input<Candidate|null>(null);
+  candidate = input<Candidate|undefined>();
   company = input<Company|null>(null);
   showConnect = input<boolean>(true);
 
