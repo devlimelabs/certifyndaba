@@ -11,6 +11,8 @@ import { CertificationNamePipe } from 'src/app/shared/certification-name/certifi
 import { SanitizePipe } from '~shared/sanitize.pipe';
 import { ConnectedCandidateCardComponent } from '../components/connected-candidate-card/connected-candidate-card.component';
 import { Candidate } from '~models/candidate';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +23,8 @@ import { Candidate } from '~models/candidate';
     CommonModule,
     ConnectedCandidateCardComponent,
     MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     SanitizePipe
   ],
   templateUrl: './company-request-detail.component.html'
@@ -31,6 +35,8 @@ export class CompanyRequestDetailComponent {
 
   candidate = input<Candidate>();
   request = input<Request>();
+
+  isAccepted = computed(() => this.request()?.status === 'Accepted');
 
   statusClasses = computed(() => {
     const classMap = {
@@ -43,6 +49,19 @@ export class CompanyRequestDetailComponent {
 
     return classMap[status];
   });
+
+  statusIcon = computed(() => {
+    const iconMap = {
+      'Pending': 'schedule',
+      'Accepted': 'check',
+      'Rejected': 'close'
+    };
+
+    const status = this.request()?.status ?? 'Pending';
+
+    return iconMap[status];
+  });
+
 
   async cancelRequest(): Promise<void> {
 

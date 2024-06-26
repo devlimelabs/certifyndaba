@@ -1,84 +1,274 @@
-<div
-  class="hidden p-4 rounded-lg bg-gray-100 md:flex flex-row flex-wrap justify-center items-center w-[50%] text-center"
->
-  <h5 class="text-lg font-bold text-blue-700 w-full mb-8">Connected Candidate:</h5>
+<mat-card class="!bg-white py-4 px-6">
+  <div class="flex items-start space-x-4">
+    <div class="flex-grow">
+      <div class="flex justify-between items-start mt-2 mb-4">
+        <div>
+          <h3 class="text-lg font-semibold">{{ candidate().firstName }} {{ candidate().lastName }}</h3>
+          <p class="text-sm text-gray-600">{{ candidate().experienceLevel | certificationName }}</p>
+          <p class="text-sm text-gray-500">
+            {{ candidate()?.location ?? candidate()?.city + ', ' + candidate()?.state }}
+          </p>
+        </div>
 
-  <img
-    class="h-16 w-16 rounded-full"
-    height="64"
-    [src]="candidate().profileImage ?? 'https://api.dicebear.com/6.x/shapes/svg?seed=' + candidate().id"
-    alt="avatar"
-  />
+        <img
+          class="h-16 w-16 rounded-full my-auto"
+          src="https://api.dicebear.com/6.x/shapes/svg?seed=123"
+          alt="Candidate Avatar"
+        />
+      </div>
+    </div>
+  </div>
 
-  <div class="flex flex-row flex-wrap justify-center items-start">
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">
-      {{ candidate().firstName }} {{ candidate().lastName }}
-    </p>
-    <p class="text-base text-gray-500 w-full mt-2">
-      {{ candidate().about }}
-    </p>
-
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">Certification Info</p>
-    <p class="text-base text-gray-500 w-full">
-      {{ candidate().experienceLevel | certificationName }}
-    </p>
-    <p class="text-base text-gray-500 w-full">
-      {{ candidate().certificationNumber }}
-    </p>
-
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">Phone Number</p>
-    <p class="text-base text-gray-500 w-full">
-      <a href="tel:{{ candidate().phone }}">{{ candidate().phone }}</a>
-    </p>
-
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">Email</p>
-    <p class="text-base text-gray-500 w-full">
-      <a href="mailto:{{ candidate().email }}">{{ candidate().email }}</a>
-    </p>
-
-    <ng-container *ngIf="candidate().linkedInProfileUrl">
-      <p class="text-base font-semibold leading-6 text-black w-full">LinkedIn Profile:</p>
-      <p class="text-base text-gray-500 w-full">
+  <div class="mt-4 grid grid-cols-2 gap-8">
+    <div>
+      <h4 class="text-base font-medium text-gray-500 mb-1">Contact Information</h4>
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Phone:</span>
         <a
-          [href]="candidate().linkedInProfileUrl"
-          target="_blank"
+          class="text-blue-600 hover:underline"
+          href="tel:{{ candidate()?.phone }}"
         >
-          {{ candidate().linkedInProfileUrl }}
+          {{ candidate()?.phone }}
         </a>
       </p>
-    </ng-container>
-
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">Address</p>
-    <p class="text-base text-gray-500 w-full">
-      {{ candidate().address1 }}
-    </p>
-    <p
-      *ngIf="candidate().address2"
-      class="text-base text-gray-500 w-full"
-    >
-      {{ candidate().address2 }}
-    </p>
-    <p class="text-base text-gray-500 w-full">{{ candidate().city }}, {{ candidate().state }} {{ candidate().zip }}</p>
-
-    <ng-container *ngIf="candidate().relocation">
-      <p class="text-base font-semibold leading-6 text-black w-full mt-4">Willing to Relocate to</p>
-      <p class="text-base text-gray-500 w-full">
-        {{ candidate().locationsOfInterest?.join(', ') }}
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Email:</span>
+        <a
+          class="text-blue-600 hover:underline"
+          href="mailto:{{ candidate()?.email }}"
+        >
+          {{ candidate()?.email }}
+        </a>
       </p>
-    </ng-container>
+      <p class="flex flex-row justify-between text-sm mt-1">
+        <span class="font-bold mr-4">LinkedIn Profile:</span>
+        <a
+          [href]="candidate()?.linkedInProfileUrl"
+          class="text-blue-600 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ candidate()?.linkedInProfileUrl ?? 'N/A' }}
+        </a>
+      </p>
+    </div>
 
-    <p class="text-base font-semibold leading-6 text-black w-full mt-4">Current Employment</p>
-    <p class="text-base text-gray-500 w-full">
-      <small>Works &#64;</small>
-      {{ candidate().employer }}
-    </p>
-    <p class="text-base text-gray-500 w-full">
-      <small>as</small>
-      {{ candidate().position }}
-    </p>
-    <p class="text-base text-gray-500 w-full">
-      <small>for the last</small>
-      {{ candidate().lengthOfEmployment }}
-    </p>
+    <div>
+      <h4 class="text-base font-medium text-gray-500 mb-1">Certification Information</h4>
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Certification Type:</span>
+
+        {{ candidate()?.experienceLevel }}
+      </p>
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Certification Number:</span>
+        {{ candidate()?.certificationNumber ?? 'N/A' }}
+      </p>
+
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Original Certification Date:</span>
+        {{ candidate()?.originalCertificationDate }}
+      </p>
+
+      <p class="flex flex-row justify-between text-sm">
+        <span class="font-bold mr-4">Certification Expiration:</span>
+        {{ candidate()?.certificationExpirationDate }}
+      </p>
+    </div>
   </div>
-</div>
+  @if (candidate()?.about) {
+    <div class="flex flex-row flex-wrap w-full mt-4 mb-8">
+      <h4 class="text-base font-medium text-gray-500 mb-1 w-full">About:</h4>
+      <p class="text-sm font-light text-gray-800 pl-2 pr-4">{{ candidate()?.about }}</p>
+    </div>
+  }
+
+  <div class="mt-1 flex justify-center items-center gap-x-2 md:gap-x-6 text-xs leading-5 text-gray-600 pb-2">
+    <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+      <svg
+        class="w-6 h-6 text-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+          clip-rule="evenodd"
+        />
+        <path
+          d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z"
+        />
+      </svg>
+
+      <p class="text-xs font-medium text-center">
+        {{ candidate()?.availabilityStatus | availability }}
+      </p>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+      <svg
+        class="w-6 h-6 text-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
+          clip-rule="evenodd"
+        />
+      </svg>
+
+      <p class="text-xs font-medium text-center">{{ candidate()?.yearsOfExperience }} Exp.</p>
+    </div>
+
+    @if (candidate()?.relocation) {
+      <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+        <svg
+          class="w-6 h-6 text-blue-600"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
+            clip-rule="evenodd"
+          />
+        </svg>
+
+        <p class="text-xs font-medium text-center">Will Relocate</p>
+      </div>
+    }
+
+    <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+      <svg
+        class="h-6 w-6 text-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        enable-background="new 0 0 24 24"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <g>
+          <rect
+            fill="none"
+            height="24"
+            width="24"
+          />
+          <path
+            d="M15.5,11.5c0,2-2.5,3.5-2.5,5h-2c0-1.5-2.5-3-2.5-5C8.5,9.57,10.07,8,12,8S15.5,9.57,15.5,11.5z M13,17.5h-2V19h2V17.5z M22,12c0-2.76-1.12-5.26-2.93-7.07l-1.06,1.06C19.55,7.53,20.5,9.66,20.5,12c0,2.34-0.95,4.47-2.49,6.01l1.06,1.06 C20.88,17.26,22,14.76,22,12z M3.5,12c0-2.34,0.95-4.47,2.49-6.01L4.93,4.93C3.12,6.74,2,9.24,2,12c0,2.76,1.12,5.26,2.93,7.07 l1.06-1.06C4.45,16.47,3.5,14.34,3.5,12z M17.5,12c0,1.52-0.62,2.89-1.61,3.89l1.06,1.06C18.22,15.68,19,13.93,19,12 c0-1.93-0.78-3.68-2.05-4.95l-1.06,1.06C16.88,9.11,17.5,10.48,17.5,12z M7.05,16.95l1.06-1.06c-1-1-1.61-2.37-1.61-3.89 c0-1.52,0.62-2.89,1.61-3.89L7.05,7.05C5.78,8.32,5,10.07,5,12C5,13.93,5.78,15.68,7.05,16.95z"
+          />
+        </g>
+      </svg>
+
+      <p class="text-xs font-medium text-center">Online {{ candidate()?.updatedAt | daysAgo }}</p>
+    </div>
+
+    @if (worksFullTime()) {
+      <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+        <mat-icon class="h-6 w-6 text-blue-600">hourglass_full</mat-icon>
+
+        <p class="text-xs font-medium text-center">Full-Time</p>
+      </div>
+    }
+
+    @if (worksPartTime()) {
+      <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+        <mat-icon class="h-6 w-6 text-blue-600">hourglass_bottom</mat-icon>
+
+        <p class="text-xs font-medium text-center">Part-Time</p>
+      </div>
+    }
+
+    <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+      <div class="flex flex-row flex-nowrap">
+        @if (worksWithChildren()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Children"
+          >
+            child_care
+          </mat-icon>
+        }
+
+        @if (worksWithAdolescents()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Adolescents"
+          >
+            boy
+          </mat-icon>
+        }
+
+        @if (worksWithAdults()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Adults"
+          >
+            wc
+          </mat-icon>
+        }
+
+        @if (worksWithElderly()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Elderly"
+          >
+            elderly
+          </mat-icon>
+        }
+      </div>
+      <p class="text-xs font-medium text-center">Client Populations</p>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-2 p-2 min-w-20 bg-blue-50 rounded-lg">
+      <div class="flex flex-row flex-nowrap">
+        @if (worksInSchools()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="School"
+          >
+            school
+          </mat-icon>
+        }
+        @if (worksInClinics()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Clinic"
+          >
+            business
+          </mat-icon>
+        }
+        @if (worksInHome()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Home"
+          >
+            home
+          </mat-icon>
+        }
+        @if (worksInResidences()) {
+          <mat-icon
+            class="text-blue-600"
+            matTooltipPosition="above"
+            matTooltip="Residence"
+          >
+            apartment
+          </mat-icon>
+        }
+        @if (worksInOther()) {
+          <div class="text-blue-600 text-xs">other</div>
+        }
+      </div>
+      <p class="text-xs font-medium text-center">Therapy Environments</p>
+    </div>
+  </div>
+</mat-card>

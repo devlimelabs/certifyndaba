@@ -160,6 +160,7 @@ export class ConnectDialogComponent implements OnInit {
   // }
 
   submitRequest(): void {
+    this.connectionForm.patchValue({ createdAt: new Date().toISOString() });
     this.dialogRef.close(this.connectionForm.value);
   }
 
