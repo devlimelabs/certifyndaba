@@ -1,16 +1,18 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { ConfirmService } from './confirm.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ConfirmService', () => {
   let service: ConfirmService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule, MatDialogModule ]
-    });
+    imports: [MatDialogModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
 
     service = TestBed.inject(ConfirmService);
   });
