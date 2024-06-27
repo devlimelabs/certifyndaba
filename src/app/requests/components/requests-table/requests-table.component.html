@@ -123,7 +123,7 @@
       <tr
         mat-row
         *matRowDef="let row; columns: displayedColumns"
-        [routerLink]="useCompanyIdLink() ? ['./', row.company.id, row.id] : ['./', row.id]"
+        [routerLink]="useCompanyIdLink() ? ['./', row.companyID, row.id] : ['./', row.id]"
         class="cursor-pointer"
         [ngClass]="{
           'bg-green-50 hover:bg-green-100': row.status === 'Accepted',
