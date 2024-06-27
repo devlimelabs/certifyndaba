@@ -9,6 +9,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { BlogFeedComponent } from '../blog-feed/blog-feed.component';
 import { ProfileComponent } from './profile/profile.component';
 import { profileInputGroupsResolver } from './profile/resolvers/profile-input-groups.resolver';
+import { requestCompanyResolver } from './requests/pages/request-detail/resolve/request-company.resolver';
+import { RequestsComponent } from '../requests/pages/main/requests.component';
 
 
 export const CandidateRoutes: Routes = [
@@ -33,17 +35,22 @@ export const CandidateRoutes: Routes = [
         }
       },
       {
-        path: ':companyId/:id',
-        component: RequestDetailComponent,
-        resolve: {
-          request: RequestDetailResolver
-        }
-      },
-      {
         path: '',
         outlet: 'right',
         component: BlogFeedComponent
       }
     ]
+  },
+  {
+    path: ':companyId/:id',
+    component: RequestsComponent,
+    children: [{
+      path: '',
+    component: RequestDetailComponent,
+      resolve: {
+        company: requestCompanyResolver,
+        request: RequestDetailResolver
+      }
+    }]
   }
 ];

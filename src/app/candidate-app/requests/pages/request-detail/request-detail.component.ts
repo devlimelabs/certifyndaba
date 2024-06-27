@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component, inject, OnInit
-} from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HotToastService } from '@ngneat/hot-toast';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { lastValueFrom } from 'rxjs';
 
 import { ConfirmRequestResponseComponent } from './confirm-request-response/confirm-request-response.component';
@@ -16,6 +14,10 @@ import {
   doc, Firestore, updateDoc
 } from '@angular/fire/firestore';
 import { ImageComponent } from '~shared/image/image.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { Company } from '~models/company';
+import { Request } from 'src/app/models/request';
 
 @UntilDestroy()
 @Component({
@@ -24,12 +26,14 @@ import { ImageComponent } from '~shared/image/image.component';
     CommonModule,
     EditorModule,
     MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     ImageComponent,
     SanitizePipe
   ],
   templateUrl: './request-detail.component.html'
 })
-export class RequestDetailComponent implements OnInit {
+export class RequestDetailComponent {
 
   private firestore = inject(Firestore);
   private dialog = inject(MatDialog);
@@ -37,15 +41,34 @@ export class RequestDetailComponent implements OnInit {
   private router = inject(Router);
   private toast = inject(HotToastService);
 
-  request!: any;
+  company = input<Company>();
+  request = input<Request>();
 
-  ngOnInit() {
-    this.route.data
-      .pipe(untilDestroyed(this))
-      .subscribe(({ request }) => {
-        this.request = request;
-      });
-  }
+  isAccepted = computed(() => this.request()?.status === 'Accepted');
+
+  statusClasses = computed(() => {
+    const classMap = {
+      'Pending': 'bg-blue-100 border-blue-800 text-blue-800',
+      'Accepted':'bg-green-50 border-green-500 text-green-600',
+      'Rejected': 'bg-red-50 border-red-500 text-red-600'
+    };
+
+    const status = this.request()?.status ?? 'Pending';
+
+    return classMap[status];
+  });
+
+  statusIcon = computed(() => {
+    const iconMap = {
+      'Pending': 'schedule',
+      'Accepted': 'check',
+      'Rejected': 'close'
+    };
+
+    const status = this.request()?.status ?? 'Pending';
+
+    return iconMap[status];
+  });
 
   async acceptRequest(): Promise<void> {
     const dialogRef = this.dialog.open(ConfirmRequestResponseComponent, {
@@ -58,7 +81,7 @@ export class RequestDetailComponent implements OnInit {
 
     if (acceptConfirmed) {
       try {
-        const requestRef = doc(this.firestore, `requests/${this.request.id}`);
+        const requestRef = doc(this.firestore, `requests/${this.request()?.id}`);
 
         const request = await updateDoc(requestRef, {
           status: 'Accepted'
@@ -84,7 +107,7 @@ export class RequestDetailComponent implements OnInit {
 
     if (rejectConfirmed) {
       try {
-        const requestRef = doc(this.firestore, `requests/${this.request.id}`);
+        const requestRef = doc(this.firestore, `requests/${this.request()?.id}`);
 
         const request = await updateDoc(requestRef, {
           status: 'Rejected'

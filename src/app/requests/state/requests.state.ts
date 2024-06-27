@@ -2,6 +2,7 @@ import { signalStore, withState } from '@ngrx/signals';
 
 type RequestsState = {
   backToListLink: string;
+  backToListText: string;
   requestPageTitle: string;
   showBackToList: boolean;
   showRequestButton: boolean;
@@ -9,6 +10,7 @@ type RequestsState = {
 
 const initialState: RequestsState = {
   backToListLink: '../',
+  backToListText: 'Back to Requests',
   requestPageTitle: 'Connection Requests',
   showBackToList: false,
   showRequestButton: false
