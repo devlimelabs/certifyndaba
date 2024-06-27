@@ -32,13 +32,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     importProvidersFrom(
       ConfirmationModule,
-      provideFirebaseApp(() => initializeApp(environment.firebase)),
-      provideAnalytics(() => getAnalytics()),
-      provideAuth(() => getAuth()),
-      provideStorage(() => getStorage()),
-      provideFirestore(() => getFirestore()),
       EditorModule
     ),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAnalytics(() => getAnalytics()),
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
+    provideFirestore(() => getFirestore()),
     provideHotToastConfig(),
     provideTippyConfig({
       defaultVariation: 'tooltip',
