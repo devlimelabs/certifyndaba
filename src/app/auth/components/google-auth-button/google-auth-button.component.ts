@@ -18,12 +18,7 @@ import { AuthService } from '~auth/auth.service';
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule,
-    
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-HttpClientModule
+    MatSnackBarModule
   ],
   templateUrl: './google-auth-button.component.html',
   styleUrls: [ './google-auth-button.component.scss' ],
