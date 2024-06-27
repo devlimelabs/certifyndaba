@@ -11,11 +11,11 @@
 @import 'node_modules/tippy.js/themes/light.css';
 @import 'node_modules/tippy.js/animations/scale.css';
 
-$light-theme: matx.define-theme((
+$light-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: matx.$m3-azure-palette,
-    tertiary: matx.$m3-violet-palette
+    primary: mat.$azure-palette,
+    tertiary: mat.$violet-palette
   ),
   density: (
     scale: -1
