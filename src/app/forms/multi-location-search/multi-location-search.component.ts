@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-candidate-profile',
+  selector: 'app-multi-location-search',
   standalone: true,
   imports: [
     CommonModule,
   ],
-  templateUrl: './candidate-profile.component.html',
+  templateUrl: './multi-location-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CandidateProfileComponent { }
+export class MultiLocationSearchComponent { }
